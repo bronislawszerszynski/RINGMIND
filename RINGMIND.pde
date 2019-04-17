@@ -24,6 +24,7 @@ interaction design and audio visual system
 
 //syphon system to send to other applications
 
+//windows need to comment out these lines and in teh setup and draw
 import codeanticode.syphon.*;
 SyphonServer server;
 
@@ -114,10 +115,11 @@ void settings() {
 
 
 void setup() {
+  
+  //windows comment out this
   server = new SyphonServer(this, "ringmindSyphon");
+    
   setupOSC();
-
-
 
   randomSeed(3);
 
@@ -216,6 +218,9 @@ void draw() {
   totalSimTime +=h_stepsize;
 
   //******************************************************
+  
+  //windows comment out this
+  
   //if we need to use multiple screens then lets sent it to madmapper and map it.
   server.sendScreen();
 }
@@ -311,15 +316,14 @@ void keyPressed() {
     }
     Saturn.rings.get(2).material = RingMat2;
     Saturn.rings.get(6).material = RingMat1;
-    
+
     camera6();
-   // test options
-   // slowdown
-   // simToRealTimeRatio = 360.0/1.0;
-   // change moon mass to see what it does
-   // Saturn.moons.get(0).GM =2.529477495e13;
-    
-  }  else if (key=='z') {
+    // test options
+    // slowdown
+    // simToRealTimeRatio = 360.0/1.0;
+    // change moon mass to see what it does
+    // Saturn.moons.get(0).GM =2.529477495e13;
+  } else if (key=='z') {
     //change system state to fadeout
     systemState= State.fadetoblack; //fadeout all particles
   } else if (key=='x') {
@@ -339,7 +343,7 @@ void keyPressed() {
   } else if (key=='P') {
     saveFrame("./screenshots/ringmind_screen-###.jpg");
   } else if (key=='R') {
-  
+
     //nope not the right way to follow an object. too jerky. maybe we need to rotate around a point instead. check proscene
     Moon m2 = Saturn.moons.get(0);
     //camera1();
@@ -348,8 +352,8 @@ void keyPressed() {
     useAdditiveBlend = !useAdditiveBlend;
   } else if (key == 'T') {
     useTrace = !useTrace;
-  } else if (key=='F'){
-  useFilters=!useFilters; 
+  } else if (key=='F') {
+    useFilters=!useFilters;
   }
 }
 
@@ -360,6 +364,4 @@ public void keyReleased() {
   if (key=='S') {
     scene.saveConfig(); //outputs the camera path to a json file.
   }
-  
-  
 }
