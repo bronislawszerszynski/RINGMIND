@@ -8,7 +8,7 @@ void initSaturn() {
   planet = createShape(SPHERE, 60);
   planet.setTexture(saturnTex);
   //refactor this properly to make a shape with all the correct settings.
-  planet.setStroke(255);  
+  planet.setStroke(255);
 }
 
 void drawSaturn() {
@@ -23,9 +23,9 @@ void drawSaturn() {
 
 
 
-void lighting(){
+void lighting() {
   //illumonate saturn
   pointLight(255, 255, 255, 500, 250, 900);
   //backlight just for ref
- // pointLight(255,  255,  255,  0,  0,  -150); 
+  // pointLight(255,  255,  255,  0,  0,  -150);
 }

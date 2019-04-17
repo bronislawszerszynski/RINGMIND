@@ -16,7 +16,6 @@ InteractiveFrame planetSaturn;
 Scene scene;
 
 Trackable lastParticle;
-boolean inThirdPerson;
   
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -26,7 +25,7 @@ void initScene() {
   scene = new Scene(this);
   // edit the json file for the starting view.
   // turn off the dispose method
- unregisterMethod("dispose", scene); //stops it autosaving the camera from where we last had it ech time and loads our default first bit of data for where we are looking
+   unregisterMethod("dispose", scene); //stops it autosaving the camera from where we last had it ech time and loads our default first bit of data for where we are looking
   
   scene.eyeFrame().setDamping(0.05); //0 is a little too rigid
   scene.eye().centerScene(); //center the entire scene
@@ -54,6 +53,8 @@ void initScene() {
   
   scene.showAll();
   
+  //initspaceship trackable
+  createShip();
 }
 
 
@@ -87,9 +88,9 @@ void camera2(){
 
 //slightly angled from aboe the ring looking down
 void camera3(){
-    scene.camera().setOrientation(new Quat(-0.829765, -0.35531852, 0.4303937, 1.2820243));
-    scene.camera().setPosition(new Vec(-176, 203, 122));
-    scene.camera().setViewDirection(new Vec (0.59, -0.68, -0.41));
+    scene.camera().setOrientation(new Quat(-0.406788, -0.40678796, 0.817953,1.7704078));
+    scene.camera().setPosition(new Vec( -281.5827, 0.0, 212.75641));
+    scene.camera().setViewDirection(new Vec ( 0.7974214, -5.960465E-8, -0.60342294));
 }
 
 

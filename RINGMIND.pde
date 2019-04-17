@@ -115,10 +115,10 @@ void settings() {
 
 
 void setup() {
-  
+
   //windows comment out this
   server = new SyphonServer(this, "ringmindSyphon");
-    
+
   setupOSC();
 
   randomSeed(3);
@@ -181,6 +181,13 @@ void draw() {
     background(0);
   }
 
+  if (inThirdPerson && scene.avatar()==null) {
+    inThirdPerson = false;
+    adjustFrameRate();
+  } else if (!inThirdPerson && scene.avatar()!=null) {
+    inThirdPerson = true;
+    adjustFrameRate();
+  }
 
 
   //*************time step******************
@@ -211,16 +218,20 @@ void draw() {
 
   titleText(); //debug info on frame title
 
-
+  triggered = scene.timer().trigggered();
+  if (triggered) {
+    voyager.update();
+    voyager.display();
+  }
 
   //******************************************************
 
   totalSimTime +=h_stepsize;
 
   //******************************************************
-  
+
   //windows comment out this
-  
+
   //if we need to use multiple screens then lets sent it to madmapper and map it.
   server.sendScreen();
 }
@@ -315,7 +326,7 @@ void keyPressed() {
       r.material = RingMat3;
     }
     Saturn.rings.get(2).material = RingMat2;
-    Saturn.rings.get(6).material = RingMat1;
+    Saturn.rings.get(5).material = RingMat1;
 
     camera6();
     // test options
@@ -329,6 +340,7 @@ void keyPressed() {
   } else if (key=='x') {
     systemState= State.fadeup; //fade up all particles
   } else if (key=='c') {
+    //if any screen frame translations ahve happened this will jump :-/ hmm. otherwise its a nice zoom to fit
     scene.camera().interpolateToFitScene();
   } else if (key=='v') {
     camera1();
@@ -354,8 +366,21 @@ void keyPressed() {
     useTrace = !useTrace;
   } else if (key=='F') {
     useFilters=!useFilters;
+  } else if (key=='y') {
+    scene.eyeFrame().translateX(new DOF1Event(-5));
+  } else if (key==' ') {    
+    if ( scene.avatar() == null && lastAvatar != null)
+      scene.setAvatar(lastAvatar);
+    else
+      lastAvatar = scene.resetAvatar();
+  } else if (key=='V') {
+    simToRealTimeRatio = 360.0/1.0;
+    //voyager follow the moon
+    systemState= State.followState;
   }
 }
+
+
 
 public void keyReleased() {
   //if (key == '1') state = cam.getState();
