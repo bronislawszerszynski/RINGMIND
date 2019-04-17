@@ -234,5 +234,7 @@ void updateCurrentScene(int t) {
   rsRenderer.render(Saturn, rsRenderContext,1); //1 for points
   
   // test for something funky
-  //applyFilters();
+  if (useFilters){
+   applyFilters();
+  }
 }

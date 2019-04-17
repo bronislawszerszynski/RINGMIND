@@ -32,6 +32,7 @@ SyphonServer server;
 boolean drawMoons = true;
 boolean useAdditiveBlend = false;
 boolean useTrace = false;
+boolean useFilters = false;
 int traceAmount=70;
 
 int ringCnt = 10; // how many rings to render
@@ -347,6 +348,8 @@ void keyPressed() {
     useAdditiveBlend = !useAdditiveBlend;
   } else if (key == 'T') {
     useTrace = !useTrace;
+  } else if (key=='F'){
+  useFilters=!useFilters; 
   }
 }
 
@@ -357,4 +360,6 @@ public void keyReleased() {
   if (key=='S') {
     scene.saveConfig(); //outputs the camera path to a json file.
   }
+  
+  
 }
