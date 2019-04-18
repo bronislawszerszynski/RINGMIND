@@ -51,7 +51,7 @@ Boolean Running = true;
 Boolean Display = true;
 Boolean Add = false;
 Boolean clear = false;
-Boolean Shearing = true; // for when we switch from ringsystem to shearsystem
+Boolean Shearing = false; // for when we switch from ringsystem to shearsystem
 
 //Initialising Objects
 RingSystem Saturn;
