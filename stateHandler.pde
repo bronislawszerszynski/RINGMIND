@@ -219,6 +219,13 @@ void updateCurrentScene(int t) {
         r.material.partAlpha +=0.5;
       }
     }
+   //for (Moon m : Saturn.moons){
+   //    if (m.material.partAlpha<=255) {
+   //     m.material.partAlpha +=0.5;
+   //   }
+   //}
+
+
 
     break;
     

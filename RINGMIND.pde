@@ -51,7 +51,7 @@ Boolean Running = true;
 Boolean Display = true;
 Boolean Add = false;
 Boolean clear = false;
-Boolean Shearing = false; // for when we switch from ringsystem to shearsystem
+Boolean Shearing = true; // for when we switch from ringsystem to shearsystem
 
 //Initialising Objects
 RingSystem Saturn;
@@ -158,6 +158,7 @@ void setup() {
   //postfx
   setupFX();
   loadFilters(); //test for potnetial aesthetics
+  
   // osc sound engine init
   transmitAllRingsOSC();
   transmitAllMoonsOSC();
@@ -216,15 +217,18 @@ void draw() {
   //display();
   //}
   
-  if (Shearing){
+ 
+  //*************Update and Render Frame******************
+  
+   if (Shearing){
     s.update();
    // s.display();
   }
+  else{
   
-  //*************Update and Render Frame******************
   thread("update"); //my imac needs this threading or it all slows down computing the physics
   //update();
-  
+  }
   //calls the render and anything specific to each scene state
  updateCurrentScene(millis()); 
 
@@ -233,7 +237,7 @@ void draw() {
   triggered = scene.timer().trigggered();
   if (triggered) {
     voyager.update();
-    voyager.display();
+    //voyager.display();
   }
 
   //******************************************************
@@ -351,10 +355,9 @@ void keyPressed() {
     // change moon mass to see what it does
     Saturn.moons.get(0).GM =2.529477495e13;
   } else if (key=='z') {
-    //change system state to fadeout
-    systemState= State.fadetoblack; //fadeout all particles
+   systemState= State.fadetoblack; //fadeout all particles from everything
   } else if (key=='x') {
-    systemState= State.fadeup; //fade up all particles
+ systemState= State.fadeup; //fade up all particles
   } else if (key=='c') {
     //if any screen frame translations ahve happened this will jump :-/ hmm. otherwise its a nice zoom to fit
     scene.camera().interpolateToFitScene();

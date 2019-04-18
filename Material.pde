@@ -40,8 +40,8 @@ void createMaterials() {
   ShearMat1.strokeColor = color(255, 255, 255);
   ShearMat1.spriteTexture = loadImage("partsmall.png");
   ShearMat1.diffTexture = pg;
-  ShearMat1.strokeWeight = 20.1;//.1
-  ShearMat1.partWeight = 1;
+  ShearMat1.strokeWeight = 2.1;//.1
+  ShearMat1.partWeight = 10;
   ShearMat1.partAlpha=255;
   
 }

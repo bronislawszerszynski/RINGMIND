@@ -1,4 +1,4 @@
-Boolean Moonlet = false;
+Boolean Moonlet = true;
 Boolean Self_Grav = false;
 Boolean Collisions =true;
 Boolean A1 =true;
