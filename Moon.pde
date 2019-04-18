@@ -7,18 +7,29 @@
 
 // class extension ashley james brown
 
+public interface Alignable {
 
-class Moon extends Particle {
-  
+  // this (object calling isLargerThan)
+  // and other must be instances of 
+  // the same class returns 1, 0, -1 
+  // if this is greater than, 
+  // equal to, or less than other
+  public boolean isAligned(Alignable other);  //Alignment Threshold
+  //public float timeToAlignment(Alignable other); //What units? [s]
+}
+
+
+class Moon extends Particle implements Alignable {
+
   //Extra Moon Properties
   float GM;
   float radius;
   color c ;
   final float moonSizeScale= 2;
-  
+
   //id
   int moonID = 0; 
-  
+
   /**
    *  Class Constuctor - General Moon object with random angle and color. 
    */
@@ -30,7 +41,7 @@ class Moon extends Particle {
 
     this.moonID = mnum;
   }
-  
+
   /**
    *  Class Constuctor - General Moon object with random angle. 
    */
@@ -106,5 +117,15 @@ class Moon extends Particle {
     x.stroke(c);
     x.circle(SCALE*position.x, SCALE*position.y, 2*moonSizeScale*radius*SCALE);
     x.pop();
+  }
+
+  boolean isAligned(Alignable other) {
+    boolean temp =false;
+    Moon otherMoon = (Moon)other;
+    float angleThreshold = asin(radians(5));
+    if (this.position.copy().normalize().cross(otherMoon.position.copy().normalize()).mag()< angleThreshold){
+     temp=true;
+    }
+    return temp;
   }
 }
