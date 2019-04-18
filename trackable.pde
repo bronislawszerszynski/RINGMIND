@@ -3,6 +3,7 @@
 
 void createShip() {
   voyager = new Ship(scene, new PVector(0, 0, 0));
+  
   scene.startAnimation();
 }
 
@@ -44,11 +45,16 @@ class Ship {
     frame = new InteractiveFrame(scene);
      
     frame.setPosition(new Vec(pos.x, pos.y, pos.z)); 
+   
     //angle
-    frame.setTrackingEyeAzimuth(-PApplet.QUARTER_PI);
+    frame.setTrackingEyeAzimuth(PApplet.QUARTER_PI); // this must be the z
+    // frame.setTrackingEyeAzimuth(-PApplet.HALF_PI); // this must be the z
     //frame.setTrackingEyeInclination(PApplet.PI*(4/5));
+    
     //inclination
-    frame.setTrackingEyeInclination(PApplet.HALF_PI*(4/5));
+    //frame.setTrackingEyeInclination(PApplet.HALF_PI*(4/5));  // this must be the y
+     frame.setTrackingEyeInclination(PApplet.QUARTER_PI);
+   
     //zoom back a bit from the object so we can see it
     frame.setTrackingEyeDistance(scene.radius()/10);
   }
@@ -58,7 +64,8 @@ class Ship {
   }
 
   void display() {
-
+    
+    //this doesnt work
     q = Quat.multiply(new Quat( new Vec(0, 1, 0), PApplet.atan2(-vel.z, vel.x)), 
     new Quat( new Vec(0, 0, 1), PApplet.asin(vel.y / vel.mag())) );    
     frame.setRotation(q);

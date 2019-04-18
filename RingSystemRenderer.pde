@@ -11,6 +11,7 @@ class RenderContext {
   PApplet pgfx;
 }
 
+
 class Material {
   PImage diffTexture;
   PImage spriteTexture;
@@ -20,14 +21,16 @@ class Material {
   float strokeWeight = 1; //usually 1 so we can see our texture but if we turn off we can make a smaller particle point as liong as the weight above is bigger than 1
 }
 
+//-------------------------------------------------
+
 class RingSystemRenderer {
   boolean withMoon = true;
 
   int ringNumber = 1;
-  
+
   void render(RingSystem rs, RenderContext ctx, int renderType) {
     PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
-    
+
     push();
     shader(ctx.shader, POINTS);
 
@@ -41,24 +44,23 @@ class RingSystemRenderer {
       }
       stroke(mat.strokeColor, mat.partAlpha);
       strokeWeight(mat.strokeWeight);
-      
+
       ctx.shader.set("weight", mat.partWeight);
       ctx.shader.set("sprite", mat.spriteTexture);
       ctx.shader.set("diffTex", mat.diffTexture);
       ctx.shader.set("view", pg.camera); //don't touch that :-)
 
 
-      if (renderType==1){
-      beginShape(POINTS);
+      if (renderType==1) {
+        beginShape(POINTS);
       } else {
-       beginShape(LINES); 
+        beginShape(LINES);
       }
       for (int ringI = 0; ringI < r.getMaxRenderedParticle(); ringI++) {
         RingParticle p = r.particles.get(ringI);
         vertex(SCALE*p.position.x, SCALE*p.position.y, SCALE*p.position.z);
       }
       endShape();
-      
     }
     pop();
 
@@ -81,5 +83,40 @@ class RingSystemRenderer {
       }
       pop();
     }
+  }
+
+
+  void renderShear(ShearingBox ss, RenderContext ctx, int renderType) {
+    PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
+
+    push();
+    shader(ctx.shader, POINTS);
+
+
+
+
+    // Ring r = rs.rings.get(i);
+    Material mat = ss.material;
+    if (mat == null) {
+      mat = ctx.mat;
+    }
+
+
+    stroke(mat.strokeColor, mat.partAlpha);
+    strokeWeight(mat.strokeWeight);
+
+    ctx.shader.set("weight", mat.partWeight);
+    ctx.shader.set("sprite", mat.spriteTexture);
+    ctx.shader.set("diffTex", mat.diffTexture);
+    ctx.shader.set("view", pg.camera); //don't touch that :-)
+
+    beginShape(POINTS);
+    for (int PP = 0; PP < num_particles; PP++) {
+      ShearParticle sp = ss.Sparticles.get(PP);
+      vertex(-sp.position.y*width/Ly, -sp.position.x*height/Lx, 2*scale*sp.radius*width/Ly, 2*scale*sp.radius*height/Lx);
+    }
+    endShape();
+    
+    pop();
   }
 }

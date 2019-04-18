@@ -10,7 +10,7 @@
 /*
 interaction design and audio visual system 
  @author ashley james brown march-may.2019
- */
+*/
 
 
 ///////////////
@@ -51,7 +51,7 @@ Boolean Running = true;
 Boolean Display = true;
 Boolean Add = false;
 Boolean clear = false;
-
+Boolean Shearing = true; // for when we switch from ringsystem to shearsystem
 
 //Initialising Objects
 RingSystem Saturn;
@@ -124,7 +124,7 @@ void setup() {
   randomSeed(3);
 
   //init with = rings 1,  moons 2
-  Saturn = new RingSystem(3, 2);
+  Saturn = new RingSystem(1, 2);
 
   // --------- renderer sety
   rsRenderer = new RingSystemRenderer();
@@ -161,6 +161,9 @@ void setup() {
   // osc sound engine init
   transmitAllRingsOSC();
   transmitAllMoonsOSC();
+  
+  s = new ShearingBox();
+  
 }
 
 
@@ -193,8 +196,10 @@ void draw() {
   //*************time step******************
   if (simToRealTimeRatio/frameRate < maxTimeStep) {
     h_stepsize= simToRealTimeRatio/frameRate;
+    dt= simToRealTimeRatio/frameRate;
   } else {
     h_stepsize= maxTimeStep;
+    dt= maxTimeStep;
     println("At Maximum Time Step");
   }
 
@@ -210,11 +215,18 @@ void draw() {
   //if (Display) {
   //display();
   //}
+  
+  if (Shearing){
+    s.update();
+   // s.display();
+  }
+  
   //*************Update and Render Frame******************
   thread("update"); //my imac needs this threading or it all slows down computing the physics
-
+  //update();
+  
   //calls the render and anything specific to each scene state
-  updateCurrentScene(millis()); 
+ updateCurrentScene(millis()); 
 
   titleText(); //debug info on frame title
 
@@ -226,8 +238,12 @@ void draw() {
 
   //******************************************************
 
-  totalSimTime +=h_stepsize;
 
+ if (Shearing){
+   totalSimTime += dt;
+ } else {
+  totalSimTime +=h_stepsize;
+ }
   //******************************************************
 
   //windows comment out this
@@ -331,9 +347,9 @@ void keyPressed() {
     camera6();
     // test options
     // slowdown
-    // simToRealTimeRatio = 360.0/1.0;
+    simToRealTimeRatio = 360.0/1.0;
     // change moon mass to see what it does
-    // Saturn.moons.get(0).GM =2.529477495e13;
+    Saturn.moons.get(0).GM =2.529477495e13;
   } else if (key=='z') {
     //change system state to fadeout
     systemState= State.fadetoblack; //fadeout all particles
@@ -374,9 +390,11 @@ void keyPressed() {
     else
       lastAvatar = scene.resetAvatar();
   } else if (key=='V') {
-    simToRealTimeRatio = 360.0/1.0;
+    //simToRealTimeRatio = 360.0/1.0;
     //voyager follow the moon
     systemState= State.followState;
+  } else if (key=='0'){
+    initCamera();
   }
 }
 

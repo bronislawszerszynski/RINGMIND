@@ -153,6 +153,7 @@ void updateCurrentScene(int t) {
     //overwrite default and chose this material to begin with for all rings
     Saturn.rings.get(0).material = RingMat1; 
     
+    s.material = ShearMat1;
     //when all camerasa are correct lock them to the scene
    //initCamera();
     
@@ -238,7 +239,12 @@ void updateCurrentScene(int t) {
   rsRenderer.withMoon = drawMoons;
   rsRenderer.ringNumber = ringCnt;
   rsRenderContext.mat.diffTexture = pg;
-  rsRenderer.render(Saturn, rsRenderContext,1); //1 for points
+  
+ if (Shearing){
+ rsRenderer.renderShear(s, rsRenderContext,1);
+} else {
+   rsRenderer.render(Saturn, rsRenderContext,1); //1 for points
+  }
   
   // test for something funky
   if (useFilters){
