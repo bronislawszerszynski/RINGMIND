@@ -1,6 +1,5 @@
-/**Class RingSystemProcessing 
- * A gravitational simulation in a Cartesian coordinate system.
- *
+/** Class RINGMIND
+ * 
  * @author Thomas Cann
  * @author Sam Hinson
  * @version 2.0
@@ -51,6 +50,7 @@ Boolean Running = true;
 Boolean Display = true;
 Boolean Add = false;
 Boolean Clear = false;
+Boolean debug = false;
 
 
 //Initialising Objects
@@ -279,8 +279,11 @@ public void mouseReleased() {
 
 void keyPressed() {
 
-  //hold down d and then these other sfor your debug modes. some may not work as commented out
+  //hold down d and then these other sfor your debug modes. some may not work as commented out //TODO Find what works and fix. Show to Sam
   if (key=='d') {
+    debug = !debug;
+  }
+  if(debug){
     if (key ==' ') {
       Running = !Running;
     } else if (key =='h') {
