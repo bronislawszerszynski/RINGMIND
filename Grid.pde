@@ -340,7 +340,7 @@ class Grid {
         }
       }
       
-      if (clear) {
+      if (Clear) {
         ArrayList<Particle> temp = new ArrayList<Particle>();
         for (Particle p: rs.totalParticles) {
           if (i(p) == i){
