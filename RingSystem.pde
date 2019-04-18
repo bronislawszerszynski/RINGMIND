@@ -12,9 +12,6 @@ float GMp = 3.7931187e16;    // Gravitational parameter (Saturn)
 float R_MIN = 1;
 float R_MAX = 5;
 
-
-
-
 final float Rp = 60268e3;          // Length scale (1 Saturn radius) [m]
 final float SCALE = 100/Rp;        // Converts from [m] to [pixel] with planetary radius (in pixels) equal to the numerator. Size of a pixel represents approximately 600km.
 
@@ -25,12 +22,8 @@ class RingSystem {
   ArrayList<Moon> moons;
   ArrayList<Grid> g;
   float r_min, r_max;
-
-
-  //pass them in instead
-  int RING_INDEX =6;
-  int MOON_INDEX =0;
-
+  int ringIndex =6;
+  int moonIndex =0;
 
   /**
    *  Class Constuctor - General need passing all the values. 
@@ -41,26 +34,23 @@ class RingSystem {
 
     r_min= R_MIN;
     r_max= R_MAX;
-    
+
     totalParticles = new ArrayList<Particle>();
     rings = new ArrayList<Ring>();
     moons = new ArrayList<Moon>();
 
-    this.RING_INDEX = ringIndex;
-    this.MOON_INDEX = moonIndex;
-    
+    this.ringIndex = ringIndex;
+    this.moonIndex = moonIndex;
+
     initialise();
 
     //***********************************************
   }
 
   void initialise() {
-
-    g.add( new Grid(1.0, 5.0, 1E-8, 1E4));
-    //g.add( new Grid(2.5, 5.0, 1E-7, 1E3));
     initialiseMoons();
     initialiseRings();
-    totalParticles.clear();
+    totalParticles.clear(); //TODO Remove if not needed 
     for (Ring r : rings) {
       for (RingParticle p : r.particles) {
         totalParticles.add(p);
@@ -73,8 +63,8 @@ class RingSystem {
 
   void initialiseMoons() {
     //***********Initialise Moons*********************
-    moons.clear();
-    switch(MOON_INDEX) {
+    moons.clear(); //TODO Remove if not needed 
+    switch(moonIndex) {
       case(1):
       // Adding Specific Moons ( e.g. Mima, Enceladus, Tethys, ... )
       //addMoon(5, moons);
@@ -94,26 +84,29 @@ class RingSystem {
 
   void initialiseRings() {
     //***********Initialise Rings********************* 
-    rings.clear();
-    switch(RING_INDEX) {
+    rings.clear(); //TODO Remove if not needed 
+
+    g.add( new Grid(1.0, 5.0, 1E-8, 1E4));
+
+    switch(ringIndex) {
     case 1:
       //Generic Disc of Particles
-      rings.add(new Ring(0,1.1, 2.9, N_PARTICLES));
+      rings.add(new Ring(0, 1.1, 2.9, N_PARTICLES));
       break;
     case 2:
       //Saturn Ring Data (Source: Nasa Saturn Factsheet) [in Saturn radii]
       // D Ring: Inner 1.110 Outer 1.236
-      rings.add(new Ring(0,1.110, 1.236, N_PARTICLES/10));
+      rings.add(new Ring(0, 1.110, 1.236, N_PARTICLES/10));
       // C Ring: Inner 1.239 Outer 1.527
-      rings.add(new Ring(1,1.239, 1.527, N_PARTICLES/10));
+      rings.add(new Ring(1, 1.239, 1.527, N_PARTICLES/10));
       // B Ring: Inner 1.527 Outer 1.951
-      rings.add(new Ring(2,1.527, 1.951, N_PARTICLES/10));
+      rings.add(new Ring(2, 1.527, 1.951, N_PARTICLES/10));
       // A Ring: Inner 2.027 Outer 2.269
-      rings.add(new Ring(3,2.027, 2.269, N_PARTICLES/2));
+      rings.add(new Ring(3, 2.027, 2.269, N_PARTICLES/2));
       // F Ring: Inner 2.320 Outer *
-      rings.add(new Ring(4,2.320, 2.321, N_PARTICLES/10));
+      rings.add(new Ring(4, 2.320, 2.321, N_PARTICLES/10));
       // G Ring: Inner 2.754 Outer 2.874
-      rings.add(new Ring(5,2.754, 2.874, N_PARTICLES/10));
+      rings.add(new Ring(5, 2.754, 2.874, N_PARTICLES/10));
       // E Ring: Inner 2.987 Outer 7.964
       //rings.add(new Ring(2.987, 7.964, 1000));
 
@@ -129,13 +122,13 @@ class RingSystem {
       importFromFile("output.csv");
       break;
     case 4:
-      rings.add(new Ring(0,1, 3, 0));
+      rings.add(new Ring(0, 1, 3, 0));
       rings.get(0).particles.add(new RingParticle(2, 0, 0, 0));
       break;
     case 5:
       //2 Discs of Particles
-      rings.add(new Ring(0,1.1, 2.9, N_PARTICLES/2));
-      rings.add(new Ring(1,4.5, 4.7, N_PARTICLES/2));
+      rings.add(new Ring(0, 1.1, 2.9, N_PARTICLES/2));
+      rings.add(new Ring(1, 4.5, 4.7, N_PARTICLES/2));
       break;
     case 6:
       //Square
@@ -149,7 +142,7 @@ class RingSystem {
   }
 
   void importFromFile(String filename) {
-    rings.add(new Ring(0,1, 3, 0));
+    rings.add(new Ring(0, 1, 3, 0));
     Table table; 
     table = loadTable("./files/" + filename);//"input.csv"
     //println(table.getRowCount()+" "+ table.getColumnCount());
@@ -184,8 +177,11 @@ class RingSystem {
       p.updateVelocity(p.getAcceleration(this));
     }
     //Output TABLE 
-    if ((frameCount)%50 ==0) {
-      saveTable(g.get(0).gridToTable(g.get(0).grid), "./files/output.csv");
+
+    if (debug) {
+      if ((frameCount)%50 ==0) {
+        saveTable(g.get(0).gridToTable(g.get(0).grid), "./files/output.csv");
+      }
     }
   }
 
@@ -208,7 +204,7 @@ class RingSystem {
     for (Moon m : moons) {
       point(SCALE*m.position.x, SCALE*m.position.y);
     }
-    
+
     guidelines();
 
     //for (Particle p : totalParticles) {
@@ -263,79 +259,79 @@ class RingSystem {
     switch(i) {
     case 0:
       // Pan Mass 5e15 [kg] Radius 1.7e4 [m] Orbital Radius 133.583e6 [m]
-      m.add(new Moon(0,G*5e15, 1.7e4, 133.5832e6));
+      m.add(new Moon(0, G*5e15, 1.7e4, 133.5832e6));
       break;
     case 1:
       // Daphnis Mass 1e14 [kg] Radius 4.3e3 [m] Orbital Radius 136.5e6 [m]
-      m.add(new Moon(1,G*1e14, 4.3e3, 136.5e6));
+      m.add(new Moon(1, G*1e14, 4.3e3, 136.5e6));
       break;
     case 2:
       // Atlas Mass 7e15 [kg] Radius 2e4 [m] Orbital Radius 137.67e6 [m]
-      m.add(new Moon(2,G*7e15, 2.4e4, 137.67e6));
+      m.add(new Moon(2, G*7e15, 2.4e4, 137.67e6));
       break;
     case 3:
       // Promethieus Mass 1.6e17 [kg] Radius 6.8e4 [m] Orbital Radius 139.353e6 [m]
-      m.add(new Moon(3,G*1.6e17, 6.8e4, 139.353e6));
+      m.add(new Moon(3, G*1.6e17, 6.8e4, 139.353e6));
       break;
     case 4:
       // Pandora Mass 1.4e17 [kg] Radius 5.2e4 [m] Orbital Radius 141.7e6 [m]
-      m.add(new Moon(4,G*1.4e17, 5.2e4, 141.7e6));
+      m.add(new Moon(4, G*1.4e17, 5.2e4, 141.7e6));
       break;
     case 5:
       // Epimetheus Mass 5.3e17 [kg] Radius 6.5e4 [m] Orbital Radius 151.422e6 [m]
-      m.add(new Moon(5,G*5.3e17, 6.5e4, 151.422e6, color(0, 255, 0)));
+      m.add(new Moon(5, G*5.3e17, 6.5e4, 151.422e6, color(0, 255, 0)));
       break;
     case 6:
       // Janus Mass 1.9e18 [kg] Radius 1.02e5 [m] Orbital Radius 151.472e6 [m]
-      m.add(new Moon(6,G*1.9e18, 1.02e5, 151.472e6));
+      m.add(new Moon(6, G*1.9e18, 1.02e5, 151.472e6));
       break;
     case 7: 
       // Mimas Mass 3.7e19 [kg] Radius 2.08e5 [m] Obital Radius 185.52e6 [m]
-      m.add(new Moon(7,G*3.7e19, 2.08e5, 185.52e6));
+      m.add(new Moon(7, G*3.7e19, 2.08e5, 185.52e6));
       break;
     case 8:
       // Enceladus Mass 1.08e20 [kg] Radius 2.57e5 [m] Obital Radius 238.02e6 [m]
-      m.add(new Moon(8,G*1.08e20, 2.57e5, 238.02e6));
+      m.add(new Moon(8, G*1.08e20, 2.57e5, 238.02e6));
       break;
     case 9:
       // Tethys Mass 6.18e20 [kg] Radius 5.38e5 [m] Orbital Radius 294.66e6 [m]
-      m.add(new Moon(9,G*6.18e20, 5.38e5, 294.66e6));
+      m.add(new Moon(9, G*6.18e20, 5.38e5, 294.66e6));
       break;
     case 10:
       // Calypso Mass 4e15 [kg] Radius 1.5e4 [m] Orbital Radius 294.66e6 [m]
-      m.add(new Moon(10,G*4e15, 1.5e4, 294.66e6));
+      m.add(new Moon(10, G*4e15, 1.5e4, 294.66e6));
       break;
     case 11:
       // Telesto Mass 7e15 [kg] Radius 1.6e4 [m] Orbital Radius 294.66e6 [m]
-      m.add(new Moon(11,G*7e15, 1.6e4, 294.66e6));
+      m.add(new Moon(11, G*7e15, 1.6e4, 294.66e6));
       break;
     case 12:
       // Dione Mass 1.1e21 [kg] Radius 5.63e5 [m] Orbital Radius 377.4e6 [m]
-      m.add(new Moon(12,G*1.1e21, 5.63e5, 377.4e6));
+      m.add(new Moon(12, G*1.1e21, 5.63e5, 377.4e6));
       break;
     case 13:
       // Helele Mass 3e16 [kg] Radius 2.2e4 [m] Orbital Radius 377.4e6[m]
-      m.add(new Moon(13,G*3e16, 2.2e4, 377.4e6));
+      m.add(new Moon(13, G*3e16, 2.2e4, 377.4e6));
       break;
     case 14:
       // Rhea Mass 2.31e21 [kg] Radius 7.65e5 [m] Orbital Radius 527.04e6 [m]
-      m.add(new Moon(14,G*2.31e21, 7.65e5, 527.4e6));
+      m.add(new Moon(14, G*2.31e21, 7.65e5, 527.4e6));
       break;
     case 15:
       // Titan Mass 1.3455e23 [kg] Radius 2.575e6 [m] Orbital Radius 1221.83e6 [m]
-      m.add(new Moon(15,G*1.34455e23, 2.57e6, 1221.83e6));
+      m.add(new Moon(15, G*1.34455e23, 2.57e6, 1221.83e6));
       break;
     case 16:
       // Hyperion Mass 5.6e18 [kg] Radius 1.8e5 [m] Orbital Radius 1481.1e6 [m]
-      m.add(new Moon(16,G*5.6e18, 1.8e5, 1481.1e6));
+      m.add(new Moon(16, G*5.6e18, 1.8e5, 1481.1e6));
       break;
     case 17:
       // Iapetus Mass 1.81e21 [kg] Radius 7.46e5 [m] Orbital Radius 3561.3e6 [m]
-      m.add(new Moon(17,G*1.81e21, 7.46e5, 3561.3e6));
+      m.add(new Moon(17, G*1.81e21, 7.46e5, 3561.3e6));
       break;
     case 18:
       // Pheobe Mass 8.3e18 [kg] Radius 1.09e5 [m] Orbital Radius 12944e6 [m] 
-      m.add(new Moon(18,G*8.3e18, 1.09e5, 12994e6));
+      m.add(new Moon(18, G*8.3e18, 1.09e5, 12994e6));
       break;
     }
   }
