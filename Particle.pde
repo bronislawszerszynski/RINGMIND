@@ -6,10 +6,10 @@
  */
 
 abstract class Particle {
-  
+
   PVector position; // Position float x1, x2, x3; 
   PVector velocity; // Velocity float v1, v2, v3;
-  PVector acceleration;  //Update all constructors!
+  PVector acceleration;  //TODO Update all constructors!
 
   /**
    *  Class Constuctor - General need passing all the values. 
@@ -20,7 +20,6 @@ abstract class Particle {
     //default velocity
     this.velocity = new PVector(v1_, v2_, v3_);
     this.acceleration = new PVector(a1_, a2_, a3_);
-    
   }
 
   /**
@@ -43,15 +42,14 @@ abstract class Particle {
     //default velocity
     this.velocity = velocity_.copy();
   }
-
-
+  
   /**
    *  Class Constuctor - Initialises an Orboid object with a random position in the ring with correct orbital velocity. 
    */
   Particle(float r, float phi) {
-    this(r*cos(phi), r*sin(phi),0, sqrt(GMp/(r))*sin(phi), -sqrt(GMp/(r))*cos(phi), 0);
+    this(r*cos(phi), r*sin(phi), 0, sqrt(GMp/(r))*sin(phi), -sqrt(GMp/(r))*cos(phi), 0);
   }
-  
+
   /**
    *  Class Constuctor - Initialises an RingParticle object with a random position in the ring with correct orbital velocity. 
    */
@@ -59,7 +57,6 @@ abstract class Particle {
     // Initialise ourRingParticle.
     this(radius, random(1)*2.0*PI);
   }
-  
 
   /**
    *  Class Constuctor - Initialises an Particle object with zero position and velocity. 
@@ -67,28 +64,6 @@ abstract class Particle {
   Particle() {
     this(0, 0, 0, 0, 0, 0);
   }
-
-  /**
-   *  Display Method - Renders this object to screen displaying its position and colour.
-   */
-  void display() {
-  }
-  
-    /**
-   *
-   */
-  void render(PGraphics x) {
-  }
-
-  ///**
-  // *  Clone Method - Return New Object with same properties.
-  // */
-  //Particle clone() {
-  //  Particle p = new Particle();
-  //  p.position= this.position.copy();
-  //  p.velocity = this.velocity.copy();
-  //  return p;
-  //}
 
   /**
    *  Calculates the acceleration on this particle (based on its current position) (Does not override value of acceleration of particle)
@@ -99,8 +74,8 @@ abstract class Particle {
     PVector a_grav = PVector.mult(position.copy().normalize(), -GMp/position.copy().magSq());
 
     //Acceleration from the Grid Object
-    for(Grid x : rs.g){
-    a_grav.add(x.gridAcceleration(this));
+    for (Grid x : rs.g) {
+      a_grav.add(x.gridAcceleration(this));
     }
 
     return a_grav;
@@ -142,4 +117,26 @@ abstract class Particle {
     this.velocity.add(PVector.add(a_grav, a_grav1).mult(0.5 *h_stepsize));
     this.position = tempPosition;
   }
+
+  /**
+   *  Display Method - Renders this object to screen displaying its position and colour.
+   */
+  void display() {
+  }
+
+  /**
+   *  Render Method - Renders this object to PGraphics Object with its position and colour.
+   */
+  void render(PGraphics x) {
+  }
+
+  ///**
+  // *  Clone Method - Return New Object with same properties.
+  // */
+  //Particle clone() {
+  //  Particle p = new Particle();
+  //  p.position= this.position.copy();
+  //  p.velocity = this.velocity.copy();
+  //  return p;
+  //}
 }
