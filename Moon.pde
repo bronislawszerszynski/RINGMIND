@@ -9,18 +9,18 @@
 
 
 class Moon extends Particle {
+  
+  //Extra Moon Properties
   float GM;
   float radius;
   color c ;
-
-  //id
-  int moonID = 0;
-
   final float moonSizeScale= 2;
-
-
+  
+  //id
+  int moonID = 0; 
+  
   /**
-   *  Class Constuctor - General Moon object with random angle. 
+   *  Class Constuctor - General Moon object with random angle and color. 
    */
   Moon(int mnum, float Gm, float radius, float orb_radius, color c) {
     super(orb_radius);
@@ -30,6 +30,7 @@ class Moon extends Particle {
 
     this.moonID = mnum;
   }
+  
   /**
    *  Class Constuctor - General Moon object with random angle. 
    */
@@ -41,8 +42,9 @@ class Moon extends Particle {
 
     this.moonID = mnum;
   }
+
   /**
-   *  Class Constuctor - Default Moon object with properties of Mima (loosely). 
+   *  Class Constuctor - Default Moon object with properties of Mima (loosely). Allowing for Specific Position and Velocity.
    */
   Moon(PVector p, PVector v) {
     //Mima (Source: Nasa Saturn Factsheet)
@@ -58,30 +60,6 @@ class Moon extends Particle {
     this.velocity.y = v.y;
     this.velocity.z = v.z;
   }
-
-
-  /**
-   *  Display Method - Renders this object to screen displaying its position and colour.
-   */
-  void display() {
-    push();
-    translate(width/2, height/2);
-    ellipseMode(CENTER);
-    fill(c);
-    stroke(c);
-    circle(SCALE*position.x, SCALE*position.y, 2*moonSizeScale*radius*SCALE);
-    pop();
-  }
-  //  void render(PGraphics x) {
-  //  x.push();
-  //  x.translate(width/2, height/2);
-  //  x.ellipseMode(CENTER);
-  //  x.fill(c);
-  //  x.stroke(c);
-  //  x.circle(scale*position.x, scale*position.y, 2*moonSizeScale*radius*scale);
-  //  x.pop();
-  //}
-
 
   /**
    *  Calculates the acceleration on this particle (based on its current position) (Does not override value of acceleration of particle)
@@ -102,5 +80,31 @@ class Moon extends Particle {
     }
 
     return a_grav;
+  }
+
+  /**
+   *  Display Method - Renders this object to screen displaying its position and colour.
+   */
+  void display() {
+    push();
+    translate(width/2, height/2);
+    ellipseMode(CENTER);
+    fill(c);
+    stroke(c);
+    circle(SCALE*position.x, SCALE*position.y, 2*moonSizeScale*radius*SCALE);
+    pop();
+  }
+
+  /**
+   *  Render Method - Renders this object to PGraphics Object with its position and colour.
+   */
+  void render(PGraphics x) {
+    x.push();
+    x.translate(width/2, height/2);
+    x.ellipseMode(CENTER);
+    x.fill(c);
+    x.stroke(c);
+    x.circle(SCALE*position.x, SCALE*position.y, 2*moonSizeScale*radius*SCALE);
+    x.pop();
   }
 }
