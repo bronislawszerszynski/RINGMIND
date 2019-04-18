@@ -25,8 +25,8 @@ interaction design and audio visual system
 //syphon system to send to other applications
 
 //windows need to comment out these lines and in teh setup and draw
-//import codeanticode.syphon.*;
-//SyphonServer server;
+import codeanticode.syphon.*;
+SyphonServer server;
 
 
 // render variables
@@ -50,7 +50,7 @@ float totalSimTime =0.0;                       // Tracks length of time simulati
 Boolean Running = true;
 Boolean Display = true;
 Boolean Add = false;
-Boolean Clear = false;
+Boolean clear = false;
 
 
 //Initialising Objects
@@ -86,6 +86,7 @@ void renderOffScreenOnPGraphics2() {
   //pg.fill(255);
   //pg.strokeWeight(100);
   //pg. line(0,0,pg.wdith,pg.height);
+
   pg.ellipse(mouseX, mouseY, 200, 200);
   pg.endDraw();
 }
@@ -95,6 +96,8 @@ void renderOffScreenOnPGraphicsClean() {
   pg.background(255, 255, 255); //no shader diffuse texture over the top
   pg.endDraw();
 }
+
+
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------
@@ -114,7 +117,7 @@ void settings() {
 void setup() {
 
   //windows comment out this
-  //server = new SyphonServer(this, "ringmindSyphon");
+  server = new SyphonServer(this, "ringmindSyphon");
 
   setupOSC();
 
@@ -208,8 +211,8 @@ void draw() {
   //display();
   //}
   //*************Update and Render Frame******************
-  //thread("update"); //my imac needs this threading or it all slows down computing the physics
-  update();
+  thread("update"); //my imac needs this threading or it all slows down computing the physics
+
   //calls the render and anything specific to each scene state
   updateCurrentScene(millis()); 
 
@@ -229,8 +232,8 @@ void draw() {
 
   //windows comment out this
 
-  //  //if we need to use multiple screens then lets sent it to madmapper and map it.
-  //  server.sendScreen();
+  //if we need to use multiple screens then lets sent it to madmapper and map it.
+  server.sendScreen();
 }
 
 
@@ -282,13 +285,30 @@ void keyPressed() {
   //hold down d and then these other sfor your debug modes. some may not work as commented out
   if (key=='d') {
     if (key ==' ') {
-      Running = !Running;
+      if (Running) {
+        Running =false;
+      } else {
+        Running = true;
+      }
     } else if (key =='h') {
-      Display = !Display;
+      if (Display) {
+        Display =false;
+      } else {
+        Display = true;
+      }
     } else if (key =='a') {
-      Add = !Add;
+      if (Add) {
+        Add =false;
+      } else {
+        println("test");
+        Add = true;
+      }
     } else if (key=='c') {
-      Clear = !Clear;
+      if (clear) {
+        clear=false;
+      } else {
+        clear =true;
+      }
     }
   }
 
