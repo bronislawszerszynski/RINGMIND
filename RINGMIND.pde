@@ -52,7 +52,8 @@ Boolean Display = true;
 Boolean Add = false;
 Boolean clear = false;
 Boolean Shearing = false; // for when we switch from ringsystem to shearsystem
-Boolean Tilting = false;
+Boolean Tilting = false; // for when we switch to titl system
+Boolean MoonAlignment = false; // for when we want to send moon alignment info to tony and we need to not thread the system.
 
 //Initialising Objects
 RingSystem Saturn;
@@ -124,8 +125,8 @@ void setup() {
 
   randomSeed(3);
 
-  //init with = rings 1,  moons 2
-  Saturn = new RingSystem(1, 2, 1);
+  //init with = rings 1,  moons 2, rendering normal =true (titl would be false);
+  Saturn = new RingSystem(1, 2, true);
 
   // --------- renderer sety
   rsRenderer = new RingSystemRenderer();
@@ -225,9 +226,11 @@ void draw() {
     // s.display();
   } else if (Tilting) {
     Saturn.tiltupdate();
-  } else {
-    //thread("update"); //my imac needs this threading or it all slows down computing the physics
+  } else if (MoonAlignment){
     Saturn.update();
+  } else {
+    thread("update"); //my imac needs this threading or it all slows down computing the physics
+    //Saturn.update();
   }
 
 
@@ -335,16 +338,13 @@ void keyPressed() {
   }
 
 
-  if (key == 'M') {
-    //moons redner better now, just if we wish to remove them from the visuals
-    drawMoons = !drawMoons;
-  } else if (key=='O') {
+ if (key=='O') {
     transmitAllRingsOSC();
   } else if (key=='7') {
     Shearing=false;
     Tilting=false; 
     //create a new system.
-    Saturn = new RingSystem(2, 2, 1); //ringtpe, moon type, tilt/nottilt
+    Saturn = new RingSystem(2, 2, true); //ringtpe, moon type, tilt/nottilt
 
     //new materials for every ring
     for (Ring r : Saturn.rings) {
@@ -378,8 +378,6 @@ void keyPressed() {
     camera2();
   } else if (key=='n') {
     camera3();
-  } else if (key=='m') {
-    camera9();
   } else if (key=='h') {
     camera10();
   } else if (key=='P') {
@@ -417,7 +415,7 @@ void keyPressed() {
 
     //create new titled system
     //create a new system.
-    Saturn = new RingSystem(9, 2, 2); //ring type 9 as its a tile type, moon type2 and tilt type2
+    Saturn = new RingSystem(9, 2, false); //ring type 9 as its a tile type, moon type2 and tilt type2
     //new materials for every ring
     for (Ring r : Saturn.rings) {
       r.material = RingMat1;
@@ -427,13 +425,18 @@ void keyPressed() {
     Tilting=true; 
     systemState= State.chaosState;
   }
+  
+  else if (key=='M'){
+    //turn on this alogorithm to send tony the data
+    MoonAlignment = !MoonAlignment;
+  } else if (key=='m'){
+   Moonlet = true; 
+  }
 }
 
 
 
 public void keyReleased() {
-  //if (key == '1') state = cam.getState();
-  //if (key == '2') cam.setState(state, 10000);
 
   if (key=='S') {
     scene.saveConfig(); //outputs the camera path to a json file.

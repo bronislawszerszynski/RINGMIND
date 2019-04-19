@@ -15,9 +15,12 @@ class Ring {
   //id
   int ringID = 0;
 
+
+ float density;
+
   //
   ArrayList<TiltParticle> Tparticles;
-  
+
   //
   ArrayList<RingParticle> particles;
   float r_inner, r_outer;
@@ -34,20 +37,21 @@ class Ring {
     for (int i = 0; i < n_particles; i++) {
       particles.add(new RingParticle(Inner, Outer));
     }
-    
+
     Omega0 = kepler_omega((r_inner +r_outer)/2.0);
-    
+
     //set a default but overwritable by methods below for each ring and depends on state
     maxRenderedParticle = n_particles;
+    density();
   }
 
 
   //tilted ring doesnt have an ID
-  Ring(float Inner, float Outer, int n_particles){
+  Ring(float Inner, float Outer, int n_particles) {
     Tparticles = new ArrayList<TiltParticle>();
-  
+
     for (int i = 0; i < n_particles; i++) {
-       Tparticles.add(new TiltParticle(Inner, Outer));
+      Tparticles.add(new TiltParticle(Inner, Outer));
     }
     Omega0 = kepler_omega((r_inner +r_outer)/2.0); 
     //set a default but overwritable by methods below for each ring and depends on state
@@ -73,6 +77,17 @@ class Ring {
   float kepler_omega(float r) {
     return sqrt(GMp/(pow(r, 3.0)));
   }
+
+
+  float density() {
+    density = particles.size() / area();
+    return density;
+  }
+
+  float area() {
+    return PI *(sq(r_outer) - sq(r_inner));
+  }
+
 
 
   //void update(ArrayList<Moon> m) {

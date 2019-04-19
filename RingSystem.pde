@@ -32,11 +32,12 @@ class RingSystem {
   int RING_INDEX =6;
   int MOON_INDEX =0;
 
+  boolean[][] Aligned;
 
   /**
    *  Class Constuctor - General need passing all the values. 
    */
-  RingSystem(int ringIndex, int moonIndex, int type) {
+  RingSystem(int ringIndex, int moonIndex, boolean type) {
 
     g = new ArrayList<Grid>();
 
@@ -51,13 +52,24 @@ class RingSystem {
     this.RING_INDEX = ringIndex;
     this.MOON_INDEX = moonIndex;
 
-    if (type==1) {
+    if (type==true) {
       println("making normal ring system");
       initialise();
     } else {
       println("making tilt RingSystem");
       initiliaseTilt();
     }
+
+
+    this.Aligned = new boolean[moons.size()+1][moons.size()+1];
+    //println(moons.size());
+    for (int i =0; i<moons.size(); i++) {
+      for (int j =0; j<=moons.size(); j++) {
+        this.Aligned[i][j]=false;
+      }
+    }
+
+
 
     //***********************************************
   }
@@ -107,20 +119,29 @@ class RingSystem {
     //***********Initialise Moons*********************
     moons.clear();
     switch(MOON_INDEX) {
+      
       case(1):
-      // Adding Specific Moons ( e.g. Mima, Enceladus, Tethys, ... )
-      //addMoon(5, moons);
+      //no moons
+      break;
+      
+      case(2):
+      //Adding All 18 Moons
+      for (int i = 0; i < 18; i++) {
+        addMoon(i, moons);
+      }
+      break;
+      
+      case(3):
+          // Adding Specific Moons ( e.g. Mima, Enceladus, Tethys, ... )
+      addMoon(5, moons); //add the first 5 moons
       //addMoon(7, moons);
       //addMoon(9, moons);
       //addMoon(12, moons);
       //addMoon(14, moons);
       break;
-      case(2):
-      //Adding All Moons
-      for (int i = 0; i < 18; i++) {
-        addMoon(i, moons);
-      }
+
     default:
+      break;
     }
   }
 
@@ -219,15 +240,31 @@ class RingSystem {
     for (Particle p : totalParticles) {
       p.updateVelocity(p.getAcceleration(this));
     }
-    //Output TABLE 
-    if ((frameCount)%50 ==0) {
-      saveTable(g.get(0).gridToTable(g.get(0).grid), "./files/output.csv");
-    }
+    ////Output TABLE 
+    //if ((frameCount)%50 ==0) {
+    //  saveTable(g.get(0).gridToTable(g.get(0).grid), "./files/output.csv");
+    //}
 
-  }
-  
-  
-  void tiltupdate(){
+    if (MoonAlignment) {
+      for (int i =0; i<(moons.size()-1); i++) {
+        for (int j = i+1; j<(moons.size()); j++) {
+          boolean isAligned =moons.get(i).isAligned(moons.get(j));
+          // println(this.Aligned[0][0]);//test[i][j]);
+          if ( Aligned[i][j] != isAligned && isAligned == true ) {
+            Aligned[i][j] =true; 
+            println(i+" "+j+" "+moons.get(i).timeToAlignment(moons.get(j)));
+            //osc moon alignment
+            transmitMoonAlignmentOSC(i, j, moons.get(i).timeToAlignment(moons.get(j)));
+          } else if ( Aligned[i][j] != isAligned && isAligned == false) {
+            Aligned[i][j] =false;
+          }
+        }
+      }
+    }
+  }//end update
+
+
+  void tiltupdate() {
     for (TiltParticle p : totalTParticles) {
       p.set_getAcceleration(this);
     }
@@ -240,7 +277,6 @@ class RingSystem {
     for (TiltParticle p : totalTParticles) {
       p.updateVelocity(p.getAcceleration(this));
     }
-    
   }
 
   /**

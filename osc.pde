@@ -29,7 +29,7 @@ void transmitRingOSC(Ring r) {
 
   // next bit of data 
   msg.setAddrPattern("/RingDensity");
-  msg.add(r.particles.size());
+  msg.add(r.density);
   bundle.add(msg);
   msg.clear();
 
@@ -106,4 +106,32 @@ void transmitAllMoonsOSC(){
     transmitMoonOSC(mm);
   } 
   
+}
+
+//------------------------------------------------------
+
+void transmitMoonAlignmentOSC(int moonA, int moonB, float t){
+  OscBundle bundle = new OscBundle();
+  
+  OscMessage msg = new OscMessage("/FirstMoonID");
+  msg.add(moonA);
+  bundle.add(msg);
+  //clear the message for next data (dont worry its still in the bundle ready to go) 
+  msg.clear();
+  
+    // next bit of data 
+  msg.setAddrPattern("/SeconMoonID");
+  msg.add(moonB);
+  bundle.add(msg);
+  msg.clear();
+  
+     // next bit of data 
+  msg.setAddrPattern("/TimeToAlignment");
+  msg.add(t);
+  bundle.add(msg);
+  msg.clear();
+  
+  bundle.setTimetag(bundle.now() + 1000);
+  // flush the message out
+  OscP5.flush(bundle, soundEngine); 
 }
