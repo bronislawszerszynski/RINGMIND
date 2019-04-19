@@ -8,14 +8,10 @@
 // class extension ashley james brown
 
 public interface Alignable {
-
-  // this (object calling isLargerThan)
-  // and other must be instances of 
-  // the same class returns 1, 0, -1 
-  // if this is greater than, 
-  // equal to, or less than other
+  
   public boolean isAligned(Alignable other);  //Alignment Threshold
   //public float timeToAlignment(Alignable other); //What units? [s]
+
 }
 
 

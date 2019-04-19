@@ -32,7 +32,7 @@ class Ring {
     for (int i = 0; i < n_particles; i++) {
       particles.add(new RingParticle(Inner, Outer));
     }
-    Omega0 = kepler_omega();
+    Omega0 = kepler_omega((r_inner +r_outer)/2.0);
     //set a default but overwritable by methods below for each ring and depends on state
     maxRenderedParticle = n_particles;
   }
@@ -41,8 +41,8 @@ class Ring {
    *@param r  Radial position (semi-major axis) to calculate the period [m].
    *@return   The angular frequency [radians/s].
    */
-  float kepler_omega() {
-    return sqrt(GMp/(pow((r_inner +r_outer)/2.0, 3.0)));
+  float kepler_omega(float r) {
+    return sqrt(GMp/(pow(r, 3.0)));
   }
 
   //--- new render methods setter and getter
