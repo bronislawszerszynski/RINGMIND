@@ -28,6 +28,8 @@ class RingSystemRenderer {
 
   int ringNumber = 1;
 
+//----------------------------------------------------------------
+
   void render(RingSystem rs, RenderContext ctx, int renderType) {
     PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
 
@@ -86,14 +88,13 @@ class RingSystemRenderer {
   }
 
 
+
+//----------------------------------------------------------------------------------------------------------
   void renderShear(ShearingBox ss, RenderContext ctx, int renderType) {
     PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
 
     push();
     shader(ctx.shader, POINTS);
-
-
-
 
     // Ring r = rs.rings.get(i);
     Material mat = ss.material;
@@ -119,4 +120,56 @@ class RingSystemRenderer {
     
     pop();
   }
+  //-----------------------------------------------------------------------------------------------------
+  
+  void renderTilt(RingSystem rs, RenderContext ctx, int renderType) {
+    PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
+
+    push();
+    shader(ctx.shader, POINTS);
+    
+    
+    Ring r = rs.rings.get(0);
+    // Ring r = rs.rings.get(i);
+    
+    Material mat = r.material;
+    if (mat == null) {
+      mat = ctx.mat;
+    }
+    
+  
+
+    stroke(mat.strokeColor, mat.partAlpha);
+    strokeWeight(mat.strokeWeight);
+
+    ctx.shader.set("weight", mat.partWeight);
+    ctx.shader.set("sprite", mat.spriteTexture);
+    ctx.shader.set("diffTex", mat.diffTexture);
+    ctx.shader.set("view", pg.camera); //don't touch that :-)
+
+    beginShape(POINTS);
+    for (int ringI = 0; ringI < r.Tparticles.size(); ringI++) {
+     TiltParticle tp = r.Tparticles.get(ringI);
+      PVector position1 = displayRotate(tp);
+      vertex(SCALE*position1.x, SCALE*position1.y, SCALE*position1.z);
+    }
+    endShape();
+    
+    pop();
+  }
+  
+  
+  
+  
+  
 }
+
+
+
+//beginShape(POINTS);
+//for (int ringI = 0; ringI < r.getMaxRenderedParticle(); ringI++) {
+//RingParticle p = r.particles.get(ringI);
+
+//PVector position1 = displayRotate(p);
+//vertex(scale*position1.x, scale*position1.y, scale*position1.z);
+//}

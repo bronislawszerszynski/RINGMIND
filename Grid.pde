@@ -493,6 +493,78 @@ class Grid {
     }
   }
 
+
+
+//---------------------------------------
+void tiltupdate(RingSystem rs) {
+
+    //Reset all the grid values.
+    reset();
+
+    //Loop through all the tilt particles trying to add them to the grid.
+    for (Ring x : rs.rings) {
+      for (TiltParticle r : x.Tparticles) {
+        int i = i(r);
+        int j = j(r);
+        if (validij(i, j)) {
+          grid[i][j] +=1;
+          PVector v = new PVector(r.velocity.x, r.velocity.y);
+          v.rotate(-angleDiff(r)).mult(1/radialScaling(r));
+          gridV[i][j].add(v);
+          gridCofM[i][j].add(r.position);
+        }
+      }
+    }
+
+    int total =0 ;
+    for (int i = 0; i < int(360/dtheta); i++) {
+      for (int j = 0; j < int((r_max-r_min)/dr); j++) {
+        total += grid[i][j];
+        if (grid[i][j] !=0) {
+          gridCofM[i][j].div(grid[i][j]);
+        } else {
+          gridCofM[i][j].set(0.0, 0.0, 0.0);
+        }
+      }
+    }
+    // Improve the calculate of gridV 
+
+    //As cannot simulate every particle, add constant or multiple number of particles with keplerian velocity to help maintain correct averages.
+
+    //float actualtosimratio = 2; // actual number of particles to simulated 
+
+    //for (int i = 0; i < int(360/dtheta); i++) {
+    //  for (int j = 0; j < int((r_max-r_min)/dr); j++) {
+    //    gridNorm[i][j] = grid[i][j]/((r_min+j*dr+dr/2)*dr*radians(dtheta)*total);
+    //    gridV[i][j].add(keplerianVelocityCell(i, j));
+    //    gridV[i][j].add(keplerianVelocityCell(i, j));
+    //    for (int k = 0; k<grid[i][j]; k ++) {
+    //      gridV[i][j].add(keplerianVelocityCell(i, j));
+    //    }
+    //    gridV[i][j].div(actualtosimratio*(grid[i][j]+1));
+    //  }
+    //}
+
+
+
+    ////  //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
+    for (int i = 0; i < int(360/dtheta); i++) {
+      for (int j = 0; j < int((r_max-r_min)/dr); j++) {
+
+        gridNorm[i][j] = grid[i][j]/((r_min+j*dr+dr/2)*dr*radians(dtheta)*total);
+
+
+        if (grid[i][j] !=0) {
+          gridV[i][j].div(grid[i][j]);
+        } else {
+          gridV[i][j].set(0.0, 0.0, 0.0);
+        }
+      }
+    }
+  }
+
+//-----------------------------------
+
   /**
    * Returns a Table Object from a 2D array containing Int data type.
    *

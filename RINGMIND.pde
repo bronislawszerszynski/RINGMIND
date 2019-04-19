@@ -10,7 +10,7 @@
 /*
 interaction design and audio visual system 
  @author ashley james brown march-may.2019
-*/
+ */
 
 
 ///////////////
@@ -51,7 +51,8 @@ Boolean Running = true;
 Boolean Display = true;
 Boolean Add = false;
 Boolean clear = false;
-Boolean Shearing = true; // for when we switch from ringsystem to shearsystem
+Boolean Shearing = false; // for when we switch from ringsystem to shearsystem
+Boolean Tilting = false;
 
 //Initialising Objects
 RingSystem Saturn;
@@ -124,7 +125,7 @@ void setup() {
   randomSeed(3);
 
   //init with = rings 1,  moons 2
-  Saturn = new RingSystem(1, 2);
+  Saturn = new RingSystem(1, 2, 1);
 
   // --------- renderer sety
   rsRenderer = new RingSystemRenderer();
@@ -158,13 +159,12 @@ void setup() {
   //postfx
   setupFX();
   loadFilters(); //test for potnetial aesthetics
-  
+
   // osc sound engine init
   transmitAllRingsOSC();
   transmitAllMoonsOSC();
-  
+
   s = new ShearingBox();
-  
 }
 
 
@@ -216,38 +216,40 @@ void draw() {
   //if (Display) {
   //display();
   //}
-  
- 
+
+
   //*************Update and Render Frame******************
-  
-   if (Shearing){
+
+  if (Shearing) {
     s.update();
-   // s.display();
+    // s.display();
+  } else if (Tilting) {
+    Saturn.tiltupdate();
+  } else {
+    //thread("update"); //my imac needs this threading or it all slows down computing the physics
+    Saturn.update();
   }
-  else{
-  
-  thread("update"); //my imac needs this threading or it all slows down computing the physics
-  //update();
-  }
+
+
   //calls the render and anything specific to each scene state
- updateCurrentScene(millis()); 
+  updateCurrentScene(millis()); 
 
   titleText(); //debug info on frame title
 
   triggered = scene.timer().trigggered();
   if (triggered) {
     voyager.update();
-    //voyager.display();
-  }
+    voyager.display();
+  } 
 
   //******************************************************
 
 
- if (Shearing){
-   totalSimTime += dt;
- } else {
-  totalSimTime +=h_stepsize;
- }
+  if (Shearing) {
+    totalSimTime += dt;
+  } else {
+    totalSimTime +=h_stepsize;
+  }
   //******************************************************
 
   //windows comment out this
@@ -339,25 +341,34 @@ void keyPressed() {
   } else if (key=='O') {
     transmitAllRingsOSC();
   } else if (key=='7') {
+    Shearing=false;
+    Tilting=false; 
     //create a new system.
-    Saturn = new RingSystem(2, 2); 
+    Saturn = new RingSystem(2, 2, 1); //ringtpe, moon type, tilt/nottilt
+
     //new materials for every ring
     for (Ring r : Saturn.rings) {
       r.material = RingMat3;
     }
+
     Saturn.rings.get(2).material = RingMat2;
     Saturn.rings.get(5).material = RingMat1;
 
     camera6();
+
+    transmitAllRingsOSC();
+    transmitAllMoonsOSC();
+
+
     // test options
     // slowdown
-    simToRealTimeRatio = 360.0/1.0;
+    // simToRealTimeRatio = 360.0/1.0;
     // change moon mass to see what it does
-    Saturn.moons.get(0).GM =2.529477495e13;
+    // Saturn.moons.get(0).GM =2.529477495e13;
   } else if (key=='z') {
-   systemState= State.fadetoblack; //fadeout all particles from everything
+    systemState= State.fadetoblack; //fadeout all particles from everything
   } else if (key=='x') {
- systemState= State.fadeup; //fade up all particles
+    systemState= State.fadeup; //fade up all particles
   } else if (key=='c') {
     //if any screen frame translations ahve happened this will jump :-/ hmm. otherwise its a nice zoom to fit
     scene.camera().interpolateToFitScene();
@@ -396,8 +407,25 @@ void keyPressed() {
     //simToRealTimeRatio = 360.0/1.0;
     //voyager follow the moon
     systemState= State.followState;
-  } else if (key=='0'){
+  } else if (key=='0') {
     initCamera();
+  } else if (key=='8') {
+    initCamera();
+    useAdditiveBlend=true;
+    Shearing=!Shearing;
+  } else if (key=='9') {
+
+    //create new titled system
+    //create a new system.
+    Saturn = new RingSystem(9, 2, 2); //ring type 9 as its a tile type, moon type2 and tilt type2
+    //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat1;
+    }
+    println(Saturn.rings.get(0).Tparticles.size());
+    Shearing=false;
+    Tilting=true; 
+    systemState= State.chaosState;
   }
 }
 

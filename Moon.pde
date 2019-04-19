@@ -8,7 +8,7 @@
 // class extension ashley james brown
 
 
-class Moon extends Particle {
+class Moon extends Particle implements Alignable {
   float GM;
   float radius;
   color c ;
@@ -102,5 +102,27 @@ class Moon extends Particle {
     }
 
     return a_grav;
+  }
+
+
+  boolean isAligned(Alignable other) {
+    boolean temp =false;
+    Moon otherMoon = (Moon)other;
+    float dAngle = this.position.heading() - otherMoon.position.heading();
+    float angleThreshold = radians(2);
+    if ( abs(dAngle) < angleThreshold) {//% PI
+      temp=true;
+      if (dAngle >0) {
+        float dOmega = sqrt(GMp/(pow(this.position.mag(), 3.0)))-sqrt(GMp/(pow(otherMoon.position.mag(), 3.0)));
+        println(timeToAlignment(dAngle, dOmega));
+      }
+      this.c= color(0, 0, 255);
+      //otherMoon.c= color(0, 0, 255);
+    } 
+    return temp;
+  }
+
+  float timeToAlignment(float dAngle, float dOmega) {
+    return dAngle/dOmega;
   }
 }

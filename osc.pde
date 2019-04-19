@@ -36,15 +36,10 @@ void transmitRingOSC(Ring r) {
 
   // next bit of data 
   msg.setAddrPattern("/RingRotationRate");
-  msg.add(2);
+  msg.add(r.Omega0);
   bundle.add(msg);
   msg.clear();
 
-  // next bit of data 
-  msg.setAddrPattern("/RingRotationPoint");
-  msg.add(3);
-  bundle.add(msg);
-  msg.clear();
   
   
 
@@ -106,7 +101,7 @@ void transmitMoonOSC(Moon m){
 
 
 void transmitAllMoonsOSC(){
-    println("sending ring data to sound engine");
+    println("sending moon data to sound engine");
   for (Moon mm : Saturn.moons){
     transmitMoonOSC(mm);
   } 

@@ -15,7 +15,7 @@ enum State {
     outroState, 
 
     fadetoblack, 
-    fadeup,
+    fadeup, 
     nocamlock
 };
 
@@ -121,8 +121,8 @@ void evaluateScenario() {
 
   case fadeup:
     break;
-    
-    case nocamlock:
+
+  case nocamlock:
     break;
   }
 }
@@ -134,38 +134,38 @@ void evaluateScenario() {
 
 void updateCurrentScene(int t) {
 
-// now regardless of scene do this
+  // now regardless of scene do this
 
   // Display all of the objects to screen using the renderer.
-  if(useAdditiveBlend){
+  if (useAdditiveBlend) {
     blendMode(ADD);
   } else {
     blendMode(NORMAL);
   }
-  
-  
-  
- switch(systemState) {
+
+
+
+  switch(systemState) {
   case initState:
     for (Ring r : Saturn.rings) {
-      r.setMaxRenderedParticle(50000); //per ring max number allowed is default 50,000
+     r.setMaxRenderedParticle(50000); //per ring max number allowed is default 50,000
     }
     //overwrite default and chose this material to begin with for all rings
     Saturn.rings.get(0).material = RingMat1; 
-    
+
     s.material = ShearMat1;
     //when all camerasa are correct lock them to the scene
-   //initCamera();
-    
+    //initCamera();
+
     break;
 
   case introState:
     break;
 
   case ringmindState: 
-     
-     
-   
+
+
+
     break;
 
   case makingState:
@@ -181,13 +181,13 @@ void updateCurrentScene(int t) {
     break;
 
   case followState:
-  
-  //probably glitch becuase of calling this and making it new eachf rame 
-  // Moon m2 = Saturn.moons.get(0);
-   RingParticle p = Saturn.rings.get(0).particles.get(0);
-   //voyager.updatePos(SCALE*m2.position.x, SCALE*m2.position.y, 2*m2.radius*SCALE);
-   PVector np = new PVector(SCALE*p.position.x, SCALE*p.position.y, SCALE*p.position.z);
-   voyager.updatePos(np);
+
+    //probably glitch becuase of calling this and making it new eachf rame 
+    // Moon m2 = Saturn.moons.get(0);
+    RingParticle p = Saturn.rings.get(0).particles.get(0);
+    //voyager.updatePos(SCALE*m2.position.x, SCALE*m2.position.y, 2*m2.radius*SCALE);
+    PVector np = new PVector(SCALE*p.position.x, SCALE*p.position.y, SCALE*p.position.z);
+    voyager.updatePos(np);
     break;
 
   case posiedState:
@@ -219,17 +219,17 @@ void updateCurrentScene(int t) {
         r.material.partAlpha +=0.5;
       }
     }
-   //for (Moon m : Saturn.moons){
-   //    if (m.material.partAlpha<=255) {
-   //     m.material.partAlpha +=0.5;
-   //   }
-   //}
+    //for (Moon m : Saturn.moons){
+    //    if (m.material.partAlpha<=255) {
+    //     m.material.partAlpha +=0.5;
+    //   }
+    //}
 
 
 
     break;
-    
-    case nocamlock:
+
+  case nocamlock:
     //no camera settings locked down. meaning when we finish our path1-3 we stay where we end ratehr than jump back to where we were before we triggerd it. this depends on brons scenes
     break;
   }
@@ -246,15 +246,18 @@ void updateCurrentScene(int t) {
   rsRenderer.withMoon = drawMoons;
   rsRenderer.ringNumber = ringCnt;
   rsRenderContext.mat.diffTexture = pg;
-  
- if (Shearing){
- rsRenderer.renderShear(s, rsRenderContext,1);
-} else {
-   rsRenderer.render(Saturn, rsRenderContext,1); //1 for points
+
+  if (Shearing) {
+    rsRenderer.renderShear(s, rsRenderContext, 1);
+  } else if (Tilting) {
+    println("rendering tilt");
+    rsRenderer.renderTilt(Saturn, rsRenderContext, 1);
+  } else {
+    rsRenderer.render(Saturn, rsRenderContext, 1); //1 for points
   }
-  
+
   // test for something funky
-  if (useFilters){
-   applyFilters();
+  if (useFilters) {
+    applyFilters();
   }
 }
