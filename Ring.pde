@@ -53,7 +53,9 @@ class Ring {
     for (int i = 0; i < n_particles; i++) {
       Tparticles.add(new TiltParticle(Inner, Outer));
     }
+    
     Omega0 = kepler_omega((r_inner +r_outer)/2.0); 
+    
     //set a default but overwritable by methods below for each ring and depends on state
     //maxRenderedParticle = n_particles;
   }
@@ -78,6 +80,8 @@ class Ring {
     return sqrt(GMp/(pow(r, 3.0)));
   }
 
+
+// ratio of the density smallest is 1, the rest are ratios of that number
 
   float density() {
     density = particles.size() / area();

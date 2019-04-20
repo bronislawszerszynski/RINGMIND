@@ -105,6 +105,8 @@ class Moon extends Particle implements Alignable {
   }
 
 
+// moon 360 position; 
+
   boolean isAligned(Alignable other) {
     boolean temp =false;
     Moon otherMoon = (Moon)other;

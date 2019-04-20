@@ -244,9 +244,14 @@ class RingSystem {
     //if ((frameCount)%50 ==0) {
     //  saveTable(g.get(0).gridToTable(g.get(0).grid), "./files/output.csv");
     //}
+    
+    
+// moon alignment only with moon 1
+
 
     if (MoonAlignment) {
-      for (int i =0; i<(moons.size()-1); i++) {
+     // for (int i =0; i<(moons.size()-1); i++) {
+       for (int i =0; i<1; i++) {
         for (int j = i+1; j<(moons.size()); j++) {
           boolean isAligned =moons.get(i).isAligned(moons.get(j));
           // println(this.Aligned[0][0]);//test[i][j]);

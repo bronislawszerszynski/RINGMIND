@@ -3,7 +3,7 @@ import oscP5.*;
 
 NetAddress soundEngine;
 //as we never listen for osc coming back we can save half the comp power by niot using the oscp5 listener function
-int portNum = 6448;
+int portNum = 6448; //57120
 
 void setupOSC() {
   // tony to have correct port listening
@@ -33,6 +33,9 @@ void transmitRingOSC(Ring r) {
   bundle.add(msg);
   msg.clear();
 
+
+
+//Omega0 map( beetween 0 and 1)
 
   // next bit of data 
   msg.setAddrPattern("/RingRotationRate");
