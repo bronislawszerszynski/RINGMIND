@@ -42,7 +42,8 @@ class Ring {
 
     //set a default but overwritable by methods below for each ring and depends on state
     maxRenderedParticle = n_particles;
-    density();
+    
+    this.density = density();
   }
 
 
