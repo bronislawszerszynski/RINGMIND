@@ -30,7 +30,7 @@ void transmitRingOSC(Ring r) {
   // next bit of data 
   msg.setAddrPattern("/RingDensity");
   msg.add(r.density);
-  println(r.density);
+  println("ring density is = "+r.density);
   bundle.add(msg);
   msg.clear();
 
@@ -41,6 +41,7 @@ void transmitRingOSC(Ring r) {
   // next bit of data 
   msg.setAddrPattern("/RingRotationRate");
   msg.add(r.Omega0);
+  println("ring rotate rate= "+r.Omega0);
   bundle.add(msg);
   msg.clear();
 

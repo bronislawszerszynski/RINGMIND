@@ -163,7 +163,7 @@ void setup() {
 
   // osc sound engine init
   transmitAllRingsOSC();
-  transmitAllMoonsOSC();
+  //transmitAllMoonsOSC();
 
   s = new ShearingBox();
 }
