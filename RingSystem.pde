@@ -119,20 +119,20 @@ class RingSystem {
     //***********Initialise Moons*********************
     moons.clear();
     switch(MOON_INDEX) {
-      
+
       case(1):
       //no moons
       break;
-      
+
       case(2):
       //Adding All 18 Moons
       for (int i = 0; i < 18; i++) {
         addMoon(i, moons);
       }
       break;
-      
+
       case(3):
-          // Adding Specific Moons ( e.g. Mima, Enceladus, Tethys, ... )
+      // Adding Specific Moons ( e.g. Mima, Enceladus, Tethys, ... )
       addMoon(5, moons); //add the first 5 moons
       //addMoon(7, moons);
       //addMoon(9, moons);
@@ -203,6 +203,15 @@ class RingSystem {
 
     default:
       rings.add(new Ring(0, 1, 3, 0));
+      break;
+    }
+
+  //calculate ring densitys absed on ring 0
+    for (int i =0; i<rings.size(); i++) {
+      rings.get(i).density = rings.get(i).density()/rings.get(0).density();
+    }
+    for (Ring r : rings) {
+      println("denisty "+ r.density + " and the omega0 " + r.Omega0);
     }
   }
 
@@ -244,14 +253,14 @@ class RingSystem {
     //if ((frameCount)%50 ==0) {
     //  saveTable(g.get(0).gridToTable(g.get(0).grid), "./files/output.csv");
     //}
-    
-    
-// moon alignment only with moon 1
+
+
+    // moon alignment only with moon 1
 
 
     if (MoonAlignment) {
-     // for (int i =0; i<(moons.size()-1); i++) {
-       for (int i =0; i<1; i++) {
+      // for (int i =0; i<(moons.size()-1); i++) {
+      for (int i =0; i<1; i++) {
         for (int j = i+1; j<(moons.size()); j++) {
           boolean isAligned =moons.get(i).isAligned(moons.get(j));
           // println(this.Aligned[0][0]);//test[i][j]);

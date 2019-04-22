@@ -16,7 +16,7 @@ class Ring {
   int ringID = 0;
 
 
- float density;
+  float density;
 
   //
   ArrayList<TiltParticle> Tparticles;
@@ -33,17 +33,21 @@ class Ring {
    */
   Ring(int rnum, float Inner, float Outer, int n_particles) {
     this.ringID = rnum;
+
+    this.r_inner = Inner;
+    this.r_outer = Outer;
+
     particles = new ArrayList<RingParticle>();
     for (int i = 0; i < n_particles; i++) {
       particles.add(new RingParticle(Inner, Outer));
     }
 
-    Omega0 = kepler_omega((r_inner +r_outer)/2.0);
+    Omega0 = kepler_omega((Inner + Outer)/2.0);
 
     //set a default but overwritable by methods below for each ring and depends on state
     maxRenderedParticle = n_particles;
-    
-    this.density = density();
+
+    // this.density = density();
   }
 
 
@@ -51,12 +55,15 @@ class Ring {
   Ring(float Inner, float Outer, int n_particles) {
     Tparticles = new ArrayList<TiltParticle>();
 
+    this.r_inner = Inner;
+    this.r_outer = Outer;
+
     for (int i = 0; i < n_particles; i++) {
       Tparticles.add(new TiltParticle(Inner, Outer));
     }
-    
-    Omega0 = kepler_omega((r_inner +r_outer)/2.0); 
-    
+
+    this.Omega0 = kepler_omega((Inner + Outer)/2.0); 
+
     //set a default but overwritable by methods below for each ring and depends on state
     //maxRenderedParticle = n_particles;
   }
@@ -78,19 +85,14 @@ class Ring {
    *@return The angular frequency [radians/s].
    */
   float kepler_omega(float r) {
-    return sqrt(GMp/(pow(r, 3.0)));
+    return sqrt(1/(pow(r, 3.0)));
   }
 
 
-// ratio of the density smallest is 1, the rest are ratios of that number
+  // ratio of the density smallest is 1, the rest are ratios of that number
 
   float density() {
-    density = particles.size() / area();
-    return density;
-  }
-
-  float area() {
-    return PI *(sq(r_outer) - sq(r_inner));
+    return particles.size() /(PI *(sq(r_outer) - sq(r_inner)));
   }
 
 
