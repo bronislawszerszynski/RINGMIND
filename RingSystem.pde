@@ -266,9 +266,9 @@ class RingSystem {
           // println(this.Aligned[0][0]);//test[i][j]);
           if ( Aligned[i][j] != isAligned && isAligned == true ) {
             Aligned[i][j] =true; 
-            println(i+" "+j+" "+moons.get(i).timeToAlignment(moons.get(j)));
+           // println(i+" "+j+" "+abs(moons.get(i).timeToAlignment(moons.get(j))));
             //osc moon alignment
-            transmitMoonAlignmentOSC(i, j, moons.get(i).timeToAlignment(moons.get(j)));
+            transmitMoonAlignmentOSC(j, moons.get(i).timeToAlignment(moons.get(j)));
           } else if ( Aligned[i][j] != isAligned && isAligned == false) {
             Aligned[i][j] =false;
           }

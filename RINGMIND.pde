@@ -9,8 +9,8 @@
 
 /*
 interaction design and audio visual system 
- @author ashley james brown march-may.2019
- */
+@author ashley james brown march-may.2019 
+*/
 
 
 ///////////////
@@ -226,7 +226,7 @@ void draw() {
     // s.display();
   } else if (Tilting) {
     Saturn.tiltupdate();
-  } else if (MoonAlignment){
+  } else if (MoonAlignment) {
     Saturn.update();
   } else {
     thread("update"); //my imac needs this threading or it all slows down computing the physics
@@ -339,7 +339,7 @@ void keyPressed() {
   }
 
 
- if (key=='O') {
+  if (key=='O') {
     transmitAllRingsOSC();
   } else if (key=='7') {
     Shearing=false;
@@ -425,13 +425,11 @@ void keyPressed() {
     Shearing=false;
     Tilting=true; 
     systemState= State.chaosState;
-  }
-  
-  else if (key=='M'){
+  } else if (key=='M') {
     //turn on this alogorithm to send tony the data
     MoonAlignment = !MoonAlignment;
-  } else if (key=='m'){
-   Moonlet = true; 
+  } else if (key=='m') {
+    Moonlet = true;
   }
 }
 

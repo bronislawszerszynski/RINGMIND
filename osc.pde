@@ -115,26 +115,16 @@ void transmitAllMoonsOSC(){
 
 //------------------------------------------------------
 
-void transmitMoonAlignmentOSC(int moonA, int moonB, float t){
+void transmitMoonAlignmentOSC(int moonB, float t){
   OscBundle bundle = new OscBundle();
   
-  OscMessage msg = new OscMessage("/FirstMoonID");
-  msg.add(moonA);
-  bundle.add(msg);
-  //clear the message for next data (dont worry its still in the bundle ready to go) 
-  msg.clear();
-  
-    // next bit of data 
-  msg.setAddrPattern("/SeconMoonID");
+  OscMessage msg = new OscMessage("/MoonAlign");
   msg.add(moonB);
-  bundle.add(msg);
-  msg.clear();
+  msg.add(abs(t));
   
-     // next bit of data 
-  msg.setAddrPattern("/TimeToAlignment");
-  msg.add(t);
   bundle.add(msg);
-  msg.clear();
+  
+  println("Moon Align: Moon 0 to Moon "+moonB+" happening in t minus " + abs(t));
   
   bundle.setTimetag(bundle.now() + 1000);
   // flush the message out
