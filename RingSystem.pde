@@ -22,7 +22,7 @@ class RingSystem {
   ArrayList<Moon> moons;
   ArrayList<Grid> g;
   float r_min, r_max;
-  int ringIndex =6;
+  int ringIndex =2;
   int moonIndex =0;
 
   /**
@@ -50,6 +50,9 @@ class RingSystem {
   void initialise() {
     initialiseMoons();
     initialiseRings();
+    
+
+    
     totalParticles.clear(); //TODO Remove if not needed 
     for (Ring r : rings) {
       for (RingParticle p : r.particles) {
@@ -88,7 +91,7 @@ class RingSystem {
 
     g.add( new Grid(1.0, 5.0, 1E-8, 1E4));
 
-    switch(ringIndex) {
+    switch(2) {
     case 1:
       //Generic Disc of Particles
       rings.add(new Ring(0, 1.1, 2.9, N_PARTICLES));
@@ -102,7 +105,7 @@ class RingSystem {
       // B Ring: Inner 1.527 Outer 1.951
       rings.add(new Ring(2, 1.527, 1.951, N_PARTICLES/10));
       // A Ring: Inner 2.027 Outer 2.269
-      rings.add(new Ring(3, 2.027, 2.269, N_PARTICLES/2));
+      rings.add(new Ring(3, 2.027, 2.269, N_PARTICLES/10));
       // F Ring: Inner 2.320 Outer *
       rings.add(new Ring(4, 2.320, 2.321, N_PARTICLES/10));
       // G Ring: Inner 2.754 Outer 2.874
@@ -138,6 +141,13 @@ class RingSystem {
 
     default:
       rings.add(new Ring(0, 1, 3, 0));
+    }
+    
+    for(int i =0; i<rings.size();i++){
+    rings.get(i).density = rings.get(i).density()/rings.get(0).density();
+    }
+    for(Ring r:rings){
+    println(r.density);
     }
   }
 

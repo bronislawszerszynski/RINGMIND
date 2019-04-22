@@ -34,18 +34,14 @@ class Ring {
       particles.add(new RingParticle(Inner, Outer));
     }
     Omega0 = kepler_omega((r_inner +r_outer)/2.0);
-    density();
+    
+    
     //set a default but overwritable by methods below for each ring and depends on state
     maxRenderedParticle = n_particles;
   }
   
   float density(){
-    density = particles.size() / area();
-  return density;
-  }
-  
-  float area(){
-  return PI *(sq(r_outer) - sq(r_inner));
+  return particles.size() /(PI *(sq(r_outer) - sq(r_inner)));
   }
   
     /** Method to calculate the Keplerian orbital angular frequency (using Kepler's 3rd law).
