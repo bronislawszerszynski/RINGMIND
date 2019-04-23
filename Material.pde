@@ -1,5 +1,5 @@
 
-Material RingMat1, RingMat2, RingMat3;
+Material RingMat1, RingMat2, RingMat3, RingMat4;
 
 Material ShearMat1;
 
@@ -16,6 +16,7 @@ void createMaterials() {
   RingMat1.partAlpha=255;
 
 
+//pink
   // second ring material to be different just as proof of concept
   RingMat2 =  new Material();
   RingMat2.strokeColor = color(203, 62, 117);
@@ -27,6 +28,7 @@ void createMaterials() {
 
 
   // second ring material to be different just as proof of concept
+  //more blue
   RingMat3 =  new Material();
   RingMat3.strokeColor = color(54, 73, 232);
   RingMat3.spriteTexture = loadImage("partsmall.png");
@@ -35,7 +37,7 @@ void createMaterials() {
   RingMat3.partWeight = 10;
   RingMat2.partAlpha=255;
   
-  
+  //white
   ShearMat1 =  new Material();
   ShearMat1.strokeColor = color(255, 255, 255);
   ShearMat1.spriteTexture = loadImage("partsmall.png");
@@ -43,6 +45,15 @@ void createMaterials() {
   ShearMat1.strokeWeight = 2.1;//.1
   ShearMat1.partWeight = 10;
   ShearMat1.partAlpha=255;
+  
+  RingMat4 =  new Material();
+  RingMat4.strokeColor = color(237, 197, 52);
+  RingMat4.spriteTexture = loadImage("partsmall.png");
+  RingMat4.diffTexture = pg;
+  RingMat4.strokeWeight = 2.1;//.1
+  RingMat4.partWeight = 10;
+  RingMat2.partAlpha=255;
+  
   
 }
 

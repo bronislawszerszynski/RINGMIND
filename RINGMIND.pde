@@ -125,13 +125,13 @@ void setup() {
   setupOSC();
 
   randomSeed(3);
-  
 
-  
+
+
   //init with = rings 1,  moons 2, rendering normal =true (titl would be false);
   Saturn = new RingSystem(1, 2, true);
- 
-  
+
+
 
   // --------- renderer sety
   rsRenderer = new RingSystemRenderer();
@@ -234,8 +234,7 @@ void draw() {
     Saturn.tiltupdate();
   } else if (MoonAlignment) {
     Saturn.update();
-    
-  } else if (Connecting){
+  } else if (Connecting) {
     //Saturn.update();
     thread("update");
   } else {
@@ -350,7 +349,7 @@ void keyPressed() {
 
 
   if (key=='O') {
-     oscRingDensity(Saturn);
+    oscRingDensity(Saturn);
     oscRingRotationRate(Saturn);
   } else if (key=='7') {
     Shearing=false;
@@ -371,8 +370,8 @@ void keyPressed() {
 
     oscRingDensity(Saturn);
     oscRingRotationRate(Saturn);
+    useAdditiveBlend=true;
 
-   
     // test options
     // slowdown
     // simToRealTimeRatio = 360.0/1.0;
@@ -381,7 +380,7 @@ void keyPressed() {
   } else if (key=='z') {
     systemState= State.fadetoblack; //fadeout all particles from everything
   } else if (key=='x') {
-   systemState= State.fadeup; //fade up all particles
+    systemState= State.fadeup; //fade up all particles
   } else if (key=='c') {
     //if any screen frame translations ahve happened this will jump :-/ hmm. otherwise its a nice zoom to fit
     scene.camera().interpolateToFitScene();
@@ -421,13 +420,13 @@ void keyPressed() {
   } else if (key=='0') {
     initCamera();
   } else if (key=='8') {
-    initCamera();
+    zoomedCamera();
     useAdditiveBlend=true;
     Shearing=!Shearing;
     Tilting=false;
     Connecting=false;
   } else if (key=='9') {
-
+    useAdditiveBlend=true;
     //create new titled system
     //create a new system.
     Saturn = new RingSystem(9, 2, false); //ring type 9 as its a tilt type, moon type2 and tilt type2
@@ -445,36 +444,44 @@ void keyPressed() {
     MoonAlignment = !MoonAlignment;
   } else if (key=='m') {
     Moonlet = true;
-  } else if (key=='6'){
-    
+  } else if (key=='6') {
+
     Saturn = new RingSystem(1, 2, true);
     Saturn.rings.get(0).material = RingMat2;
-   Connecting=true; 
-   Shearing=false;
-   Tilting=false;
-   //simToRealTimeRatio = 360.0/1.0; //slow it down
-   
+    Connecting=true; 
+    Shearing=false;
+    Tilting=false;
+    //simToRealTimeRatio = 360.0/1.0; //slow it down
+    zoomedCamera();
     useAdditiveBlend=true;
-    useFilters=true;
+    useFilters=false;
     oscRingDensity(Saturn);
     oscRingRotationRate(Saturn);
-   
-   
+  } else if (key=='5') {
+
+    Saturn = new RingSystem(5, 2, true);
+    Saturn.rings.get(0).material = RingMat4;
+    Saturn.rings.get(1).material = RingMat1;
+    
+    initCamera();
+    Connecting=false; 
+    Shearing=false;
+    Tilting=false;
+    useAdditiveBlend=true;
+    useFilters=false;
+
+
+    oscRingDensity(Saturn);
+    oscRingRotationRate(Saturn);
   }
-  
-  
-  
-  
-  
-  
-  
 }
 
 
 //-------------------------------
 public void keyReleased() {
- //if you edit the camera pathways be sure to save them !!!!
+  //if you edit the camera pathways be sure to save them !!!!
   if (key=='S') {
     scene.saveConfig(); //outputs the camera path to a json file.
+    println("camera pathways saved");
   }
 }
