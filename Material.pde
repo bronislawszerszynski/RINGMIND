@@ -6,7 +6,7 @@ Material ShearMat1;
 void createMaterials() {
   //----------- Materials per ring
 
-  // first ring material is teh deafult material fully showing
+  // first ring material is the default material fully showing
   RingMat1 =  new Material();
   RingMat1.strokeColor = color(255, 255, 255);
   RingMat1.spriteTexture = loadImage("partsmall.png");
@@ -26,7 +26,7 @@ void createMaterials() {
   //RingMat2.partAlpha=255;
 
 
-  // second ring material to be different just as proof of concept
+  // third ring material to be different just as proof of concept
   RingMat3 =  new Material();
   RingMat3.strokeColor = color(54, 73, 232);
   RingMat3.spriteTexture = loadImage("partsmall.png");

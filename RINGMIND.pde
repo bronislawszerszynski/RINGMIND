@@ -25,8 +25,8 @@ interaction design and audio visual system
 //syphon system to send to other applications
 
 //windows need to comment out these lines and in teh setup and draw
-import codeanticode.syphon.*;
-SyphonServer server;
+//import codeanticode.syphon.*;
+//SyphonServer server;
 
 
 // render variables
@@ -107,8 +107,8 @@ void renderOffScreenOnPGraphicsClean() {
 
 void settings() {
   //dont need fullscreen if using syphon and madmapper
-  //  fullScreen(P£D, 1);
-  size (1920, 800, P3D); //3840,2160 still runs 60fps just takeas few seconds to load but tbh might as well make it 4k via madmappers algorithms
+    fullScreen(P3D, 1);
+  //size (1920, 800, P3D); //3840,2160 still runs 60fps just takeas few seconds to load but tbh might as well make it 4k via madmappers algorithms
   smooth(); //noSmooth();
 }
 
@@ -119,7 +119,7 @@ void settings() {
 void setup() {
 
   //windows comment out this
-  server = new SyphonServer(this, "ringmindSyphon");
+  //server = new SyphonServer(this, "ringmindSyphon");
 
   setupOSC();
 
@@ -229,8 +229,8 @@ void draw() {
   } else if (MoonAlignment) {
     Saturn.update();
   } else {
-    thread("update"); //my imac needs this threading or it all slows down computing the physics
-    //Saturn.update();
+    //thread("update"); //my imac needs this threading or it all slows down computing the physics
+    Saturn.update();
   }
 
 
@@ -259,7 +259,7 @@ void draw() {
   //windows comment out this
 
   //if we need to use multiple screens then lets sent it to madmapper and map it.
-  server.sendScreen();
+  //server.sendScreen();
 }
 
 
@@ -366,6 +366,24 @@ void keyPressed() {
     // simToRealTimeRatio = 360.0/1.0;
     // change moon mass to see what it does
     // Saturn.moons.get(0).GM =2.529477495e13;
+  } else if (key== '8') {
+    Shearing=false;
+    Tilting=false; 
+    //create a new system.
+    Saturn = new RingSystem(10, 4, true); //ringtpe, moon type, tilt/nottilt
+    
+        //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat1;
+    }
+    //Saturn.rings.get(2).material = RingMat2;
+    //Saturn.rings.get(5).material = RingMat1;
+    //new materials for every ring
+    initCamera();
+
+    transmitAllRingsOSC();
+    transmitAllMoonsOSC();
+   
   } else if (key=='z') {
     systemState= State.fadetoblack; //fadeout all particles from everything
   } else if (key=='x') {

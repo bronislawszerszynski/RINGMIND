@@ -5,7 +5,7 @@
  */
 
 int N_PARTICLES = 10000; 
-float G = 6.67408E-8;       // Gravitational Constant 6.67408E-11[m^3 kg^-1 s^-2]
+float G = 6.67408E-11;       // Gravitational Constant 6.67408E-11[m^3 kg^-1 s^-2]
 float GMp = 3.7931187e16;    // Gravitational parameter (Saturn)
 
 // What are the minimum and maximum extents in r for initialisation
@@ -140,6 +140,21 @@ class RingSystem {
       //addMoon(14, moons);
       break;
 
+      case(4):
+      // Inner smaller moons
+      addMoon(19, moons);
+      addMoon(20, moons);
+      addMoon(21, moons);
+      addMoon(22, moons);
+      addMoon(23, moons);
+      // Larger outer moons
+      addMoon(24, moons);
+      addMoon(25, moons);
+      addMoon(26, moons);
+      addMoon(27, moons);
+      addMoon(28, moons);
+      break;
+
     default:
       break;
     }
@@ -200,13 +215,24 @@ class RingSystem {
       println("adding tilted ring");
       rings.add(new Ring(1.1, 4.9, N_PARTICLES));
       break;
+    case 10:
+      // main RINGMIND
+      g.add(new Grid(1.0, 3.4, 1E-8, 1E4));
+      g.add(new Grid(3.4, 5.0, 2E-7, 1E4));
+      rings.add(new Ring(1.110, 1.236, N_PARTICLES/12)); //inner ring
+      rings.add(new Ring(1.611, 2.175, N_PARTICLES/4)); //propeller ring
+      rings.add(new Ring(2.185, 2.6, N_PARTICLES/4));  //propeller ring
+      rings.add(new Ring(2.794, 2.795, N_PARTICLES/6)); //narrow ring
+      rings.add(new Ring(2.920, 2.921, N_PARTICLES/6)); //narrow ring
+      rings.add(new Ring(3.5, 3.8, N_PARTICLES/3)); //clumping ring
+      break;
 
     default:
       rings.add(new Ring(0, 1, 3, 0));
       break;
     }
 
-  //calculate ring densitys absed on ring 0
+    //calculate ring densitys absed on ring 0
     for (int i =0; i<rings.size(); i++) {
       rings.get(i).density = rings.get(i).density()/rings.get(0).density();
     }
@@ -266,7 +292,7 @@ class RingSystem {
           // println(this.Aligned[0][0]);//test[i][j]);
           if ( Aligned[i][j] != isAligned && isAligned == true ) {
             Aligned[i][j] =true; 
-           // println(i+" "+j+" "+abs(moons.get(i).timeToAlignment(moons.get(j))));
+            // println(i+" "+j+" "+abs(moons.get(i).timeToAlignment(moons.get(j))));
             //osc moon alignment
             transmitMoonAlignmentOSC(j, moons.get(i).timeToAlignment(moons.get(j)));
           } else if ( Aligned[i][j] != isAligned && isAligned == false) {
@@ -440,6 +466,36 @@ class RingSystem {
     case 18:
       // Pheobe Mass 8.3e18 [kg] Radius 1.09e5 [m] Orbital Radius 12944e6 [m] 
       m.add(new Moon(18, G*8.3e18, 1.09e5, 12994e6));
+      break;
+    case 19:
+      m.add(new Moon(19, G*3.7e18, 1.77e6, 1.373657091*Rp));    
+      break;
+    case 20:
+      m.add(new Moon(20, G*3.7e19, 2.66e6, 2.180544711*Rp));
+      break;
+    case 21:
+      m.add(new Moon(21, G*3.5e18, 9.90e5, 2.857321894*Rp));
+      break;
+    case 22:
+      m.add(new Moon(22, G*3.7e19, 1.32e6, 3.226611418*Rp));
+      break;
+    case 23:
+      m.add(new Moon(23, G*3.7e19, 4.08e6, 4.0165977*Rp));
+      break;
+    case 24:
+      m.add(new Moon(24, G*2.31e21, 1.65e7, 8.75091259*Rp));  //Rhea
+      break;
+    case 25:
+      m.add(new Moon(25, G*4.9e20, 6.85e7, 16.49*Rp));  
+      break;
+    case 26:
+      m.add(new Moon(26, G*1.34455e23, 8.57e7, 20.27327*Rp));  
+      break;
+    case 27:
+      m.add(new Moon(27, G*3.7e22, 2.08e8, 34.23*Rp));
+      break;
+    case 28:
+      m.add(new Moon(28, G*1.81e21, 7.46e7, 49.09*Rp));
       break;
     }
   }
