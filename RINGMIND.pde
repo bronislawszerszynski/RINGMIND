@@ -9,8 +9,8 @@
 
 /*
 interaction design and audio visual system 
-@author ashley james brown march-may.2019 
-*/
+ @author ashley james brown march-may.2019 
+ */
 
 
 ///////////////
@@ -161,9 +161,9 @@ void setup() {
   setupFX();
   loadFilters(); //test for potnetial aesthetics
 
-  // osc sound engine init
-  transmitAllRingsOSC();
-  //transmitAllMoonsOSC();
+  // osc sound engine init data
+  oscRingDensity(Saturn);
+  oscRingRotationRate(Saturn);
 
   s = new ShearingBox();
 }
@@ -340,7 +340,8 @@ void keyPressed() {
 
 
   if (key=='O') {
-    transmitAllRingsOSC();
+     oscRingDensity(Saturn);
+    oscRingRotationRate(Saturn);
   } else if (key=='7') {
     Shearing=false;
     Tilting=false; 
@@ -357,8 +358,8 @@ void keyPressed() {
 
     camera6();
 
-    transmitAllRingsOSC();
-    transmitAllMoonsOSC();
+    oscRingDensity(Saturn);
+    oscRingRotationRate(Saturn);
 
 
     // test options
@@ -416,7 +417,7 @@ void keyPressed() {
 
     //create new titled system
     //create a new system.
-    Saturn = new RingSystem(9, 2, false); //ring type 9 as its a tile type, moon type2 and tilt type2
+    Saturn = new RingSystem(9, 2, false); //ring type 9 as its a tilt type, moon type2 and tilt type2
     //new materials for every ring
     for (Ring r : Saturn.rings) {
       r.material = RingMat1;

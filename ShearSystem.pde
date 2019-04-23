@@ -68,7 +68,7 @@ class ShearingBox {
         grid[i][j] = new ArrayList<ShearParticle>();
       }
     }
-    println(Omega0+ " " + S0);
+    //println(Omega0+ " " + S0);
 
     random_start();
   }

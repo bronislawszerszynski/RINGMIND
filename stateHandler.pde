@@ -250,7 +250,6 @@ void updateCurrentScene(int t) {
   if (Shearing) {
     rsRenderer.renderShear(s, rsRenderContext, 1);
   } else if (Tilting) {
-    println("rendering tilt");
     rsRenderer.renderTilt(Saturn, rsRenderContext, 1);
   } else {
     rsRenderer.render(Saturn, rsRenderContext, 1); //1 for points

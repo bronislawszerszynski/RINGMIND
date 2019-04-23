@@ -105,12 +105,13 @@ class Moon extends Particle implements Alignable {
   }
 
 
-// moon 360 position; 
+// moon 360 position is missing.
 
   boolean isAligned(Alignable other) {
     boolean temp =false;
     Moon otherMoon = (Moon)other;
     float dAngle = this.position.heading() - otherMoon.position.heading();
+    
     float angleThreshold = radians(1);
     if ( abs(dAngle) < angleThreshold) {//% PI
       temp =true;
@@ -138,4 +139,15 @@ class Moon extends Particle implements Alignable {
   float kepler_omega(Moon m) {
     return sqrt(GMp/(pow(m.position.mag(), 3.0)));
   }
+  
+  
+  //method to get the angle in degrees of the moon
+  
+  float moonAngle(Moon m){
+    PVector center = new PVector(0,0,0);
+    PVector mm = new PVector(m.position.x,m.position.y,0);
+    return degrees(PVector.angleBetween(center,mm));
+  }
+  
+  
 }

@@ -28,7 +28,7 @@ class RingSystemRenderer {
 
   int ringNumber = 1;
 
-//----------------------------------------------------------------
+  //----------------------------------------------------------------
 
   void render(RingSystem rs, RenderContext ctx, int renderType) {
     PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
@@ -89,7 +89,7 @@ class RingSystemRenderer {
 
 
 
-//----------------------------------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------------------------
   void renderShear(ShearingBox ss, RenderContext ctx, int renderType) {
     PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
 
@@ -117,27 +117,36 @@ class RingSystemRenderer {
       vertex(-sp.position.y*width/Ly, -sp.position.x*height/Lx, 2*scale*sp.radius*width/Ly, 2*scale*sp.radius*height/Lx);
     }
     endShape();
-    
     pop();
+
+    //moonlet
+    if (Moonlet) {
+      ellipseMode(CENTER);
+      push();
+      translate(0,0);
+        fill(255);
+        sphere(moonlet_r);
+      pop();
+    }
   }
   //-----------------------------------------------------------------------------------------------------
-  
+
   void renderTilt(RingSystem rs, RenderContext ctx, int renderType) {
     PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
 
     push();
     shader(ctx.shader, POINTS);
-    
-    
+
+
     Ring r = rs.rings.get(0);
     // Ring r = rs.rings.get(i);
-    
+
     Material mat = r.material;
     if (mat == null) {
       mat = ctx.mat;
     }
-    
-  
+
+
 
     stroke(mat.strokeColor, mat.partAlpha);
     strokeWeight(mat.strokeWeight);
@@ -149,19 +158,14 @@ class RingSystemRenderer {
 
     beginShape(POINTS);
     for (int ringI = 0; ringI < r.Tparticles.size(); ringI++) {
-     TiltParticle tp = r.Tparticles.get(ringI);
+      TiltParticle tp = r.Tparticles.get(ringI);
       PVector position1 = displayRotate(tp);
       vertex(SCALE*position1.x, SCALE*position1.y, SCALE*position1.z);
     }
     endShape();
-    
+
     pop();
   }
-  
-  
-  
-  
-  
 }
 
 

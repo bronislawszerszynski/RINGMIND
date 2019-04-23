@@ -118,6 +118,8 @@ class RingSystem {
   void initialiseMoons() {
     //***********Initialise Moons*********************
     moons.clear();
+
+
     switch(MOON_INDEX) {
 
       case(1):
@@ -152,7 +154,10 @@ class RingSystem {
     case 1:
       //Generic Disc of Particles
       rings.add(new Ring(0, 1.1, 2.9, N_PARTICLES));
+
+      calcDensity();
       break;
+
     case 2:
       //Saturn Ring Data (Source: Nasa Saturn Factsheet) [in Saturn radii]
       // D Ring: Inner 1.110 Outer 1.236
@@ -176,44 +181,56 @@ class RingSystem {
       // Encke Gap 2.265
       // Keeler Gap 2.265
 
+      calcDensity();
       break;
 
     case 3:
       importFromFile("output.csv");
+
+      calcDensity();
       break;
+
     case 4:
       rings.add(new Ring(0, 1, 3, 0));
       rings.get(0).particles.add(new RingParticle(2, 0, 0, 0));
+
+      calcDensity();
       break;
+
     case 5:
       //2 Discs of Particles
       rings.add(new Ring(0, 1.1, 2.9, N_PARTICLES/2));
       rings.add(new Ring(1, 4.5, 4.7, N_PARTICLES/2));
+
+      calcDensity();
       break;
+
     case 6:
       //Square
       importFromFile("Square.csv");
 
+      calcDensity();
       break;  
+
     case 9:
       //tilted
       println("adding tilted ring");
       rings.add(new Ring(1.1, 4.9, N_PARTICLES));
+      println("tilt ring added.... no density calculated");
       break;
 
     default:
       rings.add(new Ring(0, 1, 3, 0));
       break;
     }
+  }
 
-  //calculate ring densitys absed on ring 0
+  void calcDensity() {
     for (int i =0; i<rings.size(); i++) {
       rings.get(i).density = rings.get(i).density()/rings.get(0).density();
     }
-    for (Ring r : rings) {
-      println("denisty "+ r.density + " and the omega0 " + r.Omega0);
-    }
   }
+
 
   void importFromFile(String filename) {
     rings.add(new Ring(0, 1, 3, 0));
@@ -255,6 +272,10 @@ class RingSystem {
     //}
 
 
+
+
+
+
     // moon alignment only with moon 1
 
 
@@ -266,9 +287,9 @@ class RingSystem {
           // println(this.Aligned[0][0]);//test[i][j]);
           if ( Aligned[i][j] != isAligned && isAligned == true ) {
             Aligned[i][j] =true; 
-           // println(i+" "+j+" "+abs(moons.get(i).timeToAlignment(moons.get(j))));
+            // println(i+" "+j+" "+abs(moons.get(i).timeToAlignment(moons.get(j))));
             //osc moon alignment
-            transmitMoonAlignmentOSC(j, moons.get(i).timeToAlignment(moons.get(j)));
+            oscMoonAlignment(j, moons.get(i).timeToAlignment(moons.get(j)));
           } else if ( Aligned[i][j] != isAligned && isAligned == false) {
             Aligned[i][j] =false;
           }
