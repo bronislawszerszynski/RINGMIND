@@ -148,7 +148,7 @@ void updateCurrentScene(int t) {
   switch(systemState) {
   case initState:
     for (Ring r : Saturn.rings) {
-     r.setMaxRenderedParticle(50000); //per ring max number allowed is default 50,000
+      r.setMaxRenderedParticle(50000); //per ring max number allowed is default 50,000
     }
     //overwrite default and chose this material to begin with for all rings
     Saturn.rings.get(0).material = RingMat1; 
@@ -205,8 +205,10 @@ void updateCurrentScene(int t) {
   case fadetoblack:
     // check all rings
     for (Ring r : Saturn.rings) {
-      if (r.material.partAlpha>=1) {
-        r.material.partAlpha -=0.5;
+      if (r.material !=null) {
+        if (r.material.partAlpha>=1) {
+          r.material.partAlpha -=0.5;
+        }
       }
     }
 
@@ -215,8 +217,10 @@ void updateCurrentScene(int t) {
   case fadeup:
     // check all rings
     for (Ring r : Saturn.rings) {
-      if (r.material.partAlpha<=255) {
-        r.material.partAlpha +=0.5;
+      if (r.material !=null) {
+        if (r.material.partAlpha<=254) {
+          r.material.partAlpha +=0.5;
+        }
       }
     }
     //for (Moon m : Saturn.moons){
@@ -224,8 +228,6 @@ void updateCurrentScene(int t) {
     //     m.material.partAlpha +=0.5;
     //   }
     //}
-
-
 
     break;
 
@@ -248,9 +250,14 @@ void updateCurrentScene(int t) {
   rsRenderContext.mat.diffTexture = pg;
 
   if (Shearing) {
+    renderOffScreenOnPGraphics(); //optional shader overlay for effects
     rsRenderer.renderShear(s, rsRenderContext, 1);
   } else if (Tilting) {
     rsRenderer.renderTilt(Saturn, rsRenderContext, 1);
+  } else if (Connecting) {
+    renderOffScreenOnPGraphics();
+    //rsRenderer.render(Saturn, rsRenderContext,2);
+    rsRenderer.renderComms(Saturn, rsRenderContext, 1);
   } else {
     rsRenderer.render(Saturn, rsRenderContext, 1); //1 for points
   }

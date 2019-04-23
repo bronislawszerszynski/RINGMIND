@@ -123,9 +123,9 @@ class RingSystemRenderer {
     if (Moonlet) {
       ellipseMode(CENTER);
       push();
-      translate(0,0);
-        fill(255);
-        sphere(moonlet_r);
+      translate(0, 0);
+      fill(255);
+      sphere(moonlet_r);
       pop();
     }
   }
@@ -166,14 +166,70 @@ class RingSystemRenderer {
 
     pop();
   }
+
+  //----------------------------------
+
+  void renderComms(RingSystem rs, RenderContext ctx, int renderType) {
+
+    // this is just when we have one ring.
+    
+    
+    PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
+
+    push();
+    shader(ctx.shader, POINTS);
+
+    Ring r = rs.rings.get(0);
+    // Ring r = rs.rings.get(i);
+
+    Material mat = r.material;
+    if (mat == null) {
+      mat = ctx.mat;
+    }
+
+    stroke(mat.strokeColor, mat.partAlpha);
+    strokeWeight(mat.strokeWeight);
+
+    ctx.shader.set("weight", mat.partWeight);
+    ctx.shader.set("sprite", mat.spriteTexture);
+    ctx.shader.set("diffTex", mat.diffTexture);
+    ctx.shader.set("view", pg.camera); //don't touch that :-)
+
+
+    //now lets go through all those particles and see if they are near to another and draw lines between them
+    
+    //for (int i=0; i <1000; i++){
+    //  RingParticle rp = (RingParticle) r.particles.get(i);
+    //  float distance=0;
+    //   for (int j=0; j <1000; j++){
+    //     RingParticle rpj = (RingParticle) r.particles.get(j);
+    //     distance = dist(SCALE*rp.position.x,SCALE*rp.position.y, SCALE*rpj.position.x, SCALE*rpj.position.y);
+    //     if (distance < 10){
+    //       stroke(255);
+    //       strokeWeight(1);
+    //       line(SCALE*rp.position.x,SCALE*rp.position.y, SCALE*rpj.position.x, SCALE*rpj.position.y);
+    //     }
+    //   }
+    //}
+    beginShape(LINES);
+    for (int i=0; i <3000; i++){
+      RingParticle rp = (RingParticle) r.particles.get(i);
+      float distance=0;
+       for (int j=0; j <3000; j++){
+         RingParticle rpj = (RingParticle) r.particles.get(j);
+         distance = dist(SCALE*rp.position.x,SCALE*rp.position.y, SCALE*rpj.position.x, SCALE*rpj.position.y);
+         if (distance < 20){
+           //stroke(255);
+           //strokeWeight(10);
+           //beginShape(LINES);
+           vertex(SCALE*rp.position.x,SCALE*rp.position.y);
+           vertex(SCALE*rpj.position.x, SCALE*rpj.position.y);
+           //endShape();
+         }
+       }
+    }
+    endShape();
+
+    pop();
+  }
 }
-
-
-
-//beginShape(POINTS);
-//for (int ringI = 0; ringI < r.getMaxRenderedParticle(); ringI++) {
-//RingParticle p = r.particles.get(ringI);
-
-//PVector position1 = displayRotate(p);
-//vertex(scale*position1.x, scale*position1.y, scale*position1.z);
-//}

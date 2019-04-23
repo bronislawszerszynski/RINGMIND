@@ -53,6 +53,7 @@ Boolean Add = false;
 Boolean clear = false;
 Boolean Shearing = false; // for when we switch from ringsystem to shearsystem
 Boolean Tilting = false; // for when we switch to titl system
+Boolean Connecting = false;
 Boolean MoonAlignment = false; // for when we want to send moon alignment info to tony and we need to not thread the system.
 
 //Initialising Objects
@@ -124,9 +125,13 @@ void setup() {
   setupOSC();
 
   randomSeed(3);
+  
 
+  
   //init with = rings 1,  moons 2, rendering normal =true (titl would be false);
   Saturn = new RingSystem(1, 2, true);
+ 
+  
 
   // --------- renderer sety
   rsRenderer = new RingSystemRenderer();
@@ -142,7 +147,7 @@ void setup() {
 
   background(0);
 
-  //setup proscene camera and eye viewports etc
+  //setup pros cene camera and eye viewports etc
   initScene();
 
   //if we want a planet in the middle
@@ -156,6 +161,7 @@ void setup() {
 
   //extra materials we can apply to the rings
   createMaterials();
+  applyBasicMaterials();
 
   //postfx
   setupFX();
@@ -228,6 +234,10 @@ void draw() {
     Saturn.tiltupdate();
   } else if (MoonAlignment) {
     Saturn.update();
+    
+  } else if (Connecting){
+    //Saturn.update();
+    thread("update");
   } else {
     thread("update"); //my imac needs this threading or it all slows down computing the physics
     //Saturn.update();
@@ -243,7 +253,7 @@ void draw() {
   triggered = scene.timer().trigggered();
   if (triggered) {
     voyager.update();
-    voyager.display();
+    //voyager.display(); //dont need to see it if we arent going to ever use it.
   } 
 
   //******************************************************
@@ -345,9 +355,10 @@ void keyPressed() {
   } else if (key=='7') {
     Shearing=false;
     Tilting=false; 
+    Connecting=false;
     //create a new system.
     Saturn = new RingSystem(2, 2, true); //ringtpe, moon type, tilt/nottilt
-
+    applyBasicMaterials();
     //new materials for every ring
     for (Ring r : Saturn.rings) {
       r.material = RingMat3;
@@ -361,7 +372,7 @@ void keyPressed() {
     oscRingDensity(Saturn);
     oscRingRotationRate(Saturn);
 
-
+   
     // test options
     // slowdown
     // simToRealTimeRatio = 360.0/1.0;
@@ -370,7 +381,7 @@ void keyPressed() {
   } else if (key=='z') {
     systemState= State.fadetoblack; //fadeout all particles from everything
   } else if (key=='x') {
-    systemState= State.fadeup; //fade up all particles
+   systemState= State.fadeup; //fade up all particles
   } else if (key=='c') {
     //if any screen frame translations ahve happened this will jump :-/ hmm. otherwise its a nice zoom to fit
     scene.camera().interpolateToFitScene();
@@ -413,6 +424,8 @@ void keyPressed() {
     initCamera();
     useAdditiveBlend=true;
     Shearing=!Shearing;
+    Tilting=false;
+    Connecting=false;
   } else if (key=='9') {
 
     //create new titled system
@@ -424,6 +437,7 @@ void keyPressed() {
     }
     println(Saturn.rings.get(0).Tparticles.size());
     Shearing=false;
+    Connecting=false;
     Tilting=true; 
     systemState= State.chaosState;
   } else if (key=='M') {
@@ -431,13 +445,35 @@ void keyPressed() {
     MoonAlignment = !MoonAlignment;
   } else if (key=='m') {
     Moonlet = true;
+  } else if (key=='6'){
+    
+    Saturn = new RingSystem(1, 2, true);
+    Saturn.rings.get(0).material = RingMat2;
+   Connecting=true; 
+   Shearing=false;
+   Tilting=false;
+   //simToRealTimeRatio = 360.0/1.0; //slow it down
+   
+    useAdditiveBlend=true;
+    useFilters=true;
+    oscRingDensity(Saturn);
+    oscRingRotationRate(Saturn);
+   
+   
   }
+  
+  
+  
+  
+  
+  
+  
 }
 
 
-
+//-------------------------------
 public void keyReleased() {
-
+ //if you edit the camera pathways be sure to save them !!!!
   if (key=='S') {
     scene.saveConfig(); //outputs the camera path to a json file.
   }

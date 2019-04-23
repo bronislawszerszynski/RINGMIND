@@ -153,7 +153,7 @@ class RingSystem {
     switch(RING_INDEX) {
     case 1:
       //Generic Disc of Particles
-      rings.add(new Ring(0, 1.1, 2.9, N_PARTICLES));
+      rings.add(new Ring(0, 1.1, 4.9, N_PARTICLES));
 
       calcDensity();
       break;
@@ -192,7 +192,7 @@ class RingSystem {
 
     case 4:
       rings.add(new Ring(0, 1, 3, 0));
-      rings.get(0).particles.add(new RingParticle(2, 0, 0, 0));
+      //rings.get(0).particles.add(new RingParticle(2, 0, 0, 0));
 
       calcDensity();
       break;

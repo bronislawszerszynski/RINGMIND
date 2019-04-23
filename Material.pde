@@ -23,7 +23,7 @@ void createMaterials() {
   RingMat2.diffTexture = pg;
   RingMat2.strokeWeight = 2.1;//.1
   RingMat2.partWeight = 10;
-  //RingMat2.partAlpha=255;
+  RingMat2.partAlpha=255;
 
 
   // second ring material to be different just as proof of concept
@@ -33,7 +33,7 @@ void createMaterials() {
   RingMat3.diffTexture = pg;
   RingMat3.strokeWeight = 2.1;//.1
   RingMat3.partWeight = 10;
-  //RingMat2.partAlpha=255;
+  RingMat2.partAlpha=255;
   
   
   ShearMat1 =  new Material();
@@ -49,8 +49,7 @@ void createMaterials() {
 
 void applyBasicMaterials() {
  
-  //apply the new material to each ring required 
-  Saturn.rings.get(0).material = RingMat1;
-  //Saturn.rings.get(2).material = RingMat2;
-  //Saturn.rings.get(5).material = RingMat;
+ for (Ring r : Saturn.rings){
+  r.material = RingMat1;
+ }
 }
