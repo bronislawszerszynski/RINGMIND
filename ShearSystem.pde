@@ -35,7 +35,7 @@ final float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a
 
 
 
-float num_particles = 30000;
+float num_particles = 30000; //if not using table we can use more than 1000
 
 float scale =10.0; //Makes Particles Visible
 
@@ -47,7 +47,7 @@ float dt =100; //Rough Time Set to be able to see affects.
 class ShearingBox {
 
   Material material = null;
-  
+
   ArrayList<ShearParticle> Sparticles;  // ArrayList for all "Particles" in Shearing Box
   ArrayList<ShearParticle>[][] grid;   // Grid of ArrayLists
   int scl = 5;                    // Size of each grid cell (in Simulation) [m]
@@ -71,23 +71,11 @@ class ShearingBox {
     //println(Omega0+ " " + S0);
 
     random_start();
+   // initTable();
   }
 
-  /** 
-   */
-  void display() {
-    push();
-    translate(width/2, height/2);
-    fill(255);
-    if (Moonlet) {
-      circle(0, 0, moonlet_r);
-    }
 
-    for (ShearParticle x : Sparticles) {
-      // Zero acceleration to start
-      x.display();
-    }
-
+  void initTable() {
     if (Reset) {
       //for (Particle x : particles) {
       //  // Zero acceleration to start
@@ -115,6 +103,24 @@ class ShearingBox {
 
       Reset =false;
     }
+  }
+
+  /** 
+   */
+  void display() {
+    push();
+    translate(width/2, height/2);
+    fill(255);
+    if (Moonlet) {
+      circle(0, 0, moonlet_r);
+    }
+
+    for (ShearParticle x : Sparticles) {
+      // Zero acceleration to start
+      x.display();
+    }
+
+
     pop();
   }
 
@@ -124,7 +130,6 @@ class ShearingBox {
     for (ShearParticle sp : Sparticles) {
       sp.highlight = false;
     }
-
 
     step_verlet();
     //if ( frameCount %100 == 0) {
@@ -461,7 +466,7 @@ class ShearParticle {
   float radius;
   float SPGM;
   float m;
-  
+
   boolean highlight= false;
 
 
@@ -497,34 +502,34 @@ class ShearParticle {
    */
   void display() {
     push();
-    if(!highlight){
-    fill(255, 0, 0);
-    stroke(255, 0, 0);
+    if (!highlight) {
+      fill(255, 0, 0);
+      stroke(255, 0, 0);
     } else { 
-    fill( 0);
-    stroke(0);
+      fill( 0);
+      stroke(0);
     }
     ellipseMode(CENTER);  // Set ellipseMode to CENTER
     //ellipse(-y*width/Ly,-x*height/Lx,20, 20); //Debugging
     //println(radius);
     //displayPosition(position,1,color(255,0,0));
-    if(Guides){
-    translate(-position.y*width/Ly,-position.x*height/Lx);
-    circle(0,0,2*scale*radius*width/Ly);
-    displayPVector(velocity,1000,color(0,255,0));
-    displayPVector(acceleration,1000000,color(0,0,255));}else{
-    ellipse(-position.y*width/Ly, -position.x*height/Lx, 2*scale*radius*width/Ly, 2*scale*radius*height/Lx);
+    if (Guides) {
+      translate(-position.y*width/Ly, -position.x*height/Lx);
+      circle(0, 0, 2*scale*radius*width/Ly);
+      displayPVector(velocity, 1000, color(0, 255, 0));
+      displayPVector(acceleration, 1000000, color(0, 0, 255));
+    } else {
+      ellipse(-position.y*width/Ly, -position.x*height/Lx, 2*scale*radius*width/Ly, 2*scale*radius*height/Lx);
     }
     pop();
-    
   }
-  void displayPosition(PVector v, float scale, color c){
+  void displayPosition(PVector v, float scale, color c) {
     stroke(c);
-    line(0,0,-v.y*scale*width/Ly,-v.x*scale*height/Lx);
+    line(0, 0, -v.y*scale*width/Ly, -v.x*scale*height/Lx);
   } 
-  void displayPVector(PVector v, float scale, color c){
+  void displayPVector(PVector v, float scale, color c) {
     stroke(c);
-    line(0,0,-v.y*scale,-v.x*scale);
+    line(0, 0, -v.y*scale, -v.x*scale);
   }
 
 
@@ -536,12 +541,12 @@ class ShearParticle {
     // acceleration due planet in centre of the ring. 
     PVector a_grav = new PVector();
 
-    if(A1){
-    a_grav.x += 2.0*Omega0*S0*position.x;
+    if (A1) {
+      a_grav.x += 2.0*Omega0*S0*position.x;
     }
-    if(A2){
-    a_grav.x += 2.0*Omega0*velocity.y;
-    a_grav.y += -2.0*Omega0*velocity.x;
+    if (A2) {
+      a_grav.x += 2.0*Omega0*velocity.y;
+      a_grav.y += -2.0*Omega0*velocity.x;
     }
     if (Moonlet) {
       float moonlet_GMr3 = moonlet_GM/pow(position.mag(), 3.0);
@@ -553,13 +558,13 @@ class ShearParticle {
       for (ShearParticle p : sb.Sparticles) {
         if (p!=this) {
           PVector distanceVect = PVector.sub(position.copy(), p.position.copy());
-          
+
           // Calculate magnitude of the vector separating the balls
           float distanceVectMag = distanceVect.mag();
-          if (distanceVectMag > radius+p.radius){
-          distanceVect = distanceVect.mult(p.SPGM /pow(distanceVectMag, 3));
-          a_grav.x+= -distanceVect.x ;
-          a_grav.y+=-distanceVect.y;
+          if (distanceVectMag > radius+p.radius) {
+            distanceVect = distanceVect.mult(p.SPGM /pow(distanceVectMag, 3));
+            a_grav.x+= -distanceVect.x ;
+            a_grav.y+=-distanceVect.y;
           }
         }
       }
@@ -690,7 +695,7 @@ class ShearParticle {
 
 class Moonlet extends ShearParticle {
 
-  Moonlet(){
+  Moonlet() {
     position = new PVector();
     velocity = new PVector();
     acceleration = new PVector();
@@ -698,5 +703,4 @@ class Moonlet extends ShearParticle {
     this.SPGM = moonlet_GM;
     m= PI*pow(radius, 3.0)*4.0/3.0;
   }
-
 }

@@ -55,6 +55,7 @@ Boolean Shearing = false; // for when we switch from ringsystem to shearsystem
 Boolean Tilting = false; // for when we switch to titl system
 Boolean Connecting = false;
 Boolean MoonAlignment = false; // for when we want to send moon alignment info to tony and we need to not thread the system.
+Boolean Threading = false;
 
 //Initialising Objects
 RingSystem Saturn;
@@ -128,8 +129,8 @@ void setup() {
 
 
 
-  //init with = rings 1,  moons 2, rendering normal =true (titl would be false);
-  Saturn = new RingSystem(1, 2, true);
+  //init with = rings 10,  moons 4, rendering normal =true (titl would be false);
+  Saturn = new RingSystem(10, 4, true);
 
 
 
@@ -235,11 +236,13 @@ void draw() {
   } else if (MoonAlignment) {
     Saturn.update();
   } else if (Connecting) {
-    //Saturn.update();
+    Saturn.update();
+    //thread("update");
+  } else if (Threading) {
     thread("update");
   } else {
-    thread("update"); //my imac needs this threading or it all slows down computing the physics
-    //Saturn.update();
+    //thread("update"); //my imac needs this threading or it all slows down computing the physics
+    Saturn.update();
   }
 
 
@@ -252,7 +255,7 @@ void draw() {
   triggered = scene.timer().trigggered();
   if (triggered) {
     voyager.update();
-   //voyager.display(); //dont need to see it if we arent going to ever use it.
+    //voyager.display(); //dont need to see it if we arent going to ever use it.
   } 
 
   //******************************************************
@@ -355,6 +358,7 @@ void keyPressed() {
     Shearing=false;
     Tilting=false; 
     Connecting=false;
+    Threading=false;
     //create a new system.
     Saturn = new RingSystem(2, 2, true); //ringtpe, moon type, tilt/nottilt
     applyBasicMaterials();
@@ -394,12 +398,8 @@ void keyPressed() {
     camera10();
   } else if (key=='P') {
     saveFrame("./screenshots/ringmind_screen-###.jpg");
-  } else if (key=='R') {
-
-    //nope not the right way to follow an object. too jerky. maybe we need to rotate around a point instead. check proscene
-    Moon m2 = Saturn.moons.get(0);
-    //camera1();
-    scene.camera().lookAt(new Vec(SCALE*m2.position.x, SCALE*m2.position.y, 2*m2.radius*SCALE));
+  } else if (key=='r') {
+    //
   } else if (key == 'A') {
     useAdditiveBlend = !useAdditiveBlend;
   } else if (key == 'T') {
@@ -420,15 +420,16 @@ void keyPressed() {
   } else if (key=='0') {
     initCamera();
   } else if (key=='8') {
+
     zoomedCamera();
     useAdditiveBlend=true;
     Shearing=!Shearing;
     Tilting=false;
     Connecting=false;
+    Threading=false;
   } else if (key=='9') {
+    //tilting
     useAdditiveBlend=true;
-    //create new titled system
-    //create a new system.
     Saturn = new RingSystem(9, 2, false); //ring type 9 as its a tilt type, moon type2 and tilt type2
     //new materials for every ring
     for (Ring r : Saturn.rings) {
@@ -438,6 +439,7 @@ void keyPressed() {
     Shearing=false;
     Connecting=false;
     Tilting=true; 
+    Threading=false;
     systemState= State.chaosState;
   } else if (key=='M') {
     //turn on this alogorithm to send tony the data
@@ -445,9 +447,10 @@ void keyPressed() {
   } else if (key=='m') {
     Moonlet = true;
   } else if (key=='6') {
-
+    //connected
     Saturn = new RingSystem(1, 2, true);
     Saturn.rings.get(0).material = RingMat2;
+
     Connecting=true; 
     Shearing=false;
     Tilting=false;
@@ -458,11 +461,25 @@ void keyPressed() {
     oscRingDensity(Saturn);
     oscRingRotationRate(Saturn);
   } else if (key=='5') {
+    Threading=false;
+    //reinit
+    Saturn = new RingSystem(10, 4, true);
 
-    Saturn = new RingSystem(5, 2, true);
+    applyBasicMaterials();
+    //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat3;
+    }
+
+
+
     Saturn.rings.get(0).material = RingMat4;
-    Saturn.rings.get(1).material = RingMat1;
-    
+    Saturn.rings.get(1).material = RingMat2; //same as below
+    Saturn.rings.get(2).material = RingMat2;
+    Saturn.rings.get(3).material = RingMat6;
+    Saturn.rings.get(4).material = RingMat6;
+    Saturn.rings.get(5).material = RingMat5;
+
     initCamera();
     Connecting=false; 
     Shearing=false;
@@ -473,6 +490,19 @@ void keyPressed() {
 
     oscRingDensity(Saturn);
     oscRingRotationRate(Saturn);
+  } else if (key=='G') {
+    G=6.67408E-9;
+    //reinit
+    Saturn = new RingSystem(11, 4, true);
+    applyBasicMaterials();
+    //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat3;
+    }
+  } else if (key=='p') {
+    Saturn = new RingSystem(1, 2, true);
+    applyBasicMaterials();
+    Threading=true;
   }
 }
 

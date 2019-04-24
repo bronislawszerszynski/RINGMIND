@@ -37,7 +37,7 @@ class Moon extends Particle implements Alignable {
     super(orb_radius);
     this.GM=Gm;
     this.radius=radius;
-    c= color(255, 0, 0);
+    c= color(random(255), random(255), random(255));
 
     this.moonID = mnum;
   }
