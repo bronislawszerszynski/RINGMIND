@@ -125,10 +125,11 @@ class RingSystemRenderer {
       push();
       translate(0, 0);
       fill(255);
-      sphere(moonlet_r);
+      sphere(moonlet_r/4);
       pop();
     }
   }
+  
   //-----------------------------------------------------------------------------------------------------
 
   void renderTilt(RingSystem rs, RenderContext ctx, int renderType) {

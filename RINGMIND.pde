@@ -252,7 +252,7 @@ void draw() {
   triggered = scene.timer().trigggered();
   if (triggered) {
     voyager.update();
-    //voyager.display(); //dont need to see it if we arent going to ever use it.
+   //voyager.display(); //dont need to see it if we arent going to ever use it.
   } 
 
   //******************************************************
