@@ -56,6 +56,7 @@ Boolean Tilting = false; // for when we switch to titl system
 Boolean Connecting = false;
 Boolean MoonAlignment = false; // for when we want to send moon alignment info to tony and we need to not thread the system.
 Boolean Threading = false;
+Boolean Finale=false;
 
 //Initialising Objects
 RingSystem Saturn;
@@ -101,6 +102,20 @@ void renderOffScreenOnPGraphicsClean() {
   pg.endDraw();
 }
 
+//----
+
+void initMoonWeight(){
+    Saturn.moons.get(0).moonWeight=1.77e6*SCALE;
+    Saturn.moons.get(1).moonWeight=2.66e6*SCALE;
+    Saturn.moons.get(2).moonWeight=9.90e5*SCALE;
+    Saturn.moons.get(3).moonWeight=(1.32e6*SCALE)/2;
+    Saturn.moons.get(4).moonWeight=4.08e6*SCALE;
+    Saturn.moons.get(5).moonWeight=(1.65e7*SCALE)/4;
+    Saturn.moons.get(6).moonWeight=(6.85e7*SCALE)/4;
+    Saturn.moons.get(7).moonWeight=(8.57e7*SCALE)/8;
+    Saturn.moons.get(8).moonWeight=(2.08e8*SCALE)/8;
+    Saturn.moons.get(9).moonWeight=(7.46e7*SCALE)/6;
+}
 
 
 
@@ -132,7 +147,7 @@ void setup() {
   //init with = rings 10,  moons 4, rendering normal =true (titl would be false);
   Saturn = new RingSystem(10, 4, true);
 
-
+  initMoonWeight();
 
   // --------- renderer sety
   rsRenderer = new RingSystemRenderer();
@@ -382,7 +397,7 @@ void keyPressed() {
     //oscRingDensity(Saturn);
     //oscRingRotationRate(Saturn);
     sendOSC(Saturn);
-    useAdditiveBlend=true;
+    useAdditiveBlend=false;
 
     // test options
     // slowdown
@@ -471,6 +486,7 @@ void keyPressed() {
     oscRingRotationRate(Saturn);
   } else if (key=='5') {
     Threading=false;
+    useTrace=false;
     //reinit
     Saturn = new RingSystem(10, 4, true);
 
@@ -485,13 +501,13 @@ void keyPressed() {
     Saturn.moons.get(0).moonWeight=1.77e6*SCALE;
     Saturn.moons.get(1).moonWeight=2.66e6*SCALE;
     Saturn.moons.get(2).moonWeight=9.90e5*SCALE;
-    Saturn.moons.get(3).moonWeight=1.32e6*SCALE;
+    Saturn.moons.get(3).moonWeight=(1.32e6*SCALE)/2;
     Saturn.moons.get(4).moonWeight=4.08e6*SCALE;
     Saturn.moons.get(5).moonWeight=1.65e7*SCALE;
-    Saturn.moons.get(6).moonWeight=6.85e7*SCALE;
-    Saturn.moons.get(7).moonWeight=8.57e7*SCALE;
-    Saturn.moons.get(8).moonWeight=2.08e8*SCALE;
-    Saturn.moons.get(9).moonWeight=7.46e7*SCALE;
+    Saturn.moons.get(6).moonWeight=(6.85e7*SCALE)/4;
+    Saturn.moons.get(7).moonWeight=(8.57e7*SCALE)/4;
+    Saturn.moons.get(8).moonWeight=(2.08e8*SCALE)/4;
+    Saturn.moons.get(9).moonWeight=(7.46e7*SCALE)/4;
 
 
     Saturn.rings.get(0).material = RingMat4;
@@ -521,11 +537,35 @@ void keyPressed() {
     for (Ring r : Saturn.rings) {
       r.material = RingMat3;
     }
+  
+
+
+
+    Saturn.moons.get(0).moonWeight=1.77e6*SCALE;
+    Saturn.moons.get(1).moonWeight=2.66e6*SCALE;
+    Saturn.moons.get(2).moonWeight=9.90e5*SCALE;
+    Saturn.moons.get(3).moonWeight=(1.32e6*SCALE)/2;
+    Saturn.moons.get(4).moonWeight=4.08e6*SCALE;
+    Saturn.moons.get(5).moonWeight=1.65e7*SCALE;
+    Saturn.moons.get(6).moonWeight=(6.85e7*SCALE)/4;
+    Saturn.moons.get(7).moonWeight=(8.57e7*SCALE)/4;
+    Saturn.moons.get(8).moonWeight=(2.08e8*SCALE)/4;
+    Saturn.moons.get(9).moonWeight=(7.46e7*SCALE)/4;
+
+
+    Saturn.rings.get(0).material = RingMat4;
+    Saturn.rings.get(1).material = RingMat2; //same as below
+    Saturn.rings.get(2).material = RingMat2;
+    Saturn.rings.get(3).material = RingMat6;
+    Saturn.rings.get(4).material = RingMat6;
+    Saturn.rings.get(5).material = RingMat5;
+    
     closerCamera();
+    
   } else if (key=='p') {
 
 
-    Saturn = new RingSystem(1, 4, true);
+    Saturn = new RingSystem(1, 2, true);
     applyBasicMaterials();
     for (Ring r : Saturn.rings) {
       r.material = RingMat5;
@@ -536,7 +576,7 @@ void keyPressed() {
     drawMoons=false;
     Threading=true;
     G=6.67408E-13;
-    Saturn.moons.get(4).GM =4.529477495e13;
+    Saturn.moons.get(2).GM =4.529477495e13;
     Saturn.moons.get(0).GM =2.529477495e13;
     toptiltCamera();
     Connecting =false;
@@ -577,9 +617,50 @@ void keyPressed() {
     applyBasicMaterials();
     for (Ring r : Saturn.rings) {
       r.material = RingMat5;
+    } 
+  } else if (key=='N'){
+    
+   Threading=false;
+    useTrace=false;
+    useAdditiveBlend=false;
+    //reinit
+    Saturn = new RingSystem(2, 4, true);
+
+    applyBasicMaterials();
+    //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat1;
     }
-    
-    
+
+
+
+    Saturn.moons.get(0).moonWeight=1.77e6*SCALE;
+    Saturn.moons.get(1).moonWeight=2.66e6*SCALE;
+    Saturn.moons.get(2).moonWeight=9.90e5*SCALE;
+    Saturn.moons.get(3).moonWeight=(1.32e6*SCALE)/2;
+    Saturn.moons.get(4).moonWeight=4.08e6*SCALE;
+    Saturn.moons.get(5).moonWeight=1.65e7*SCALE;
+    Saturn.moons.get(6).moonWeight=(6.85e7*SCALE)/4;
+    Saturn.moons.get(7).moonWeight=(8.57e7*SCALE)/4;
+    Saturn.moons.get(8).moonWeight=(2.08e8*SCALE)/4;
+    Saturn.moons.get(9).moonWeight=(7.46e7*SCALE)/4;
+
+
+    Saturn.rings.get(0).material = RingMat1;
+    Saturn.rings.get(1).material = RingMat3; //same as below
+    Saturn.rings.get(2).material = RingMat3;
+    Saturn.rings.get(3).material = RingMat1;
+    Saturn.rings.get(4).material = RingMat1;
+    Saturn.rings.get(5).material = RingMat5;
+
+    closerCamera();
+    Connecting=false; 
+    Shearing=false;
+    Tilting=false;
+   // useAdditiveBlend=true;
+    useFilters=false;
+
+    sendOSC(Saturn); 
   }
  
 }

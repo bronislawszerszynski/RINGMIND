@@ -258,6 +258,9 @@ void updateCurrentScene(int t) {
     renderOffScreenOnPGraphics();
     //rsRenderer.render(Saturn, rsRenderContext,2);
     rsRenderer.renderComms(Saturn, rsRenderContext, 1);
+  } else if (Finale){
+    renderOffScreenOnPGraphics();
+    rsRenderer.renderComms(Saturn, rsRenderContext,1);
   } else {
     rsRenderer.render(Saturn, rsRenderContext, 1); //1 for points
   }
