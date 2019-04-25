@@ -213,7 +213,7 @@ class RingSystemRenderer {
     //   }
     //}
     beginShape(LINES);
-    for (int i=0; i <3000; i++){
+    for (int i=0; i <1000; i++){
       RingParticle rp = (RingParticle) r.particles.get(i);
       float distance=0;
        for (int j=0; j <3000; j++){

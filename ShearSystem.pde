@@ -35,7 +35,7 @@ final float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a
 
 
 
-float num_particles = 30000; //if not using table we can use more than 1000
+float num_particles = 50000; //if not using table we can use more than 1000
 
 float scale =10.0; //Makes Particles Visible
 

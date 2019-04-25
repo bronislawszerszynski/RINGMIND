@@ -429,6 +429,7 @@ void keyPressed() {
     Threading=false;
   } else if (key=='9') {
     //tilting
+    zoomedCamera();
     useAdditiveBlend=true;
     Saturn = new RingSystem(9, 2, false); //ring type 9 as its a tilt type, moon type2 and tilt type2
     //new materials for every ring
