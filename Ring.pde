@@ -49,7 +49,7 @@ class Ring {
    *@return   The angular frequency [radians/s].
    */
   float kepler_omega(float r) {
-    return sqrt(GMp/(pow(r, 3.0)));
+    return sqrt(1.0/(pow(r, 3.0)));
   }
 
   //--- new render methods setter and getter

@@ -50,9 +50,9 @@ class RingSystem {
   void initialise() {
     initialiseMoons();
     initialiseRings();
-    
 
-    
+
+
     totalParticles.clear(); //TODO Remove if not needed 
     for (Ring r : rings) {
       for (RingParticle p : r.particles) {
@@ -67,12 +67,12 @@ class RingSystem {
   void initialiseMoons() {
     //***********Initialise Moons*********************
     moons.clear(); //TODO Remove if not needed 
-    switch(moonIndex) {
+    switch(1) {
       case(1):
       // Adding Specific Moons ( e.g. Mima, Enceladus, Tethys, ... )
       //addMoon(5, moons);
       //addMoon(7, moons);
-      //addMoon(9, moons);
+      addMoon(9, moons);
       //addMoon(12, moons);
       //addMoon(14, moons);
       break;
@@ -83,6 +83,14 @@ class RingSystem {
       }
     default:
     }
+
+    //float temp = moons.get(0).orbitalRadius;
+    //for(int i =0; i<moons.size();i++){
+
+    // OUTPUT 
+    //moons.get(i).orbitalRadius = moons.get(i).orbitalRadius/temp;
+
+    //}
   }
 
   void initialiseRings() {
@@ -91,7 +99,7 @@ class RingSystem {
 
     g.add( new Grid(1.0, 5.0, 1E-8, 1E4));
 
-    switch(2) {
+    switch(0) {
     case 1:
       //Generic Disc of Particles
       rings.add(new Ring(0, 1.1, 2.9, N_PARTICLES));
@@ -142,12 +150,12 @@ class RingSystem {
     default:
       rings.add(new Ring(0, 1, 3, 0));
     }
-    
-    for(int i =0; i<rings.size();i++){
-    rings.get(i).density = rings.get(i).density()/rings.get(0).density();
+
+    for (int i =0; i<rings.size(); i++) {
+      rings.get(i).density = rings.get(i).density()/rings.get(0).density();
     }
-    for(Ring r:rings){
-    println(r.density);
+    for (Ring r : rings) {
+      println(r.density + " " + r.Omega0);
     }
   }
 
@@ -186,8 +194,12 @@ class RingSystem {
     for (Particle p : totalParticles) {
       p.updateVelocity(p.getAcceleration(this));
     }
-    //Output TABLE 
+    
+    //for(int i =0; i<moons.size();i++){
+    //println((moons.get(i).position.heading()+PI)/(2*PI));
+    //}
 
+    //Output TABLE 
     if (debug) {
       if ((frameCount)%50 ==0) {
         saveTable(g.get(0).gridToTable(g.get(0).grid), "./files/output.csv");

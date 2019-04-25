@@ -20,6 +20,7 @@ class Moon extends Particle implements Alignable {
   //Extra Moon Properties
   float GM;
   float radius;
+  float orbitalRadius;
   color c ;
   final float moonSizeScale= 2;
 
@@ -31,6 +32,7 @@ class Moon extends Particle implements Alignable {
    */
   Moon(int mnum, float Gm, float radius, float orb_radius, color c) {
     super(orb_radius);
+    orbitalRadius = orb_radius;
     this.GM=Gm;
     this.radius=radius;
     this.c= c; 
