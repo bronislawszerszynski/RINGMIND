@@ -267,6 +267,20 @@ class RingSystem {
 
       calcDensity();
       break;
+      
+      case 12:
+      
+      rings.add(new Ring(1,5.0,5.2,22500));
+      rings.get(0).particles.clear();
+      addParticlesFromTable("outputParticles.csv");
+      break;
+      
+      case 13:
+      rings.add(new Ring(0,1,3,22500));
+      rings.get(0).particles.clear();
+      addParticlesFromTable("outputParticles.csv");
+      rings.add(new Ring(1,5.0,5.2,1000));
+      break;
 
     default:
       rings.add(new Ring(0, 1, 3, 0));
