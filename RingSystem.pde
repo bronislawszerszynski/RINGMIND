@@ -145,7 +145,7 @@ class RingSystem {
       //addMoon(12, moons);
       //addMoon(14, moons);
       break;
-      
+
       case(4):
       // Inner smaller moons
       addMoon(19, moons);
@@ -160,7 +160,7 @@ class RingSystem {
       addMoon(27, moons);
       addMoon(28, moons);
       break;
-      
+
     default:
       break;
     }
@@ -238,7 +238,7 @@ class RingSystem {
       println("tilt ring added.... no density calculated");
       break;
 
-     case 10:
+    case 10:
       // main RINGMIND
       g.add(new Grid(1.0, 3.4, 1E-8, 1E4));
       g.add(new Grid(3.4, 5.0, 1E-8, 1E4)); //switch 1E-8 and go to 2E-7
@@ -249,12 +249,12 @@ class RingSystem {
       rings.add(new Ring(3, 2.794, 2.795, N_PARTICLES/6)); //narrow ring
       rings.add(new Ring(4, 2.920, 2.921, N_PARTICLES/6)); //narrow ring
       rings.add(new Ring(5, 3.5, 3.8, N_PARTICLES/3)); //clumping ring
-      
+
       calcDensity();
       break;
-      
-      case 11:
-        // main RINGMIND
+
+    case 11:
+      // main RINGMIND
       g.add(new Grid(1.0, 3.4, 1E-8, 1E4));
       g.add(new Grid(3.4, 5.0, 9E-7, 1E4)); //switch 1E-8 and go to 2E-7
       //g.add(new Grid(3.4, 5.0, 2E7, 1E4)); //switch 1E-8 and go to 2E-7
@@ -264,7 +264,7 @@ class RingSystem {
       rings.add(new Ring(3, 2.794, 2.795, N_PARTICLES/6)); //narrow ring
       rings.add(new Ring(4, 2.920, 2.921, N_PARTICLES/6)); //narrow ring
       rings.add(new Ring(5, 3.5, 3.8, N_PARTICLES/3)); //clumping ring
-      
+
       calcDensity();
       break;
 
@@ -279,6 +279,35 @@ class RingSystem {
       rings.get(i).density = rings.get(i).density()/rings.get(0).density();
     }
   }
+
+
+  void addParticlesFromTable(String Filename) {
+    Table table; 
+    table = loadTable("./files/"+Filename);//output.csv");//"input.csv"
+
+    //particles.clear();
+
+    for (int i = 0; i < table.getRowCount(); i++) {
+      RingParticle temp = new RingParticle();
+      temp.position.x= table.getFloat(i, 0);
+      temp.position.y= table.getFloat(i, 1);
+      temp.position.z= table.getFloat(i, 2);
+      temp.velocity.x= table.getFloat(i, 3);
+      temp.velocity.y= table.getFloat(i, 4);
+      temp.velocity.z= table.getFloat(i, 5);
+      temp.acceleration.x= table.getFloat(i, 6);
+      temp.acceleration.y= table.getFloat(i, 7);
+      temp.acceleration.z= table.getFloat(i, 8);
+      rings.get(0).particles.add(temp);
+      totalParticles.add(temp);
+    }
+  }
+
+
+
+
+
+
 
 
   void importFromFile(String filename) {
@@ -511,8 +540,8 @@ class RingSystem {
       // Pheobe Mass 8.3e18 [kg] Radius 1.09e5 [m] Orbital Radius 12944e6 [m] 
       m.add(new Moon(18, G*8.3e18, 1.09e5, 12994e6));
       break;
-      
-      case 19:
+
+    case 19:
       m.add(new Moon(19, G*3.7e18, 1.77e6, 1.373657091*Rp));    
       break;
     case 20:
@@ -542,8 +571,6 @@ class RingSystem {
     case 28:
       m.add(new Moon(28, G*1.81e21, 7.46e7, 49.09*Rp));
       break;
-      
-      
     }
   }
 }

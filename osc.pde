@@ -21,53 +21,94 @@ void setupOSC() {
 
 //------------------------------------------------------OSC METHODS------------------------------
 
-void oscMoonAlignment(int moonB, float t){
+void oscMoonAlignment(int moonB, float t) {
 
   OscMessage msg = new OscMessage("/MoonAlign");
-  
+
   msg.add(moonB); // the moon its aligning with
   msg.add(abs(t)); // time to align
   msg.add("moon position"); //moon angle as a map from 0 to 1 but lets do this when we know the front as 0
-  
+
   println("Moon Align: Moon 0 to Moon "+moonB+" happening in t minus " + abs(t));  
-  
-  osc.send(msg, soundEngine); 
 
-
+  osc.send(msg, soundEngine);
 }
 
 
 
-void oscRingDensity(RingSystem rs){
-  
+void oscRingDensity(RingSystem rs) {
+
   OscMessage rmsg = new OscMessage("/RingDensity");
   int count = rs.rings.size();
-  for(int i=0; i < count; i++){
-   Ring r = rs.rings.get(i);
-   rmsg.add(r.density);
+  for (int i=0; i < count; i++) {
+    Ring r = rs.rings.get(i);
+    rmsg.add(r.density);
   }
-  
+
   println(count+" ring densities sent via osc");
-  
-  osc.send(rmsg, soundEngine); 
-    
+
+  osc.send(rmsg, soundEngine);
 }
 
 
-void oscRingRotationRate(RingSystem rs){
+void oscRingRotationRate(RingSystem rs) {
   OscMessage rmsg = new OscMessage("/RingRotationRate");
   int count = rs.rings.size();
-  for(int i=0; i < count; i++){
-   Ring r = rs.rings.get(i);
-   rmsg.add(r.Omega0);
+  for (int i=0; i < count; i++) {
+    Ring r = rs.rings.get(i);
+    rmsg.add(r.Omega0);
   }
-  
-  println(count+" ring rotation rates sent via osc");
-  
-  osc.send(rmsg, soundEngine); 
-  
-}
 
+  println(count+" ring rotation rates sent via osc");
+
+  osc.send(rmsg, soundEngine);
+}
+//-----------------------------------------------------------------------------
+
+// osc array stuff f tony
+
+float [] moonOSC;
+float [] ringsOSC;
+
+
+void sendOSC(RingSystem rs) {
+
+  //moonOSC = new float[6];
+  //ringsOSC = new float[6];
+  moonOSC = new float[rs.moons.size()];
+  ringsOSC = new float[rs.rings.size()];
+  //construct the data into the array
+
+  for (int i=0; i < rs.rings.size(); i++) {
+    Ring r = rs.rings.get(i);
+    ringsOSC[i] = (r.density);
+  }
+
+  for (int i=0; i < rs.moons.size(); i++) {
+    Moon m = rs.moons.get(i);
+    moonOSC[i] = (m.radius);
+  }
+
+  OscMessage rmsg = new OscMessage("/ringMind");
+
+  rmsg.add("array_length:");
+  rmsg.add(moonOSC.length+ringsOSC.length);
+
+  rmsg.add("rings_data");
+  rmsg.add(ringsOSC);  
+
+  rmsg.add("moons_data");
+  rmsg.add(moonOSC);
+
+  osc.send(rmsg, soundEngine); 
+
+  println("OSC data sent ");
+  println(moonOSC.length+ringsOSC.length);
+  println("rings");
+  printArray(ringsOSC);
+  println("moons");
+  printArray(moonOSC);
+}
 
 
 
@@ -88,7 +129,7 @@ void oscRingRotationRate(RingSystem rs){
 //  bundle.add(msg);
 //  //clear the message for next data (dont worry its still in the bundle ready to go) 
 //  msg.clear();
-  
+
 
 //  // next bit of data 
 //  msg.setAddrPattern("/RingDensity");
@@ -103,8 +144,8 @@ void oscRingRotationRate(RingSystem rs){
 //  bundle.add(msg);
 //  msg.clear();
 
-  
-  
+
+
 
 //  //send the bundle in one go
 
@@ -137,13 +178,13 @@ void oscRingRotationRate(RingSystem rs){
 ////-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //void transmitMoonOSC(Moon m){
-  
+
 // //moon mass
 //  OscMessage msg = new OscMessage("/MoonData");
 //  msg.add(m.GM);
-  
+
 //  osc.send(msg, soundEngine); 
-  
+
 //}
 
 
@@ -152,5 +193,5 @@ void oscRingRotationRate(RingSystem rs){
 //  for (Moon mm : Saturn.moons){
 //    transmitMoonOSC(mm);
 //  } 
-  
+
 //}

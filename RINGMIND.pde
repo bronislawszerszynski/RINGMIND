@@ -168,9 +168,10 @@ void setup() {
   setupFX();
   loadFilters(); //test for potnetial aesthetics
 
-  // osc sound engine init data
-  oscRingDensity(Saturn);
-  oscRingRotationRate(Saturn);
+  //osc sound engine init data
+  //oscRingDensity(Saturn);
+  //oscRingRotationRate(Saturn);
+  sendOSC(Saturn);
 
   s = new ShearingBox();
 }
@@ -360,20 +361,27 @@ void keyPressed() {
     Connecting=false;
     Threading=false;
     //create a new system.
+    
     Saturn = new RingSystem(2, 2, true); //ringtpe, moon type, tilt/nottilt
     applyBasicMaterials();
+    
     //new materials for every ring
     for (Ring r : Saturn.rings) {
       r.material = RingMat3;
     }
 
-    Saturn.rings.get(2).material = RingMat2;
-    Saturn.rings.get(5).material = RingMat1;
+    for (Moon m : Saturn.moons) {
+      m.moonWeight = 1;
+    }
+ 
+    //Saturn.rings.get(2).material = RingMat2;
+    //Saturn.rings.get(5).material = RingMat1;
+ 
+    initCamera();
 
-    camera6();
-
-    oscRingDensity(Saturn);
-    oscRingRotationRate(Saturn);
+    //oscRingDensity(Saturn);
+    //oscRingRotationRate(Saturn);
+    sendOSC(Saturn);
     useAdditiveBlend=true;
 
     // test options
@@ -447,7 +455,7 @@ void keyPressed() {
     MoonAlignment = !MoonAlignment;
   } else if (key=='m') {
     Moonlet = true;
-  } else if (key=='6') {
+  } else if (key=='C') {
     //connected
     Saturn = new RingSystem(1, 2, true);
     Saturn.rings.get(0).material = RingMat2;
@@ -472,7 +480,12 @@ void keyPressed() {
       r.material = RingMat3;
     }
 
-
+    Saturn.moons.get(5).moonWeight=6.85e7*SCALE;
+    Saturn.moons.get(6).moonWeight=90;
+    Saturn.moons.get(7).moonWeight=100;
+    Saturn.moons.get(8).moonWeight=120;
+    Saturn.moons.get(9).moonWeight=150;
+    
 
     Saturn.rings.get(0).material = RingMat4;
     Saturn.rings.get(1).material = RingMat2; //same as below
@@ -481,16 +494,17 @@ void keyPressed() {
     Saturn.rings.get(4).material = RingMat6;
     Saturn.rings.get(5).material = RingMat5;
 
-    initCamera();
+    closerCamera();
     Connecting=false; 
     Shearing=false;
     Tilting=false;
     useAdditiveBlend=true;
     useFilters=false;
 
+    sendOSC(Saturn);
 
-    oscRingDensity(Saturn);
-    oscRingRotationRate(Saturn);
+    //oscRingDensity(Saturn);
+    //oscRingRotationRate(Saturn);
   } else if (key=='G') {
     G=6.67408E-9;
     //reinit
@@ -500,11 +514,70 @@ void keyPressed() {
     for (Ring r : Saturn.rings) {
       r.material = RingMat3;
     }
+    closerCamera();
   } else if (key=='p') {
-    Saturn = new RingSystem(1, 2, true);
+    
+    
+    Saturn = new RingSystem(1, 4, true);
     applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat5;
+    }
+     for (Moon m : Saturn.moons) {
+      m.moonWeight = 1;
+    }
+    drawMoons=false;
     Threading=true;
+    G=6.67408E-13;
+    Saturn.moons.get(4).GM =4.529477495e13;
+    Saturn.moons.get(0).GM =2.529477495e13;
+    toptiltCamera();
+    Connecting =false;
+    Shearing=false;
+    Tilting=false;
+    
+    
+    
+  } else if (key=='d') {
+    traceAmount=190;
   }
+  
+  else if (key=='6'){
+    //reinit plus some options
+     G=6.67408E-9;
+    Saturn = new RingSystem(11, 4, true);
+    applyBasicMaterials();
+    
+    //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat3;
+    }
+    
+    for (Moon m : Saturn.moons) {
+      m.moonWeight = 5;
+    }
+    
+    camera10();
+    useAdditiveBlend=true;
+    useTrace=false;
+    Threading=false;
+    Shearing=false;
+    Tilting=false;
+    //fade us back up or press x to do it manually
+    systemState= State.fadeup;
+  }
+  
+  else if (key=='Y'){
+    Threading=false;
+    
+    Saturn = new RingSystem(0, 0, true);
+     applyBasicMaterials();
+     for (Ring r : Saturn.rings) {
+      r.material = RingMat1;
+    }
+    Saturn.addParticlesFromTable("outputParticles.csv");
+  }
+  
 }
 
 

@@ -77,6 +77,18 @@ void zoomedCamera(){
    scene.camera().setViewDirection(new Vec (0,0,-1));
 }
 
+void closerCamera(){
+   scene.camera().setOrientation(new Quat(0,0,0,1));
+   scene.camera().setPosition(new Vec(0,0,670));
+   scene.camera().setViewDirection(new Vec (0,0,-1));
+}
+
+void toptiltCamera(){
+   scene.camera().setOrientation(new Quat(-0.27797017, -0.8494466, -0.44852334));
+   scene.camera().setPosition(new Vec(216.607, 262.6706, -178.04265));
+   scene.camera().setViewDirection(new Vec (-0.50023884, -0.6601704, 0.5603001));
+}
+
 
 //zoomed far back distant view of ring system
 void camera1(){

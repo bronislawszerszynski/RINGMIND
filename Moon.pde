@@ -17,6 +17,8 @@ class Moon extends Particle implements Alignable {
   int moonID = 0;
 
   final float moonSizeScale= 2;
+  
+  float moonWeight=5;
 
 
   /**

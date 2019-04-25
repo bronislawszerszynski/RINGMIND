@@ -74,13 +74,13 @@ class RingSystemRenderer {
         //translate(width/2, height/2);
         fill(m.c);
         stroke(m.c);
-        strokeWeight(5);
-        beginShape(POINTS);
-        //translate(scale*m.position.x, scale*m.position.y, 2*m.radius*scale);
-        //sphere(1);
-        vertex(SCALE*m.position.x, SCALE*m.position.y, 2*m.radius*SCALE);
-        endShape();
-        //circle(scale*position.x, scale*position.y, 2*radius*scale);
+        strokeWeight(m.moonWeight);
+        //beginShape(POINTS);
+         translate(SCALE*m.position.x, SCALE*m.position.y, 2*m.radius*SCALE);
+         sphere(m.moonWeight);
+        //vertex(SCALE*m.position.x, SCALE*m.position.y, 2*m.radius*SCALE);
+        //endShape();
+        // circle(scale*position.x, scale*position.y, 2*radius*scale);
         popMatrix();
       }
       pop();
@@ -121,12 +121,12 @@ class RingSystemRenderer {
 
     //moonlet
     if (Moonlet) {
-      ellipseMode(CENTER);
-      push();
-      translate(0, 0);
-      fill(255);
-      sphere(moonlet_r/4);
-      pop();
+      //ellipseMode(CENTER);
+      //push();
+     // translate(0, 0);
+     // fill(0);
+     // sphere(moonlet_r/8);
+    //  pop();
     }
   }
   
