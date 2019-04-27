@@ -104,17 +104,17 @@ void renderOffScreenOnPGraphicsClean() {
 
 //----
 
-void initMoonWeight(){
-    Saturn.moons.get(0).moonWeight=1.77e6*SCALE;
-    Saturn.moons.get(1).moonWeight=2.66e6*SCALE;
-    Saturn.moons.get(2).moonWeight=9.90e5*SCALE;
-    Saturn.moons.get(3).moonWeight=(1.32e6*SCALE)/2;
-    Saturn.moons.get(4).moonWeight=4.08e6*SCALE;
-    Saturn.moons.get(5).moonWeight=(1.65e7*SCALE)/4;
-    Saturn.moons.get(6).moonWeight=(6.85e7*SCALE)/4;
-    Saturn.moons.get(7).moonWeight=(8.57e7*SCALE)/8;
-    Saturn.moons.get(8).moonWeight=(2.08e8*SCALE)/8;
-    Saturn.moons.get(9).moonWeight=(7.46e7*SCALE)/6;
+void initMoonWeight() {
+  Saturn.moons.get(0).moonWeight=1.77e6*SCALE;
+  Saturn.moons.get(1).moonWeight=2.66e6*SCALE;
+  Saturn.moons.get(2).moonWeight=9.90e5*SCALE;
+  Saturn.moons.get(3).moonWeight=(1.32e6*SCALE)/2;
+  Saturn.moons.get(4).moonWeight=4.08e6*SCALE;
+  Saturn.moons.get(5).moonWeight=(1.65e7*SCALE)/4;
+  Saturn.moons.get(6).moonWeight=(6.85e7*SCALE)/4;
+  Saturn.moons.get(7).moonWeight=(8.57e7*SCALE)/8;
+  Saturn.moons.get(8).moonWeight=(2.08e8*SCALE)/8;
+  Saturn.moons.get(9).moonWeight=(7.46e7*SCALE)/6;
 }
 
 
@@ -388,6 +388,22 @@ void keyPressed() {
     for (Moon m : Saturn.moons) {
       m.moonWeight = 1;
     }
+    
+    Saturn.moons.get(0).moonWeight=1;
+    Saturn.moons.get(1).moonWeight=1;
+    Saturn.moons.get(2).moonWeight=2;
+    Saturn.moons.get(3).moonWeight=2;
+    Saturn.moons.get(4).moonWeight=3;
+    Saturn.moons.get(5).moonWeight=3;
+    Saturn.moons.get(6).moonWeight=4;
+    Saturn.moons.get(7).moonWeight=4;
+    Saturn.moons.get(8).moonWeight=5;
+    Saturn.moons.get(9).moonWeight=5;
+    
+    
+    
+    
+    
 
     //Saturn.rings.get(2).material = RingMat2;
     //Saturn.rings.get(5).material = RingMat1;
@@ -429,9 +445,10 @@ void keyPressed() {
     useTrace = !useTrace;
   } else if (key=='F') {
     useFilters=!useFilters;
-  } else if (key=='y') {
-    scene.eyeFrame().translateX(new DOF1Event(-5));
-  } else if (key==' ') {    
+  
+  //else if (key=='y') {
+  //  scene.eyeFrame().translateX(new DOF1Event(-5));
+ } else if (key==' ') {    
     if ( scene.avatar() == null && lastAvatar != null)
       scene.setAvatar(lastAvatar);
     else
@@ -537,7 +554,7 @@ void keyPressed() {
     for (Ring r : Saturn.rings) {
       r.material = RingMat3;
     }
-  
+
 
 
 
@@ -559,9 +576,8 @@ void keyPressed() {
     Saturn.rings.get(3).material = RingMat6;
     Saturn.rings.get(4).material = RingMat6;
     Saturn.rings.get(5).material = RingMat5;
-    
+
     closerCamera();
-    
   } else if (key=='p') {
 
 
@@ -585,6 +601,7 @@ void keyPressed() {
   } else if (key=='d') {
     traceAmount=190;
   } else if (key=='6') {
+
     //reinit plus some options
     G=6.67408E-9;
     Saturn = new RingSystem(11, 4, true);
@@ -608,19 +625,43 @@ void keyPressed() {
     //fade us back up or press x to do it manually
     systemState= State.fadeup;
   } else if (key=='Y') {
+
+
     Threading=false;
     Tilting=false;
     Shearing=false;
     //zoomedCamera();
     initCamera();
-    Saturn = new RingSystem(12, 0, true);
+    Saturn = new RingSystem(13, 0, true);
+
     applyBasicMaterials();
     for (Ring r : Saturn.rings) {
       r.material = RingMat5;
-    } 
-  } else if (key=='N'){
-    
-   Threading=false;
+    }
+  } else if (key=='y') {
+
+    Saturn.rings.add(new Ring(1, 1, 3, 0));
+    Saturn.addParticlesFromTable("outputParticles.csv");
+    Saturn.rings.get(1).setMaxRenderedParticle(Saturn.rings.get(1).particles.size());
+
+    applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat5;
+    }
+  } else if (key=='D') {
+    Threading=false;
+    Tilting=false;
+    Shearing=false;
+
+    Saturn.rings.remove(0);
+
+    applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat5;
+    }
+  } else if (key=='N') {
+
+    Threading=false;
     useTrace=false;
     useAdditiveBlend=false;
     //reinit
@@ -657,12 +698,11 @@ void keyPressed() {
     Connecting=false; 
     Shearing=false;
     Tilting=false;
-   // useAdditiveBlend=true;
+    // useAdditiveBlend=true;
     useFilters=false;
 
-    sendOSC(Saturn); 
+    sendOSC(Saturn);
   }
- 
 }
 
 
