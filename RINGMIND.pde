@@ -25,8 +25,8 @@ interaction design and audio visual system
 //syphon system to send to other applications
 
 //windows need to comment out these lines and in teh setup and draw
-import codeanticode.syphon.*;
-SyphonServer server;
+//import codeanticode.syphon.*;
+//SyphonServer server;
 
 
 // render variables
@@ -121,7 +121,7 @@ void settings() {
 void setup() {
 
   //windows comment out this
-  server = new SyphonServer(this, "ringmindSyphon");
+  //server = new SyphonServer(this, "ringmindSyphon");
 
   setupOSC();
 
@@ -272,7 +272,7 @@ void draw() {
   //windows comment out this
 
   //if we need to use multiple screens then lets sent it to madmapper and map it.
-  server.sendScreen();
+  //server.sendScreen();
 }
 
 
@@ -414,8 +414,8 @@ void keyPressed() {
     useTrace = !useTrace;
   } else if (key=='F') {
     useFilters=!useFilters;
-  } else if (key=='y') {
-    scene.eyeFrame().translateX(new DOF1Event(-5));
+  //} else if (key=='y') {
+  //  scene.eyeFrame().translateX(new DOF1Event(-5));
   } else if (key==' ') {    
     if ( scene.avatar() == null && lastAvatar != null)
       scene.setAvatar(lastAvatar);
@@ -573,15 +573,33 @@ void keyPressed() {
     Shearing=false;
     //zoomedCamera();
     initCamera();
-    Saturn = new RingSystem(12, 0, true);
+    Saturn = new RingSystem(13, 0, true);
     applyBasicMaterials();
     for (Ring r : Saturn.rings) {
       r.material = RingMat5;
     }
+  } else if (key=='y'){
+   
+    Saturn.rings.add(new Ring(1, 1, 3, 0));
+    Saturn.addParticlesFromTable("outputParticles.csv");
+    Saturn.rings.get(1).setMaxRenderedParticle(Saturn.rings.get(1).particles.size()); 
+       applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat5;
+    }
+  }else if (key=='N') {
     
-    
+      Threading=false;
+    Tilting=false;
+    Shearing=false;
+    //zoomedCamera();
+    initCamera();
+    Saturn.rings.remove(0);
+    applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat5;
+    }
   }
- 
 }
 
 

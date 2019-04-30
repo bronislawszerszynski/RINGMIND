@@ -270,16 +270,14 @@ class RingSystem {
       
       case 12:
       
-      rings.add(new Ring(1,5.0,5.2,22500));
+      rings.add(new Ring(0,1,3,22500));
       rings.get(0).particles.clear();
       addParticlesFromTable("outputParticles.csv");
       break;
       
       case 13:
-      rings.add(new Ring(0,1,3,22500));
-      rings.get(0).particles.clear();
-      addParticlesFromTable("outputParticles.csv");
-      rings.add(new Ring(1,5.0,5.2,1000));
+      rings.add(new Ring(1,5.0,5.2,22500));
+      
       break;
 
     default:
@@ -312,7 +310,7 @@ class RingSystem {
       temp.acceleration.x= table.getFloat(i, 6);
       temp.acceleration.y= table.getFloat(i, 7);
       temp.acceleration.z= table.getFloat(i, 8);
-      rings.get(0).particles.add(temp);
+      rings.get(1).particles.add(temp);
       totalParticles.add(temp);
     }
   }
