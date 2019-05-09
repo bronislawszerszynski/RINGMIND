@@ -87,8 +87,8 @@ void initMoonWeight() {
 
 void settings() {
   //dont need fullscreen if using syphon and madmapper
-  //  fullScreen(P£D, 1);
-  size (1920, 800, P3D); //3840,2160 still runs 60fps just takeas few seconds to load but tbh might as well make it 4k via madmappers algorithms
+  fullScreen(P3D, 1);
+  //size (1920, 800, P3D); //3840,2160 still runs 60fps just takeas few seconds to load but tbh might as well make it 4k via madmappers algorithms
   smooth(); //noSmooth();
 }
 
