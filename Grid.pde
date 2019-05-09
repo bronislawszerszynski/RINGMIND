@@ -16,7 +16,6 @@ class Grid {
   protected float dr, dtheta, r_min, r_max; 
   protected int sizeTheta, sizeR;
   protected float drag_c, drag_p;  //Constants for Drag Rule.
-
   protected int grid[][];          //Grid to hold the number of particle in each cell
   protected float gridNorm[][];    //Grid to hold Normalised Number Density of Particles in Cell (by Area and Total number).
   protected PVector gridV[][];     //Grid to hold the average velocity of cell. 
@@ -94,7 +93,7 @@ class Grid {
     for (int i = 0; i < int(360/dtheta); i++) {
       for (int j = 0; j < int((r_max-r_min)/dr); j++) {
         grid[i][j] = 0;
-        gridNorm[i][j] =0;
+        gridNorm[i][j] = 0;
         gridV[i][j]= new PVector();
         gridCofM[i][j]= new PVector();
       }
@@ -109,7 +108,6 @@ class Grid {
    */
   float angle(Particle p) {
     return (atan2(p.position.y, p.position.x)+TAU)%(TAU);
-    //return (atan2(p.position.y, p.position.x)+PI);
   }
 
   /**
@@ -264,11 +262,8 @@ class Grid {
     if ( random(1)< r) {
 
       float a, nn;
-      //println(degrees(angleDiff(p)));
-      a_drag = PVector.sub(gridV[i][j].copy().rotate(angleDiff(p)).mult(radialScaling(p)), p.velocity.copy()); // 
-
-      //println( p.position.mag()+ "\t::" +a_drag.mag());
-      a =  a_drag.magSq(); //a=1; 
+      a_drag = PVector.sub(gridV[i][j].copy().rotate(angleDiff(p)).mult(radialScaling(p)), p.velocity.copy()); 
+      a =  a_drag.magSq();   
       a_drag.normalize();
       nn = gridNorm[i][j];
       a_drag.mult(drag_c*a*nn);
@@ -363,13 +358,6 @@ class Grid {
         displayVector(i, j, gridV[i][j]);
       }
     }
-    //else {
-    //  for (int i = 0; i < int(360/dtheta); i++) {
-    //    for (int j = 0; j < int((r_max-r_min)/dr); j++) {
-    //      displaycell(i, j );
-    //    }
-    //  }
-    //}
   }
 
   /**
@@ -477,7 +465,7 @@ class Grid {
 
 
 
-    ////  //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
+    //  //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
     for (int i = 0; i < int(360/dtheta); i++) {
       for (int j = 0; j < int((r_max-r_min)/dr); j++) {
 
@@ -527,27 +515,8 @@ void tiltupdate(RingSystem rs) {
         }
       }
     }
-    // Improve the calculate of gridV 
 
-    //As cannot simulate every particle, add constant or multiple number of particles with keplerian velocity to help maintain correct averages.
-
-    //float actualtosimratio = 2; // actual number of particles to simulated 
-
-    //for (int i = 0; i < int(360/dtheta); i++) {
-    //  for (int j = 0; j < int((r_max-r_min)/dr); j++) {
-    //    gridNorm[i][j] = grid[i][j]/((r_min+j*dr+dr/2)*dr*radians(dtheta)*total);
-    //    gridV[i][j].add(keplerianVelocityCell(i, j));
-    //    gridV[i][j].add(keplerianVelocityCell(i, j));
-    //    for (int k = 0; k<grid[i][j]; k ++) {
-    //      gridV[i][j].add(keplerianVelocityCell(i, j));
-    //    }
-    //    gridV[i][j].div(actualtosimratio*(grid[i][j]+1));
-    //  }
-    //}
-
-
-
-    ////  //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
+    //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
     for (int i = 0; i < int(360/dtheta); i++) {
       for (int j = 0; j < int((r_max-r_min)/dr); j++) {
 
@@ -631,85 +600,4 @@ void tiltupdate(RingSystem rs) {
 
     return tempTable;
   }
-
-
-  //void render(PGraphics x) {
-  //  for (RingParticle p : particles) {
-  //    p.render(x);
-  //  }
-  //}
-
-
-
-
-  //  PVector dragAccelerationC(Particle p) {
-
-  //    // Collisions - acceleration due drag (based on number of particles in grid cell).
-  //    PVector a_drag = new PVector();
-
-  //    float r = 0.9;
-  //    if ( r > random(1)) {    
-
-  //      //Find which cell the particle is in.
-  //      int x = i(p);
-  //      int y = j(p);
-
-  //      int sizeR = 2; //Size of Neighbourhood
-  //      int sizeTheta = 2;
-
-  //      float c, a, n;
-  //      c= 1E-5;
-
-
-  //      for ( int i = x-sizeTheta; i <= x+sizeTheta; i++) {
-  //        for ( int j = y-sizeR; j <= y+sizeR; j++) {
-  //          if (validij(i, j)) {
-
-  //            //PVector drag = PVector.sub(gridV[i][j].copy().normalize(), p.velocity.copy().normalize());
-  //            PVector drag = PVector.sub(gridV[i][j].copy(), p.velocity.copy());
-
-  //            a =1;// drag.magSq(); //a=1; 
-  //            drag.normalize();
-  //            n = gridNorm[x][y];
-  //            drag.mult(c*a*n);
-  //            a_drag.add(drag);
-  //          }
-  //        }
-  //      }
-  //    }
-
-
-  //  return a_drag;
-  //}
-
-  ///**
-  // * Returns the normalise particle density relevant to specific particle.
-  // *
-  // * @param p a particle with a position vector. 
-  // * @return 
-  // */
-  //float returnGridNorm(Particle p) {
-  //  float temp =0;
-  //  try {
-  //    temp = gridNorm[i(p)][j(p)];
-  //  } 
-  //  catch (Exception e) {
-  //  }
-  //  return temp;
-  //}
-
-  ///**
-  // * Returns the average cell velocity relevant to specific particle.
-  // *
-  // * @param p a particle with a position vector. 
-  // */
-  //PVector returnGridV(Particle p) {
-  //  PVector temp = new PVector();
-  //  try {
-  //    temp = gridV[i(p)][j(p)].copy();
-  //  } 
-  //  catch (Exception e) {
-  //  }
-  //  return temp;
-  //}
 }
