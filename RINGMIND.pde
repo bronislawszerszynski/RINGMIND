@@ -1,32 +1,32 @@
-/**Class RingSystemProcessing 
+/**
+ * Class RingSystemProcessing 
  * A gravitational simulation in a Cartesian coordinate system.
- *
- * @author Thomas Cann
- * @author Sam Hinson
- * @version 2.0
  */
-
 
 /*
-interaction design and audio visual system 
- @author ashley james brown march-may.2019 
+ * Physics Coding by Lancaster University Physics Graduates.
+ * @author Thomas Cann
+ * @author Sam Hinson
+ *
+ * Interaction design and audio visual system 
+ * @author ashley james brown march-may.2019 
  */
 
 
-///////////////
-//           //
-//           //
-// RINGMIND  //
-//           //
-//           //
-///////////////
+  ///////////////
+  //           //
+  //           //
+  // RINGMIND  //
+  //           //
+  //           //
+  ///////////////
 
 
 //syphon system to send to other applications
 
 //windows need to comment out these lines and in teh setup and draw
-import codeanticode.syphon.*;
-SyphonServer server;
+//import codeanticode.syphon.*;
+//SyphonServer server;
 
 
 // render variables
@@ -35,22 +35,8 @@ boolean useAdditiveBlend = false;
 boolean useTrace = false;
 boolean useFilters = false;
 int traceAmount=70;
-
 int ringCnt = 10; // how many rings to render
 
-// Basic parameters
-float h_stepsize;
-
-//Dynamic Timestep variables
-float simToRealTimeRatio = 3600.0/1.0;   // 3600.0/1.0 --> 1hour/second
-final float maxTimeStep = 20* simToRealTimeRatio / 30;
-float totalSimTime =0.0;                       // Tracks length of time simulation has be running
-
-
-Boolean Running = true;
-Boolean Display = true;
-Boolean Add = false;
-Boolean clear = false;
 Boolean Shearing = false; // for when we switch from ringsystem to shearsystem
 Boolean Tilting = false; // for when we switch to titl system
 Boolean Connecting = false;
@@ -58,7 +44,16 @@ Boolean MoonAlignment = false; // for when we want to send moon alignment info t
 Boolean Threading = false;
 Boolean Finale=false;
 
+//Dynamic Timestep variables
+float h_stepsize; 
+//float dt; 
+float simToRealTimeRatio = 3600.0/1.0;   // 3600.0/1.0 --> 1hour/second
+final float maxTimeStep = 20* simToRealTimeRatio / 30;
+float totalSimTime =0.0;                       // Tracks length of time simulation has be running
+
 //Initialising Objects
+
+//Simulation
 RingSystem Saturn;
 
 //Render System
@@ -66,7 +61,6 @@ RingSystemRenderer rsRenderer;
 RenderContext rsRenderContext;
 PGraphics pg;
 PShader offscreenShader;
-
 
 
 //----------------------------------------------------------------------------------------------------------------------------------------
@@ -136,7 +130,7 @@ void settings() {
 void setup() {
 
   //windows comment out this
-  server = new SyphonServer(this, "ringmindSyphon");
+  //server = new SyphonServer(this, "ringmindSyphon");
 
   setupOSC();
 
@@ -287,7 +281,7 @@ void draw() {
   //windows comment out this
 
   //if we need to use multiple screens then lets sent it to madmapper and map it.
-  server.sendScreen();
+  //server.sendScreen();
 }
 
 
@@ -337,36 +331,7 @@ public void mouseReleased() {
 void keyPressed() {
 
   //hold down d and then these other sfor your debug modes. some may not work as commented out
-  if (key=='d') {
-    if (key ==' ') {
-      if (Running) {
-        Running =false;
-      } else {
-        Running = true;
-      }
-    } else if (key =='h') {
-      if (Display) {
-        Display =false;
-      } else {
-        Display = true;
-      }
-    } else if (key =='a') {
-      if (Add) {
-        Add =false;
-      } else {
-        println("test");
-        Add = true;
-      }
-    } else if (key=='c') {
-      if (clear) {
-        clear=false;
-      } else {
-        clear =true;
-      }
-    }
-  }
-
-
+  
   if (key=='O') {
     oscRingDensity(Saturn);
     oscRingRotationRate(Saturn);
@@ -388,7 +353,7 @@ void keyPressed() {
     for (Moon m : Saturn.moons) {
       m.moonWeight = 1;
     }
-    
+
     Saturn.moons.get(0).moonWeight=1;
     Saturn.moons.get(1).moonWeight=1;
     Saturn.moons.get(2).moonWeight=2;
@@ -399,11 +364,11 @@ void keyPressed() {
     Saturn.moons.get(7).moonWeight=4;
     Saturn.moons.get(8).moonWeight=5;
     Saturn.moons.get(9).moonWeight=5;
-    
-    
-    
-    
-    
+
+
+
+
+
 
     //Saturn.rings.get(2).material = RingMat2;
     //Saturn.rings.get(5).material = RingMat1;
@@ -445,10 +410,10 @@ void keyPressed() {
     useTrace = !useTrace;
   } else if (key=='F') {
     useFilters=!useFilters;
-  
-  //else if (key=='y') {
-  //  scene.eyeFrame().translateX(new DOF1Event(-5));
- } else if (key==' ') {    
+
+    //else if (key=='y') {
+    //  scene.eyeFrame().translateX(new DOF1Event(-5));
+  } else if (key==' ') {    
     if ( scene.avatar() == null && lastAvatar != null)
       scene.setAvatar(lastAvatar);
     else
