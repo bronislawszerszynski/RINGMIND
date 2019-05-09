@@ -149,7 +149,10 @@ class Moon extends Particle implements Alignable {
     PVector center = new PVector(0,0,0);
     PVector mm = new PVector(m.position.x,m.position.y,0);
     return degrees(PVector.angleBetween(center,mm));
-  }
-  
-  
+  } 
+}
+
+public interface Alignable {
+  public boolean isAligned(Alignable other); //Alignment Threshold
+  //public float timeToAlignment(Alignable other); //What units? [s]
 }

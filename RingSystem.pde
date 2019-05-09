@@ -267,19 +267,19 @@ class RingSystem {
 
       calcDensity();
       break;
-      
-      case 12:
-      
-      rings.add(new Ring(1,5.0,5.2,22500));
+
+    case 12:
+
+      rings.add(new Ring(1, 5.0, 5.2, 22500));
       rings.get(0).particles.clear();
       addParticlesFromTable("outputParticles.csv");
       break;
-      
-      case 13:
-      rings.add(new Ring(1,5.0,5.2,22500));
-     // rings.get(0).particles.clear();
+
+    case 13:
+      rings.add(new Ring(1, 5.0, 5.2, 22500));
+      // rings.get(0).particles.clear();
       //addParticlesFromTable("outputParticles.csv");
-     // rings.add(new Ring(1,5.0,5.2,1000));
+      // rings.add(new Ring(1,5.0,5.2,1000));
       break;
 
     default:
@@ -586,5 +586,95 @@ class RingSystem {
       m.add(new Moon(28, G*1.81e21, 7.46e7, 49.09*Rp));
       break;
     }
+  }
+}
+
+/**Class Ring
+ * @author Thomas Cann
+ * @version 1.0
+ */
+
+//class extension ashley james brown
+
+
+class Ring {
+  //render variables
+  private int maxRenderedParticle;
+  Material material = null;
+  //ring variables
+  int ringID = 0;//id
+  ArrayList<TiltParticle> Tparticles;
+  ArrayList<RingParticle> particles;
+  float r_inner, r_outer, Omega0, density;
+  color c;
+
+  
+  /**
+   *  Class Constuctor - General need passing all the values. 
+   */
+  Ring(int rnum, float Inner, float Outer, int n_particles) {
+    this.ringID = rnum;
+
+    this.r_inner = Inner;
+    this.r_outer = Outer;
+
+    particles = new ArrayList<RingParticle>();
+    for (int i = 0; i < n_particles; i++) {
+      particles.add(new RingParticle(Inner, Outer));
+    }
+
+    Omega0 = kepler_omega((Inner + Outer)/2.0);
+
+    //set a default but overwritable by methods below for each ring and depends on state
+    maxRenderedParticle = n_particles;
+
+    // this.density = density();
+  }
+
+
+  //tilted ring doesnt have an ID
+  Ring(float Inner, float Outer, int n_particles) {
+    Tparticles = new ArrayList<TiltParticle>();
+
+    this.r_inner = Inner;
+    this.r_outer = Outer;
+
+    for (int i = 0; i < n_particles; i++) {
+      Tparticles.add(new TiltParticle(Inner, Outer));
+    }
+
+    this.Omega0 = kepler_omega((Inner + Outer)/2.0); 
+
+    //set a default but overwritable by methods below for each ring and depends on state
+    //maxRenderedParticle = n_particles;
+  }
+
+
+  //--- new render methods setter and getter
+
+  int getMaxRenderedParticle() {
+    return maxRenderedParticle;
+  }
+
+  void setMaxRenderedParticle(int newMax) {
+    maxRenderedParticle = min(particles.size(), newMax);
+  }
+
+
+  /** Method to calculate the Keplerian orbital angular frequency (using Kepler's 3rd law).
+   *@param r Radial position (semi-major axis) to calculate the period [m].
+   *@return The angular frequency [radians/s].
+   */
+  float kepler_omega(float r) {
+    return sqrt(1/(pow(r, 3.0)));
+  }
+
+
+  
+  /** Method to calculate the density of particles in ring.
+   *@return denstiy [N/A].
+   */
+  float density() {
+    return particles.size() /(PI *(sq(r_outer) - sq(r_inner)));
   }
 }

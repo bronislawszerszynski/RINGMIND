@@ -182,12 +182,12 @@ void updateCurrentScene(int t) {
 
   case followState:
 
-    //probably glitch becuase of calling this and making it new eachf rame 
-    // Moon m2 = Saturn.moons.get(0);
-    RingParticle p = Saturn.rings.get(0).particles.get(0);
-    //voyager.updatePos(SCALE*m2.position.x, SCALE*m2.position.y, 2*m2.radius*SCALE);
-    PVector np = new PVector(SCALE*p.position.x, SCALE*p.position.y, SCALE*p.position.z);
-    voyager.updatePos(np);
+    ////probably glitch becuase of calling this and making it new eachf rame 
+    //// Moon m2 = Saturn.moons.get(0);
+    //RingParticle p = Saturn.rings.get(0).particles.get(0);
+    ////voyager.updatePos(SCALE*m2.position.x, SCALE*m2.position.y, 2*m2.radius*SCALE);
+    //PVector np = new PVector(SCALE*p.position.x, SCALE*p.position.y, SCALE*p.position.z);
+    //voyager.updatePos(np);
     break;
 
   case posiedState:

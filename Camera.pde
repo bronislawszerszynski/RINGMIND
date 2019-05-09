@@ -53,8 +53,7 @@ void initScene() {
   
   scene.showAll();
   
-  //initspaceship trackable
-  createShip();
+ 
 }
 
 

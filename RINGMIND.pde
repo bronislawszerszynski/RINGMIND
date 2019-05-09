@@ -37,6 +37,8 @@ boolean useFilters = false;
 int traceAmount=70;
 int ringCnt = 10; // how many rings to render
 
+Boolean Add;
+Boolean clear;
 Boolean Shearing = false; // for when we switch from ringsystem to shearsystem
 Boolean Tilting = false; // for when we switch to titl system
 Boolean Connecting = false;
@@ -63,40 +65,7 @@ PGraphics pg;
 PShader offscreenShader;
 
 
-//----------------------------------------------------------------------------------------------------------------------------------------
 
-// default overlay render using shader
-
-void renderOffScreenOnPGraphics() {
-  pg.beginDraw();
-  pg.shader(offscreenShader);
-  offscreenShader.set("resolution", float(pg.width), float(pg.height));
-  offscreenShader.set("time", float(millis()));
-  pg.rect(0, 0, pg.width, pg.height);
-  pg.endDraw();
-}
-
-
-//a little keyhole example
-void renderOffScreenOnPGraphics2() {
-  pg.beginDraw();
-  pg.background(0, 0, 0);
-  //pg.stroke(255);
-  //pg.fill(255);
-  //pg.strokeWeight(100);
-  //pg. line(0,0,pg.wdith,pg.height);
-
-  pg.ellipse(mouseX, mouseY, 200, 200);
-  pg.endDraw();
-}
-
-void renderOffScreenOnPGraphicsClean() {
-  pg.beginDraw();
-  pg.background(255, 255, 255); //no shader diffuse texture over the top
-  pg.endDraw();
-}
-
-//----
 
 void initMoonWeight() {
   Saturn.moons.get(0).moonWeight=1.77e6*SCALE;
@@ -160,9 +129,6 @@ void setup() {
   //setup pros cene camera and eye viewports etc
   initScene();
 
-  //if we want a planet in the middle
-  initSaturn();
-
   //instantaite the scenarios so they are avialble for the state system to handle
   setupStates();
 
@@ -173,8 +139,6 @@ void setup() {
   createMaterials();
   applyBasicMaterials();
 
-  //postfx
-  setupFX();
   loadFilters(); //test for potnetial aesthetics
 
   //osc sound engine init data
@@ -203,13 +167,6 @@ void draw() {
     background(0);
   }
 
-  if (inThirdPerson && scene.avatar()==null) {
-    inThirdPerson = false;
-    adjustFrameRate();
-  } else if (!inThirdPerson && scene.avatar()!=null) {
-    inThirdPerson = true;
-    adjustFrameRate();
-  }
 
 
   //*************time step******************
@@ -262,11 +219,7 @@ void draw() {
 
   titleText(); //debug info on frame title
 
-  triggered = scene.timer().trigggered();
-  if (triggered) {
-    voyager.update();
-    //voyager.display(); //dont need to see it if we arent going to ever use it.
-  } 
+ 
 
   //******************************************************
 
@@ -413,11 +366,6 @@ void keyPressed() {
 
     //else if (key=='y') {
     //  scene.eyeFrame().translateX(new DOF1Event(-5));
-  } else if (key==' ') {    
-    if ( scene.avatar() == null && lastAvatar != null)
-      scene.setAvatar(lastAvatar);
-    else
-      lastAvatar = scene.resetAvatar();
   } else if (key=='V') {
     //simToRealTimeRatio = 360.0/1.0;
     //voyager follow the moon
