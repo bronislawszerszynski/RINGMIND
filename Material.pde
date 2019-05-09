@@ -1,4 +1,10 @@
 
+//----------Palette-----------------
+//#FEB60A,#FF740A,#D62B00,#A30000,#640100,#FEB60A,#FF740A,#D62B00
+//fire
+//153,21,245
+//----------------------------------
+
 Material RingMat1, RingMat2, RingMat3, RingMat4, RingMat5, RingMat6;
 
 Material ShearMat1;
