@@ -104,7 +104,6 @@ void keyPressed() {
 
   if (key==' ') {
   }
-
   //NUMERICAL KEY
   if (key=='1') {
     //Proscene - Camera Route #1
@@ -174,7 +173,7 @@ void keyPressed() {
     saveFrame("./screenshots/ringmind_screen-###.jpg");
   }
 
-  //---------------------------SECOND ROW ASDGHJKL--------------------------------------------
+  //---------------------------SECOND ROW ASDFGHJKL--------------------------------------------
 
   if (key == 'a') {
     //
@@ -214,7 +213,7 @@ void keyPressed() {
     //
   }
 
-  //THIRD ROW ZXCVBNM
+  //---------------------------THIRD ROW ZXCVBNM--------------------------------------------
 
   if (key=='z') {
     systemState= State.fadetoblack; //fadeout all particles from everything
