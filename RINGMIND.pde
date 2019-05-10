@@ -37,10 +37,8 @@ boolean useFilters = false;
 int traceAmount=70;
 int ringCnt = 10; // how many rings to render
 
-Boolean Add;
-Boolean clear;
-Boolean Shearing = false; // for when we switch from ringsystem to shearsystem
-Boolean Tilting = false; // for when we switch to titl system
+Boolean Add, clear; // for when we switch from ringsystem to shearsystem
+Boolean Tilting,Shearing; // for when we switch to titl system
 Boolean Connecting = false;
 Boolean MoonAlignment = false; // for when we want to send moon alignment info to tony and we need to not thread the system.
 Boolean Threading = false;
@@ -67,11 +65,8 @@ PShader offscreenShader;
 //--------------------------------------------------------------------------------------------------------------------------------------------
 
 void settings() {
-
-
   //fullScreen(P3D, 1);
   size (1920, 800, P3D);
-
   smooth(); //noSmooth();
 }
 
@@ -124,10 +119,6 @@ void setup() {
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 void draw() {
 
@@ -267,11 +258,11 @@ void keyPressed() {
   } else if (key=='W') {
     //
   } else if (key=='e') {
-    //Proscene
+    //Proscene -
   } else if (key=='E') {
     //
   } else if (key=='r') {
-    //
+    //Proscene - Show Camera Path
   } else if (key=='R') {
     //
   } else if (key=='t') {
