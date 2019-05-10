@@ -68,8 +68,10 @@ PShader offscreenShader;
 
 void settings() {
 
+
   //fullScreen(P3D, 1);
   size (1920, 800, P3D);
+
   smooth(); //noSmooth();
 }
 
