@@ -5,6 +5,9 @@
  * @version 1.0
  */
 
+//Simulation
+RingSystem Saturn;
+
 int N_PARTICLES = 10000; 
 float G = 6.67408E-11;       // Gravitational Constant 6.67408E-11[m^3 kg^-1 s^-2]
 float grid2value = 1E-8;

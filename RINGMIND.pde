@@ -20,44 +20,16 @@
 ///////////////
 
 //syphon system to send to other applications
-
 //windows need to comment out these lines and in teh setup and draw
 //import codeanticode.syphon.*;
 //SyphonServer server;
 
-
-// render variables
-boolean drawMoons = true;
-boolean useAdditiveBlend = false;
-boolean useTrace = false;
-boolean useFilters = false;
-int traceAmount=70;
-int ringCnt = 10; // how many rings to render
-
-Boolean Add, clear; // for when we switch from ringsystem to shearsystem
-Boolean Tilting,Shearing; // for when we switch to titl system
-Boolean Connecting = false;
-Boolean MoonAlignment = false; // for when we want to send moon alignment info to tony and we need to not thread the system.
-Boolean Threading = false;
-Boolean Finale=false;
-
 //Dynamic Timestep variables
 float h_stepsize; 
 //float dt; 
-float simToRealTimeRatio = 3600.0/1.0;   // 3600.0/1.0 --> 1hour/second
+float simToRealTimeRatio = 3600.0/1.0;         // 3600.0/1.0 --> 1hour/second
 final float maxTimeStep = 20* simToRealTimeRatio / 30;
 float totalSimTime =0.0;                       // Tracks length of time simulation has be running
-
-//Initialising Objects
-
-//Simulation
-RingSystem Saturn;
-
-//Render System
-RingSystemRenderer rsRenderer;
-RenderContext rsRenderContext;
-PGraphics pg;
-PShader offscreenShader;
 
 //--------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -71,47 +43,15 @@ void settings() {
 //--------------------------------------------------------------------------------------------------------------------------------------------
 
 void setup() {
-
+  background(0);
+  randomSeed(3);
   //windows comment out this
   //server = new SyphonServer(this, "ringmindSyphon");
-
   setupOSC();
-
-  randomSeed(3);
-
-  // --------------renderer setup------------------
-  rsRenderer = new RingSystemRenderer();
-  rsRenderer.withMoon = false;
-  rsRenderContext = new RenderContext();
-  rsRenderContext.pgfx = this;
-  rsRenderContext.shader = loadShader("texfrag.glsl", "texvert.glsl");
-  rsRenderContext.mat.spriteTexture = loadImage("partsmall.png");
-  pg = createGraphics(1024, 1024, P3D);
-  rsRenderContext.mat.diffTexture = pg;
-  rsRenderContext.mat.strokeColor = 255;
-  offscreenShader = loadShader("cloudy.glsl");
-
-  background(0);
-
-  //setup pros cene camera and eye viewports etc
-  initScene();
-
-  //which state shall we begin with
-  systemState = State.initState; 
-
-  //instantaite the scenarios so they are avialble for the state system to handle
-  setupStates();
-
-  //extra materials we can apply to the rings
-  createMaterials();
-  applyBasicMaterials();
-
-  loadFilters(); //test for potnetial aesthetics
-
-  //osc sound engine init data
-  //oscRingDensity(Saturn);
-  //oscRingRotationRate(Saturn);
-  sendOSC(Saturn);
+  renderSetup();
+  initScene();   //setup proscene camera and eye viewports etc
+  systemState = State.initState;  //which state shall we begin with 
+  setupStates();    //instantiate the scenarios so they are avialble for the state system to handle
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------------
@@ -128,6 +68,7 @@ void draw() {
   }
 
   //*************time step******************
+
   if (simToRealTimeRatio/frameRate < maxTimeStep) {
     h_stepsize= simToRealTimeRatio/frameRate;
     dt= simToRealTimeRatio/frameRate;
@@ -137,71 +78,24 @@ void draw() {
     println("At Maximum Time Step");
   }
 
-  //*************Update and Render Frame******************
+  //*************Update Frame******************
 
-  //Updates properties of all objects.
-
-  //if (Running) {
-  //  update();
-  //}
-
-  ////Display all of the objects to screen.
-  //if (Display) {
-  //display();
-  //}
-
-  //*************Update and Render Frame******************
-
-  if (Shearing) {
-    s.update();
-    // s.display();
-  } else if (Tilting) {
-    Saturn.tiltupdate();
-  } else if (MoonAlignment) {
-    Saturn.update();
-  } else if (Connecting) {
-    Saturn.update();
-    //thread("update");
-  } else if (Threading) {
-    thread("update");
-  } else {
-    //thread("update"); //my imac needs this threading or it all slows down computing the physics
-    Saturn.update();
-  }
-
-  //calls the render and anything specific to each scene state
-  updateCurrentScene(millis()); 
+  updateCurrentScene(millis());    //calls the render and anything specific to each scene state 
 
   titleText(); //debug info on frame title
 
   //******************************************************
 
-  if (Shearing) {
-    totalSimTime += dt;
-  } else {
-    totalSimTime +=h_stepsize;
-  }
+  totalSimTime += dt;
+
   //******************************************************
 
   //windows comment out this
-
-  //if we need to use multiple screens then lets sent it to madmapper and map it.
-  //server.sendScreen();
+  //server.sendScreen();    //if we need to use multiple screens then lets sent it to madmapper and map it.
 }
 
 void update() {
   Saturn.update();
-}
-
-void display() {
-  background(0);
-  Saturn.display();
-}
-
-
-//Display FrameRate and Time data to bar along bottom of screen
-void fps() {
-  surface.setTitle("Framerate: " + int(frameRate) + "     Time Elapsed[Seconds]: " + int(millis()/1000.0) + "     Simulation Time Elapsed[hours]: " + int(totalSimTime/3600.0)); //Set the frame title to the frame rate
 }
 
 //--------------------------- INTERACTION KEYS -------------------------------------------------------------------

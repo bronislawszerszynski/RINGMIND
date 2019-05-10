@@ -17,10 +17,10 @@ enum State {
     ringmindStableState, 
     ringmindUnstableState, 
     connectedState, 
-    saturnState,
-    ringboarderState,
-    addAlienLettersState,
-    
+    saturnState, 
+    ringboarderState, 
+    addAlienLettersState, 
+
 
     fadetoblack, 
     fadeup, 
@@ -66,6 +66,13 @@ abstract class Scenario {
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Boolean Add, clear; // for when we switch from ringsystem to shearsystem
+Boolean Tilting, Shearing; // for when we switch to titl system
+Boolean Connecting = false;
+Boolean MoonAlignment = false; // for when we want to send moon alignment info to tony and we need to not thread the system.
+Boolean Threading = false;
+Boolean Finale=false;
+
 void setupStates() {
 
   Shearing=false;
@@ -76,7 +83,13 @@ void setupStates() {
   switch(systemState) {
   case initState:
     //init with = rings 10,  moons 4, rendering normal =true (titl would be false);
-    Saturn = new RingSystem(10, 4, true);
+    Saturn = new RingSystem(10, 4, true);  
+    createMaterials();       //extra materials we can apply to the rings
+    applyBasicMaterials();
+    //osc sound engine init data
+    //oscRingDensity(Saturn);
+    //oscRingRotationRate(Saturn);
+    sendOSC(Saturn);
     break;
 
   case introState:
@@ -181,7 +194,7 @@ void setupStates() {
       r.material = RingMat1;
     }
     break;
-    
+
   case ringboarderState:
 
     Threading=false;
@@ -195,10 +208,10 @@ void setupStates() {
     for (Ring r : Saturn.rings) {
       r.material = RingMat5;
     }
-    
-  break;
+
+    break;
   case addAlienLettersState:
-  
+
     Saturn.rings.add(new Ring(1, 1, 3, 0));
     Saturn.addParticlesFromTable("outputParticles.csv");
     Saturn.rings.get(1).setMaxRenderedParticle(Saturn.rings.get(1).particles.size());
@@ -207,7 +220,7 @@ void setupStates() {
     for (Ring r : Saturn.rings) {
       r.material = RingMat5;
     }
-  break;
+    break;
 
   case makingState:
     break;
@@ -304,6 +317,22 @@ void evaluateScenario() {
 void updateCurrentScene(int t) {
 
   // now regardless of scene do this
+  if (Shearing) {
+    s.update();
+    // s.display();
+  } else if (Tilting) {
+    Saturn.tiltupdate();
+  } else if (MoonAlignment) {
+    Saturn.update();
+  } else if (Connecting) {
+    Saturn.update();
+    //thread("update");
+  } else if (Threading) {
+    thread("update");
+  } else {
+    //thread("update"); //my imac needs this threading or it all slows down computing the physics
+    Saturn.update();
+  }
 
   // Display all of the objects to screen using the renderer.
   if (useAdditiveBlend) {
@@ -320,7 +349,7 @@ void updateCurrentScene(int t) {
     //overwrite default and chose this material to begin with for all rings
     Saturn.rings.get(0).material = RingMat1; 
 
-    
+
     //when all camerasa are correct lock them to the scene
     //initCamera();
 
@@ -342,7 +371,7 @@ void updateCurrentScene(int t) {
     break;
 
   case shearState:
-  s.material = ShearMat1;
+    s.material = ShearMat1;
     break;
 
   case followState:
