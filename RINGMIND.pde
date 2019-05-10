@@ -355,7 +355,9 @@ void keyPressed() {
   } else if (key == 'A') {
     useAdditiveBlend = !useAdditiveBlend;
   } else if (key=='s') {
+    //
   } else if (key=='S') {
+    //
   } else if (key=='d') {
     traceAmount=190;
   } else if (key=='D') {
@@ -370,19 +372,29 @@ void keyPressed() {
       r.material = RingMat5;
     }
   } else if (key=='f') {
+    //
   } else if (key=='F') {
     useFilters=!useFilters;
   } else if (key=='g') {
+    //
   } else if (key=='G') {
+    //
   } else if (key=='h') {
     camera10();
   } else if (key=='H') {
+    //
   } else if (key=='j') {
+    //
   } else if (key=='J') {
+    //
   } else if (key=='k') {
+    //
   } else if (key=='k') {
+    //
   } else if (key=='l') {
+    //
   } else if (key=='L') {
+    //
   }
 
   //THIRD ROW ZXCVBNM
@@ -396,12 +408,15 @@ void keyPressed() {
   } else if (key=='c') {
     scene.camera().interpolateToFitScene(); //if any screen frame translations ahve happened this will jump :-/ hmm. otherwise its a nice zoom to fit
   } else if (key=='C') {
+    //
   } else if (key=='v') {
     camera1();
   } else if (key=='V') {
+    //
   } else if (key=='b') {
     camera2();
   } else if (key=='B') {
+    //
   } else if (key=='n') {
     camera3();
   } else if (key=='N') {
@@ -420,48 +435,48 @@ void keyPressed() {
     useFilters=false;
 
     sendOSC(Saturn);
+  } else if (key=='m') {
+    Moonlet = true;
+  } else if (key=='M') {
+    //turn on this alogorithm to send tony the data
+    MoonAlignment = !MoonAlignment;
   }
-} else if (key=='M') {
-  //turn on this alogorithm to send tony the data
-  MoonAlignment = !MoonAlignment;
-} else if (key=='m') {
-  Moonlet = true;
-}
+  
 }
 
 
-//-------------------------------
-public void keyReleased() {
-  //if you edit the camera pathways be sure to save them !!!!
-  if (key=='S') {
-    scene.saveConfig(); //outputs the camera path to a json file.
-    println("camera pathways saved");
+  //-------------------------------
+  public void keyReleased() {
+    //if you edit the camera pathways be sure to save them !!!!
+    if (key=='S') {
+      scene.saveConfig(); //outputs the camera path to a json file.
+      println("camera pathways saved");
+    }
   }
-}
 
-//----------------------------
+  //----------------------------
 
-//    //reinit plus some options
-//    G=6.67408E-9;
-//    Saturn = new RingSystem(11, 4, true);
-//    applyBasicMaterials();
+  //    //reinit plus some options
+  //    G=6.67408E-9;
+  //    Saturn = new RingSystem(11, 4, true);
+  //    applyBasicMaterials();
 
-//    //new materials for every ring
-//    for (Ring r : Saturn.rings) {
-//      r.material = RingMat3;
-//    }
+  //    //new materials for every ring
+  //    for (Ring r : Saturn.rings) {
+  //      r.material = RingMat3;
+  //    }
 
-//    for (Moon m : Saturn.moons) {
-//      m.radius = 5;
-//    }
+  //    for (Moon m : Saturn.moons) {
+  //      m.radius = 5;
+  //    }
 
-//    camera10();
-//    useAdditiveBlend=true;
-//    useTrace=false;
-//    Threading=false;
-//    Shearing=false;
-//    Tilting=false;
-//    //fade us back up or press x to do it manually
-//    systemState= State.fadeup;
+  //    camera10();
+  //    useAdditiveBlend=true;
+  //    useTrace=false;
+  //    Threading=false;
+  //    Shearing=false;
+  //    Tilting=false;
+  //    //fade us back up or press x to do it manually
+  //    systemState= State.fadeup;
 
-//------------------------------------
+  //------------------------------------
