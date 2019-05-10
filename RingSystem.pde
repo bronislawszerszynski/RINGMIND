@@ -2,7 +2,6 @@
  *
  * @author Thomas Cann
  * @author Sam Hinson
- * @version 1.0
  */
 
 //Simulation

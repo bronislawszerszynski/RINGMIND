@@ -58,7 +58,6 @@ class RingParticle extends Particle {
  *
  * @author Thomas Cann
  * @author Sam Hinson
- * @version 1.0
  */
 
 abstract class Particle {

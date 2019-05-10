@@ -67,26 +67,12 @@ void draw() {
     background(0);
   }
 
-  //*************time step******************
 
-  if (simToRealTimeRatio/frameRate < maxTimeStep) {
-    h_stepsize= simToRealTimeRatio/frameRate;
-    dt= simToRealTimeRatio/frameRate;
-  } else {
-    h_stepsize= maxTimeStep;
-    dt= maxTimeStep;
-    println("At Maximum Time Step");
-  }
-
-  //*************Update Frame******************
+  //*************Simulation Update Frame******************
 
   updateCurrentScene(millis());    //calls the render and anything specific to each scene state 
 
   titleText(); //debug info on frame title
-
-  //******************************************************
-
-  totalSimTime += dt;
 
   //******************************************************
 
@@ -103,6 +89,7 @@ void update() {
 void keyPressed() {
 
   if (key==' ') {
+    Running = !Running;
   }
   //NUMERICAL KEY
   if (key=='1') {
@@ -112,15 +99,25 @@ void keyPressed() {
   } else if (key=='3') {
     //Proscene - Camera Route #3
   } else if (key=='4') {
-    //
+    //introState
+    systemState= State.introState;
+    setupStates();
   } else if (key=='5') {
-    //
+    //ringmindStableState
+    systemState= State.ringmindStableState;
+    setupStates();
   } else if (key=='6') {
-    //
+    //connectedState
+    systemState= State.connectedState;
+    setupStates();
   } else if (key=='7') {
-    //
+    //saturnState
+    systemState= State.saturnState;
+    setupStates();
   } else if (key=='8') {
-    //
+    //shearState
+    systemState= State.shearState;
+    setupStates();
   } else if (key=='9') {
     //TiltSystem
     systemState= State.chaosState;
@@ -271,62 +268,3 @@ public void mouseReleased() {
   println(scene.camera().viewDirection());
   println();
 }
-
-//----------------------------
-
-//    //reinit plus some options
-//    G=6.67408E-9;
-//    Saturn = new RingSystem(11, 4, true);
-//    applyBasicMaterials();
-
-//    //new materials for every ring
-//    for (Ring r : Saturn.rings) {
-//      r.material = RingMat3;
-//    }
-
-//    for (Moon m : Saturn.moons) {
-//      m.radius = 5;
-//    }
-
-//    camera10();
-//    useAdditiveBlend=true;
-//    useTrace=false;
-//    Threading=false;
-//    Shearing=false;
-//    Tilting=false;
-//    //fade us back up or press x to do it manually
-//    systemState= State.fadeup;
-
-//------------------------------------
-
-
-//Threading=false;
-//    Tilting=false;
-//    Shearing=false;
-
-//    Saturn.rings.remove(0);
-
-//    applyBasicMaterials();
-//    for (Ring r : Saturn.rings) {
-//      r.material = RingMat5;
-//    }
-
-//--------------------------------------------------------------------------
-
-//Saturn.rings.get(0).material = RingMat1;
-//Saturn.rings.get(1).material = RingMat3; //same as below
-//Saturn.rings.get(2).material = RingMat3;
-//Saturn.rings.get(3).material = RingMat1;
-//Saturn.rings.get(4).material = RingMat1;
-//Saturn.rings.get(5).material = RingMat5;
-
-//closerCamera();
-//Connecting=false; 
-//Shearing=false;
-//Tilting=false;
-//// useAdditiveBlend=true;
-//useFilters=false;
-
-//sendOSC(Saturn);
-
-//------------------------------------------------------------------------
