@@ -257,7 +257,10 @@ public void mouseReleased() {
 void keyPressed() {
 
   if (key==' ') {
-  } else if (key=='1') {
+  }
+
+  //NUMERICAL KEY
+  if (key=='1') {
     //Proscene - Camera Route #1
   } else if (key=='2') {
     //Proscene - Camera Route #2
@@ -279,10 +282,112 @@ void keyPressed() {
     setupStates();
   } else if (key=='0') {
     initCamera();
+  }
+
+  //----------------------------TOP ROW QWERTYUIOP------------------------------------------------
+  if (key=='q') {
+    //
+  } else if (key=='Q') {
+    //
+  } else if (key=='w') {
+    //
+  } else if (key=='W') {
+    //
+  } else if (key=='e') {
+    //Proscene
+  } else if (key=='E') {
+    //
+  } else if (key=='r') {
+    //
+  } else if (key=='R') {
+    //
+  } else if (key=='t') {
+    //
+  } else if (key=='T') {
+    useTrace = !useTrace;
+  } else if (key=='y') {
+    //
+    Saturn.rings.add(new Ring(1, 1, 3, 0));
+    Saturn.addParticlesFromTable("outputParticles.csv");
+    Saturn.rings.get(1).setMaxRenderedParticle(Saturn.rings.get(1).particles.size());
+
+    applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat5;
+    }
+  } else if (key=='Y') {
+    //
+
+    Threading=false;
+    Tilting=false;
+    Shearing=false;
+    //zoomedCamera();
+    initCamera();
+    Saturn = new RingSystem(13, 0, true);
+
+    applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat5;
+    }
+  } else if (key=='u') {
+    //
+  } else if (key=='U') {
+    //
+  } else if (key=='i') {
+    //
+  } else if (key=='I') {
+    //
+  } else if (key=='o') {
+    //
   } else if (key=='O') {
     oscRingDensity(Saturn);
     oscRingRotationRate(Saturn);
-  } else if (key=='z') {
+  } else if (key=='p') {
+    //
+  } else if (key=='P') {
+    saveFrame("./screenshots/ringmind_screen-###.jpg");
+  }
+
+  //---------------------------SECOND ROW ASDGHJKL--------------------------------------------
+
+  if (key == 'a') {
+    //
+  } else if (key == 'A') {
+    useAdditiveBlend = !useAdditiveBlend;
+  } else if (key=='s') {
+  } else if (key=='S') {
+  } else if (key=='d') {
+    traceAmount=190;
+  } else if (key=='D') {
+    Threading=false;
+    Tilting=false;
+    Shearing=false;
+
+    Saturn.rings.remove(0);
+
+    applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat5;
+    }
+  } else if (key=='f') {
+  } else if (key=='F') {
+    useFilters=!useFilters;
+  } else if (key=='g') {
+  } else if (key=='G') {
+  } else if (key=='h') {
+    camera10();
+  } else if (key=='H') {
+  } else if (key=='j') {
+  } else if (key=='J') {
+  } else if (key=='k') {
+  } else if (key=='k') {
+  } else if (key=='l') {
+  } else if (key=='L') {
+  }
+
+  //THIRD ROW ZXCVBNM
+
+  if (key=='z') {
     systemState= State.fadetoblack; //fadeout all particles from everything
   } else if (key=='Z') {
   } else if (key=='x') {
@@ -300,63 +405,6 @@ void keyPressed() {
   } else if (key=='n') {
     camera3();
   } else if (key=='N') {
-  } else if (key=='h') {
-    camera10();
-  } else if (key=='P') {
-    saveFrame("./screenshots/ringmind_screen-###.jpg");
-  } else if (key=='r') {
-  } else if (key == 'A') {
-    useAdditiveBlend = !useAdditiveBlend;
-  } else if (key == 'T') {
-    useTrace = !useTrace;
-  } else if (key=='F') {
-    useFilters=!useFilters;
-  } else if (key=='M') {
-    //turn on this alogorithm to send tony the data
-    MoonAlignment = !MoonAlignment;
-  } else if (key=='m') {
-    Moonlet = true;
-  } else if (key=='C') {
-  } else if (key=='G') {
-  } else if (key=='p') {
-  } else if (key=='d') {
-    traceAmount=190;
-  } else if (key=='Y') {
-
-
-    Threading=false;
-    Tilting=false;
-    Shearing=false;
-    //zoomedCamera();
-    initCamera();
-    Saturn = new RingSystem(13, 0, true);
-
-    applyBasicMaterials();
-    for (Ring r : Saturn.rings) {
-      r.material = RingMat5;
-    }
-  } else if (key=='y') {
-
-    Saturn.rings.add(new Ring(1, 1, 3, 0));
-    Saturn.addParticlesFromTable("outputParticles.csv");
-    Saturn.rings.get(1).setMaxRenderedParticle(Saturn.rings.get(1).particles.size());
-
-    applyBasicMaterials();
-    for (Ring r : Saturn.rings) {
-      r.material = RingMat5;
-    }
-  } else if (key=='D') {
-    Threading=false;
-    Tilting=false;
-    Shearing=false;
-
-    Saturn.rings.remove(0);
-
-    applyBasicMaterials();
-    for (Ring r : Saturn.rings) {
-      r.material = RingMat5;
-    }
-  } else if (key=='N') {
     Saturn.rings.get(0).material = RingMat1;
     Saturn.rings.get(1).material = RingMat3; //same as below
     Saturn.rings.get(2).material = RingMat3;
@@ -373,6 +421,12 @@ void keyPressed() {
 
     sendOSC(Saturn);
   }
+} else if (key=='M') {
+  //turn on this alogorithm to send tony the data
+  MoonAlignment = !MoonAlignment;
+} else if (key=='m') {
+  Moonlet = true;
+}
 }
 
 
