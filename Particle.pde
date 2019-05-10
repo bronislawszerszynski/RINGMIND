@@ -28,9 +28,9 @@ class RingParticle extends Particle {
     // Initialise ourRingParticle.
     super(radius, random(1)*2.0*PI);
   }
-  
-  RingParticle(){
-   super(); 
+
+  RingParticle() {
+    super();
   }
 
   /**
@@ -62,7 +62,7 @@ class RingParticle extends Particle {
  */
 
 abstract class Particle {
-  
+
   PVector position; // Position float x1, x2, x3; 
   PVector velocity; // Velocity float v1, v2, v3;
   PVector acceleration;  //Update all constructors!
@@ -76,7 +76,6 @@ abstract class Particle {
     //default velocity
     this.velocity = new PVector(v1_, v2_, v3_);
     this.acceleration = new PVector(a1_, a2_, a3_);
-    
   }
 
   /**
@@ -100,14 +99,13 @@ abstract class Particle {
     this.velocity = velocity_.copy();
   }
 
-
   /**
    *  Class Constuctor - Initialises an Orboid object with a random position in the ring with correct orbital velocity. 
    */
   Particle(float r, float phi) {
-    this(r*cos(phi), r*sin(phi),0, sqrt(GMp/(r))*sin(phi), -sqrt(GMp/(r))*cos(phi), 0);
+    this(r*cos(phi), r*sin(phi), 0, sqrt(GMp/(r))*sin(phi), -sqrt(GMp/(r))*cos(phi), 0);
   }
-  
+
   /**
    *  Class Constuctor - Initialises an RingParticle object with a random position in the ring with correct orbital velocity. 
    */
@@ -115,7 +113,6 @@ abstract class Particle {
     // Initialise ourRingParticle.
     this(radius, random(1)*2.0*PI); //random(1)
   }
-  
 
   /**
    *  Class Constuctor - Initialises an Particle object with zero position and velocity. 
@@ -129,8 +126,8 @@ abstract class Particle {
    */
   void display() {
   }
-  
-    /**
+
+  /**
    *
    */
   void render(PGraphics x) {
@@ -155,8 +152,8 @@ abstract class Particle {
     PVector a_grav = PVector.mult(position.copy().normalize(), -GMp/position.copy().magSq());
 
     //Acceleration from the Grid Object
-    for(Grid x : rs.g){
-    a_grav.add(x.gridAcceleration(this));
+    for (Grid x : rs.g) {
+      a_grav.add(x.gridAcceleration(this));
     }
 
     return a_grav;

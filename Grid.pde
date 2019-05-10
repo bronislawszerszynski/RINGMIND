@@ -13,7 +13,6 @@ float GRID_DRAG_PROBABILITY = 1E4 ;
 
 class Grid {
 
-
   protected float dr, dtheta, r_min, r_max; 
   protected int sizeTheta, sizeR;
   protected float drag_c, drag_p;  //Constants for Drag Rule.
@@ -180,7 +179,6 @@ class Grid {
     return sqrt(radiusCell(j(p))/p.position.mag());
   }
 
-
   /**
    * Check to see if the Particle is in the grid .
    *
@@ -224,7 +222,6 @@ class Grid {
     float angle = angleCell(i);
     return new PVector(sqrt(GMp/(r))*sin(angle), -sqrt(GMp/(r))*cos(angle));
   }
-
 
   /**
    * Acceleration on a particle due to average values in a grid.  
@@ -314,8 +311,6 @@ class Grid {
     }
     return a_selfgrav;
   }
-
-
 
   /**
    *    Displays Grid cell mouse is over and relevant informotion when mouse is pressed
@@ -481,8 +476,6 @@ class Grid {
       }
     }
   }
-
-
 
 //---------------------------------------
 void tiltupdate(RingSystem rs) {

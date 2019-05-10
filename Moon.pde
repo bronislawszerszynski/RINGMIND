@@ -55,7 +55,6 @@ class Moon extends Particle implements Alignable {
     this.velocity.z = v.z;
   }
 
-
   /**
    *  Display Method - Renders this object to screen displaying its position and colour.
    */
@@ -78,7 +77,6 @@ class Moon extends Particle implements Alignable {
   //  x.pop();
   //}
 
-
   /**
    *  Calculates the acceleration on this particle (based on its current position) (Does not override value of acceleration of particle)
    */
@@ -99,7 +97,6 @@ class Moon extends Particle implements Alignable {
 
     return a_grav;
   }
-
 
 // moon 360 position is missing.
 
@@ -136,8 +133,7 @@ class Moon extends Particle implements Alignable {
     return sqrt(GMp/(pow(m.position.mag(), 3.0)));
   }
   
-  
-  //method to get the angle in degrees of the moon
+    //method to get the angle in degrees of the moon
   
   float moonAngle(Moon m){
     PVector center = new PVector(0,0,0);
@@ -150,66 +146,3 @@ public interface Alignable {
   public boolean isAligned(Alignable other); //Alignment Threshold
   //public float timeToAlignment(Alignable other); //What units? [s]
 }
-
-
-//void initMoonWeight() {
-//  Saturn.moons.get(0).moonWeight=1.77e6*SCALE;
-//  Saturn.moons.get(1).moonWeight=2.66e6*SCALE;
-//  Saturn.moons.get(2).moonWeight=9.90e5*SCALE;
-//  Saturn.moons.get(3).moonWeight=(1.32e6*SCALE)/2;
-//  Saturn.moons.get(4).moonWeight=4.08e6*SCALE;
-//  Saturn.moons.get(5).moonWeight=(1.65e7*SCALE)/4;
-//  Saturn.moons.get(6).moonWeight=(6.85e7*SCALE)/4;
-//  Saturn.moons.get(7).moonWeight=(8.57e7*SCALE)/8;
-//  Saturn.moons.get(8).moonWeight=(2.08e8*SCALE)/8;
-//  Saturn.moons.get(9).moonWeight=(7.46e7*SCALE)/6;
-//}
-
-    //for (Moon m : Saturn.moons) {
-    //  m.moonWeight = 1;
-    //}
-
-    //Saturn.moons.get(0).moonWeight=1;
-    //Saturn.moons.get(1).moonWeight=1;
-    //Saturn.moons.get(2).moonWeight=2;
-    //Saturn.moons.get(3).moonWeight=2;
-    //Saturn.moons.get(4).moonWeight=3;
-    //Saturn.moons.get(5).moonWeight=3;
-    //Saturn.moons.get(6).moonWeight=4;
-    //Saturn.moons.get(7).moonWeight=4;
-    //Saturn.moons.get(8).moonWeight=5;
-    //Saturn.moons.get(9).moonWeight=5;
-    
-    //Saturn.moons.get(0).moonWeight=1.77e6*SCALE;
-    //Saturn.moons.get(1).moonWeight=2.66e6*SCALE;
-    //Saturn.moons.get(2).moonWeight=9.90e5*SCALE;
-    //Saturn.moons.get(3).moonWeight=(1.32e6*SCALE)/2;
-    //Saturn.moons.get(4).moonWeight=4.08e6*SCALE;
-    //Saturn.moons.get(5).moonWeight=1.65e7*SCALE;
-    //Saturn.moons.get(6).moonWeight=(6.85e7*SCALE)/4;
-    //Saturn.moons.get(7).moonWeight=(8.57e7*SCALE)/4;
-    //Saturn.moons.get(8).moonWeight=(2.08e8*SCALE)/4;
-    //Saturn.moons.get(9).moonWeight=(7.46e7*SCALE)/4;
-    
-    
-//    Saturn.moons.get(0).moonWeight=1.77e6*SCALE;
-//    Saturn.moons.get(1).moonWeight=2.66e6*SCALE;
-//    Saturn.moons.get(2).moonWeight=9.90e5*SCALE;
-//    Saturn.moons.get(3).moonWeight=(1.32e6*SCALE)/2;
-//    Saturn.moons.get(4).moonWeight=4.08e6*SCALE;
-//    Saturn.moons.get(5).moonWeight=1.65e7*SCALE;
-//    Saturn.moons.get(6).moonWeight=(6.85e7*SCALE)/4;
-//    Saturn.moons.get(7).moonWeight=(8.57e7*SCALE)/4;
-//    Saturn.moons.get(8).moonWeight=(2.08e8*SCALE)/4;
-//    Saturn.moons.get(9).moonWeight=(7.46e7*SCALE)/4;
-
-//    Saturn.moons.get(0).moonWeight=1.77e6*SCALE;
-//    Saturn.moons.get(1).moonWeight=2.66e6*SCALE;
-//    Saturn.moons.get(2).moonWeight=9.90e5*SCALE;
-//    Saturn.moons.get(3).moonWeight=(1.32e6*SCALE)/2;
-//    Saturn.moons.get(4).moonWeight=4.08e6*SCALE;
-//    Saturn.moons.get(5).moonWeight=1.65e7*SCALE;
-//    Saturn.moons.get(6).moonWeight=(6.85e7*SCALE)/4;
-//    Saturn.moons.get(7).moonWeight=(8.57e7*SCALE)/4;
-//    Saturn.moons.get(8).moonWeight=(2.08e8*SCALE)/4;
-//    Saturn.moons.get(9).moonWeight=(7.46e7*SCALE)/4;

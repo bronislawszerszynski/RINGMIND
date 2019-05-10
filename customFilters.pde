@@ -15,7 +15,6 @@ void loadFilters(){
   metaBallThreshold.set("antialiasing", 0.05); // values between 0.00 and 0.10 work best
 }
 
-
 void applyFilters(){
    // Vertical blur pass
   gaussianBlur.set("horizontalPass", 0);

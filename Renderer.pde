@@ -11,7 +11,6 @@ void renderOffScreenOnPGraphics() {
   pg.endDraw();
 }
 
-
 //a little keyhole example
 void renderOffScreenOnPGraphics2() {
   pg.beginDraw();
@@ -33,7 +32,6 @@ void renderOffScreenOnPGraphicsClean() {
 
 //-----------------------------------------------------------------------------------------
 
-
 class RenderContext {
   RenderContext() {
     mat = new Material();
@@ -43,6 +41,7 @@ class RenderContext {
   PApplet pgfx;
 }
 
+//-----------------------------------------------------------------------------------------
 
 class Material {
   PImage diffTexture;
@@ -53,14 +52,14 @@ class Material {
   float strokeWeight = 1; //usually 1 so we can see our texture but if we turn off we can make a smaller particle point as liong as the weight above is bigger than 1
 }
 
-//-------------------------------------------------
+//-----------------------------------------------------------------------------------------
 
 class RingSystemRenderer {
   boolean withMoon = true;
 
   int ringNumber = 1;
 
-  //----------------------------------------------------------------
+  //-----------------------------------------------------------------------------------------
 
   void render(RingSystem rs, RenderContext ctx, int renderType) {
     PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
@@ -108,10 +107,10 @@ class RingSystemRenderer {
         stroke(m.c);
         //strokeWeight(m.radius*SCALE);
         strokeWeight(1);
-        
+
         //beginShape(POINTS);
-         translate(SCALE*m.position.x, SCALE*m.position.y, 0);
-         sphere(m.radius*SCALE);
+        translate(SCALE*m.position.x, SCALE*m.position.y, 0);
+        sphere(m.radius*SCALE);
         //vertex(SCALE*m.position.x, SCALE*m.position.y, 2*m.radius*SCALE);
         //endShape();
         // circle(scale*position.x, scale*position.y, 2*radius*scale);
@@ -121,9 +120,8 @@ class RingSystemRenderer {
     }
   }
 
+  //-----------------------------------------------------------------------------------------
 
-
-  //----------------------------------------------------------------------------------------------------------
   void renderShear(ShearingBox ss, RenderContext ctx, int renderType) {
     PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
 
@@ -135,7 +133,6 @@ class RingSystemRenderer {
     if (mat == null) {
       mat = ctx.mat;
     }
-
 
     stroke(mat.strokeColor, mat.partAlpha);
     strokeWeight(mat.strokeWeight);
@@ -157,21 +154,18 @@ class RingSystemRenderer {
     if (Moonlet) {
       //ellipseMode(CENTER);
       //push();
-     // translate(0, 0);
-     // fill(0);
-     // sphere(moonlet_r/8);
-    //  pop();
+      // translate(0, 0);
+      // fill(0);
+      // sphere(moonlet_r/8);
+      //  pop();
     }
   }
-  
-  //-----------------------------------------------------------------------------------------------------
 
   void renderTilt(RingSystem rs, RenderContext ctx, int renderType) {
     PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
 
     push();
     shader(ctx.shader, POINTS);
-
 
     Ring r = rs.rings.get(0);
     // Ring r = rs.rings.get(i);
@@ -180,8 +174,6 @@ class RingSystemRenderer {
     if (mat == null) {
       mat = ctx.mat;
     }
-
-
 
     stroke(mat.strokeColor, mat.partAlpha);
     strokeWeight(mat.strokeWeight);
@@ -207,8 +199,8 @@ class RingSystemRenderer {
   void renderComms(RingSystem rs, RenderContext ctx, int renderType) {
 
     // this is just when we have one ring.
-    
-    
+
+
     PGraphicsOpenGL pg = (PGraphicsOpenGL) ctx.pgfx.g;
 
     push();
@@ -232,7 +224,7 @@ class RingSystemRenderer {
 
 
     //now lets go through all those particles and see if they are near to another and draw lines between them
-    
+
     //for (int i=0; i <1000; i++){
     //  RingParticle rp = (RingParticle) r.particles.get(i);
     //  float distance=0;
@@ -247,21 +239,21 @@ class RingSystemRenderer {
     //   }
     //}
     beginShape(LINES);
-    for (int i=0; i <1000; i++){
+    for (int i=0; i <1000; i++) {
       RingParticle rp = (RingParticle) r.particles.get(i);
       float distance=0;
-       for (int j=0; j <3000; j++){
-         RingParticle rpj = (RingParticle) r.particles.get(j);
-         distance = dist(SCALE*rp.position.x,SCALE*rp.position.y, SCALE*rpj.position.x, SCALE*rpj.position.y);
-         if (distance < 20){
-           //stroke(255);
-           //strokeWeight(10);
-           //beginShape(LINES);
-           vertex(SCALE*rp.position.x,SCALE*rp.position.y);
-           vertex(SCALE*rpj.position.x, SCALE*rpj.position.y);
-           //endShape();
-         }
-       }
+      for (int j=0; j <3000; j++) {
+        RingParticle rpj = (RingParticle) r.particles.get(j);
+        distance = dist(SCALE*rp.position.x, SCALE*rp.position.y, SCALE*rpj.position.x, SCALE*rpj.position.y);
+        if (distance < 20) {
+          //stroke(255);
+          //strokeWeight(10);
+          //beginShape(LINES);
+          vertex(SCALE*rp.position.x, SCALE*rp.position.y);
+          vertex(SCALE*rpj.position.x, SCALE*rpj.position.y);
+          //endShape();
+        }
+      }
     }
     endShape();
 

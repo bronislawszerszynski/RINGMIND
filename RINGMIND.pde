@@ -2,7 +2,6 @@
  * Class RingSystemProcessing 
  * A gravitational simulation in a Cartesian coordinate system.
  */
-
 /*
  * Physics Coding by Lancaster University Physics Graduates.
  * @author Thomas Cann
@@ -12,7 +11,6 @@
  * @author ashley james brown march-may.2019 
  */
 
-
 ///////////////
 //           //
 //           //
@@ -20,7 +18,6 @@
 //           //
 //           //
 ///////////////
-
 
 //syphon system to send to other applications
 
@@ -68,7 +65,6 @@ PShader offscreenShader;
 
 void settings() {
 
-
   //fullScreen(P3D, 1);
   size (1920, 800, P3D);
 
@@ -85,7 +81,6 @@ void setup() {
   setupOSC();
 
   randomSeed(3);
-
 
   // --------------renderer setup------------------
   rsRenderer = new RingSystemRenderer();
@@ -122,12 +117,7 @@ void setup() {
   sendOSC(Saturn);
 }
 
-
 //--------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 void draw() {
 
@@ -139,8 +129,6 @@ void draw() {
   } else {
     background(0);
   }
-
-
 
   //*************time step******************
   if (simToRealTimeRatio/frameRate < maxTimeStep) {
@@ -165,7 +153,6 @@ void draw() {
   //display();
   //}
 
-
   //*************Update and Render Frame******************
 
   if (Shearing) {
@@ -185,14 +172,10 @@ void draw() {
     Saturn.update();
   }
 
-
-
   //calls the render and anything specific to each scene state
   updateCurrentScene(millis()); 
 
   titleText(); //debug info on frame title
-
-
 
   //******************************************************
 
@@ -208,7 +191,6 @@ void draw() {
   //if we need to use multiple screens then lets sent it to madmapper and map it.
   //server.sendScreen();
 }
-
 
 void update() {
   Saturn.update();
@@ -372,7 +354,6 @@ void keyPressed() {
     MoonAlignment = !MoonAlignment;
   }
 }
-
 
 //-------------------------------
 public void keyReleased() {

@@ -33,8 +33,6 @@ float moonlet_GM = SG*(4.0*PI/3.0)*pow(moonlet_r, 3.0)*moonlet_density; //Standa
 final float Omega0 = sqrt(SGM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
 final float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
 
-
-
 float num_particles = 50000; //if not using table we can use more than 1000
 
 float scale =10.0; //Makes Particles Visible
@@ -71,9 +69,8 @@ class ShearingBox {
     //println(Omega0+ " " + S0);
 
     random_start();
-   // initTable();
+    // initTable();
   }
-
 
   void initTable() {
     if (Reset) {
@@ -141,7 +138,6 @@ class ShearingBox {
     //}
   }
 
-
   Table particlesToTable() {
     Table tempTable = new Table();
 
@@ -162,12 +158,8 @@ class ShearingBox {
       newRow.setFloat(8, sp.acceleration.z);
     }
 
-
-
     return tempTable;
   }
-
-
 
   /** Take a step using the Velocity Verlet (Leapfrog) ODE integration algorithm.
    *   TODO: Check Algorithm is correct.
@@ -185,8 +177,6 @@ class ShearingBox {
       // Zero acceleration to start
       x.updatePosition();
     }
-
-
 
     //Calculate Second Approximation to the acceleration.
     for (ShearParticle x : Sparticles) {
@@ -207,7 +197,6 @@ class ShearingBox {
       }
     }
   }
-
 
   /** Method to boolean if Particle is out of ShearingBox.
    *@param x  A Particle to inject.
@@ -308,8 +297,6 @@ class ShearingBox {
       //}
     }
 
-
-
     // Run through the Grid
     for (int i = 0; i < cols; i++) {
       //line(i*scl,0,i*scl,height);
@@ -324,8 +311,6 @@ class ShearingBox {
           for (ShearParticle other : temp) {
             // As long as its not the same one
             if (other != p) {
-
-
 
               // Check to see if they are touching
               // (We could do many other things here besides just intersection tests, such
@@ -447,13 +432,9 @@ class ShearingBox {
   }
 }
 
-
-
 //------------------------------------- SHEAR PARTICLE -------------------------------------------------------
 
-
 class ShearParticle {
-
 
   PVector position; //position vector
   //position.x;    //Position of Particle along planet-point line relative to moonlet [m].
@@ -468,8 +449,6 @@ class ShearParticle {
   float m;
 
   boolean highlight= false;
-
-
 
   /**CONSTUCTOR Particle
    */
@@ -496,7 +475,6 @@ class ShearParticle {
     this.SPGM = SG* (4.0*PI/3.0)*pow(radius, 3.0)*particle_rho;
     m= PI*pow(radius, 3.0)*4.0/3.0;
   }
-
 
   /**Method to Display Particle
    */
@@ -531,7 +509,6 @@ class ShearParticle {
     stroke(c);
     line(0, 0, -v.y*scale, -v.x*scale);
   }
-
 
   /**
    *  Calculates the acceleration on this particle (based on its current position) (Does not override value of acceleration of particle)

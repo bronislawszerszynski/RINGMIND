@@ -4,7 +4,6 @@ float LAMBDA= 3E-5;
 
 class TiltParticle extends Particle {
 
-
   float rotation;
   float inclination;
   float initialiseTime;
@@ -45,11 +44,10 @@ class TiltParticle extends Particle {
     initialiseTime = millis();
   }
 
-
   float inclination() {
     return inclination* exp(-LAMBDA*(millis()-initialiseTime)) +minInclination ;
   }
-  
+
   PVector getAcceleration(RingSystem rs) {
 
     // acceleration due planet in centre of the ring. 
@@ -66,9 +64,6 @@ class TiltParticle extends Particle {
     }
     return a_grav;
   }
-  
-  
-  
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------
@@ -92,7 +87,6 @@ PVector displayRotate(TiltParticle p) {
   temp.x = cosa * temp1.x - sina * temp1.y;
 
   temp.y = cosa * temp1.y + sina * temp1.x;
-
 
   return temp;
 }

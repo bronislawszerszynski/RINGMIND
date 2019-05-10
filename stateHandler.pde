@@ -27,9 +27,7 @@ enum State {
     nocamlock
 };
 
-
 // brons scenarios from script
-
 
 /*
 
@@ -46,7 +44,6 @@ enum State {
  outro - what is a ringmind lets return back to the beginning.
  
  */
-
 
 State systemState;
 
@@ -69,15 +66,12 @@ abstract class Scenario {
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 void setupStates() {
 
   Shearing=false;
   Tilting=false; 
   Connecting=false;
   Threading=false;
-
 
   switch(systemState) {
   case initState:
@@ -144,7 +138,6 @@ void setupStates() {
       r.material = RingMat3;
     }
 
-
     Saturn.rings.get(0).material = RingMat4;
     Saturn.rings.get(1).material = RingMat2; //same as below
     Saturn.rings.get(2).material = RingMat2;
@@ -153,7 +146,6 @@ void setupStates() {
     Saturn.rings.get(5).material = RingMat5;
 
     closerCamera();
-
 
     break;
 
@@ -301,13 +293,10 @@ void setupStates() {
 
 // evaluate what state determine time and then transition to the next state
 
-
 void evaluateScenario() {
 
   int t =millis();
 }
-
-
 
 // update scenario method so depending on which scenario do different things and render differently etc
 // basically like a void draw for each scneario and we switch to its one depending on what scene we in.
@@ -322,8 +311,6 @@ void updateCurrentScene(int t) {
   } else {
     blendMode(NORMAL);
   }
-
-
 
   switch(systemState) {
   case initState:
@@ -343,9 +330,6 @@ void updateCurrentScene(int t) {
     break;
 
   case ringmindState: 
-
-
-
     break;
 
   case makingState:
@@ -417,13 +401,9 @@ void updateCurrentScene(int t) {
     break;
   }
 
-
-
-
   // renderOffScreenOnPGraphics(); // this fills the diffuse texture
   // renderOffScreenOnPGraphics2(); // this is the keyhole overlay
   renderOffScreenOnPGraphicsClean();
-
 
   //default render must stay
   rsRenderer.withMoon = drawMoons;

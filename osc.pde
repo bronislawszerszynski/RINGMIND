@@ -18,7 +18,6 @@ void setupOSC() {
   println("comms connected on port "+portNum);
 }
 
-
 //------------------------------------------------------OSC METHODS------------------------------
 
 void oscMoonAlignment(int moonB, float t) {

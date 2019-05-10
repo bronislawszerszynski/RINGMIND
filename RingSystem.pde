@@ -16,10 +16,6 @@ float GMp = 3.7931187e16;    // Gravitational parameter (Saturn)
 // What are the minimum and maximum extents in r for initialisation
 float R_MIN = 1;
 float R_MAX = 5;
-
-
-
-
 final float Rp = 60268e3;          // Length scale (1 Saturn radius) [m]
 final float SCALE = 100/Rp;        // Converts from [m] to [pixel] with planetary radius (in pixels) equal to the numerator. Size of a pixel represents approximately 600km.
 
@@ -74,8 +70,6 @@ class RingSystem {
       }
     }
 
-
-
     //***********************************************
   }
 
@@ -99,8 +93,6 @@ class RingSystem {
     //}
   }
 
-
-
   //-----------------------------------------------
 
   void initialise() {
@@ -120,8 +112,9 @@ class RingSystem {
     }
   }
 
+  //*********************Initialise Moons*********************
+
   void initialiseMoons() {
-    //***********Initialise Moons*********************
     moons.clear();
 
 
@@ -295,7 +288,6 @@ class RingSystem {
     }
   }
 
-
   void addParticlesFromTable(String Filename) {
     Table table; 
     table = loadTable("./files/"+Filename);//output.csv");//"input.csv"
@@ -317,13 +309,6 @@ class RingSystem {
       totalParticles.add(temp);
     }
   }
-
-
-
-
-
-
-
 
   void importFromFile(String filename) {
     rings.add(new Ring(0, 1, 3, 0));
@@ -385,8 +370,7 @@ class RingSystem {
     }
   }//end update
 
-
-  void tiltupdate() {
+ void tiltupdate() {
     for (TiltParticle p : totalTParticles) {
       p.set_getAcceleration(this);
     }
@@ -549,7 +533,6 @@ class RingSystem {
       // Pheobe Mass 8.3e18 [kg] Radius 1.09e5 [m] Orbital Radius 12944e6 [m] 
       m.add(new Moon(18, G*8.3e18, 1.09e5, 12994e6));
       break;
-
     case 19:
       m.add(new Moon(19, G*3.7e18, 1.77e6, 1.373657091*Rp));    
       break;
@@ -604,7 +587,6 @@ class Ring {
   float r_inner, r_outer, Omega0, density;
   color c;
 
-
   /**
    *  Class Constuctor - General need passing all the values. 
    */
@@ -626,7 +608,6 @@ class Ring {
     // this.density = density();
   }
 
-
   //tilted ring doesnt have an ID
   Ring(float Inner, float Outer, int n_particles) {
     Tparticles = new ArrayList<TiltParticle>();
@@ -644,7 +625,6 @@ class Ring {
     //maxRenderedParticle = n_particles;
   }
 
-
   //--- new render methods setter and getter
 
   int getMaxRenderedParticle() {
@@ -655,7 +635,6 @@ class Ring {
     maxRenderedParticle = min(particles.size(), newMax);
   }
 
-
   /** Method to calculate the Keplerian orbital angular frequency (using Kepler's 3rd law).
    *@param r Radial position (semi-major axis) to calculate the period [m].
    *@return The angular frequency [radians/s].
@@ -663,8 +642,6 @@ class Ring {
   float kepler_omega(float r) {
     return sqrt(1/(pow(r, 3.0)));
   }
-
-
 
   /** Method to calculate the density of particles in ring.
    *@return denstiy [N/A].
