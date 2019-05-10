@@ -225,38 +225,15 @@ void fps() {
   surface.setTitle("Framerate: " + int(frameRate) + "     Time Elapsed[Seconds]: " + int(millis()/1000.0) + "     Simulation Time Elapsed[hours]: " + int(totalSimTime/3600.0)); //Set the frame title to the frame rate
 }
 
-
-
-
-
-//---------------------------- MOUSE -----------------------------------------------------------------------
-
-public void mouseReleased() {
-  //lets debug print all the camera stuff to help figure out what data we need for each scene
-  println("****** camera debug info ******");
-  println();
-  println("camera orientation");
-  Rotation r = scene.camera().frame().orientation();
-  r.print();
-  println();
-  println("camera position");
-  println(scene.camera().position());
-  println();
-  println("view direction");
-  println(scene.camera().viewDirection());
-  println();
-
-  //the translate is missing ? what is the number i need argh
-}
-
-
 //--------------------------- INTERACTION KEYS -------------------------------------------------------------------
-
 
 void keyPressed() {
 
   if (key==' ') {
-  } else if (key=='1') {
+  }
+
+  //NUMERICAL KEY
+  if (key=='1') {
     //Proscene - Camera Route #1
   } else if (key=='2') {
     //Proscene - Camera Route #2
@@ -278,10 +255,95 @@ void keyPressed() {
     setupStates();
   } else if (key=='0') {
     initCamera();
+  }
+
+  //----------------------------TOP ROW QWERTYUIOP------------------------------------------------
+  if (key=='q') {
+    //
+  } else if (key=='Q') {
+    //
+  } else if (key=='w') {
+    //
+  } else if (key=='W') {
+    //
+  } else if (key=='e') {
+    //Proscene
+  } else if (key=='E') {
+    //
+  } else if (key=='r') {
+    //
+  } else if (key=='R') {
+    //
+  } else if (key=='t') {
+    //
+  } else if (key=='T') {
+    useTrace = !useTrace;
+  } else if (key=='y') {
+    //
+  } else if (key=='Y') {
+    //
+  } else if (key=='u') {
+    //
+  } else if (key=='U') {
+    //
+  } else if (key=='i') {
+    //
+  } else if (key=='I') {
+    //
+  } else if (key=='o') {
+    //
   } else if (key=='O') {
     oscRingDensity(Saturn);
     oscRingRotationRate(Saturn);
-  } else if (key=='z') {
+  } else if (key=='p') {
+    //
+  } else if (key=='P') {
+    saveFrame("./screenshots/ringmind_screen-###.jpg");
+  }
+
+  //---------------------------SECOND ROW ASDGHJKL--------------------------------------------
+
+  if (key == 'a') {
+    //
+  } else if (key == 'A') {
+    useAdditiveBlend = !useAdditiveBlend;
+  } else if (key=='s') {
+    //
+  } else if (key=='S') {
+    //
+  } else if (key=='d') {
+    traceAmount=190;
+  } else if (key=='D') {
+    //
+  } else if (key=='f') {
+    //
+  } else if (key=='F') {
+    useFilters=!useFilters;
+  } else if (key=='g') {
+    //
+  } else if (key=='G') {
+    //
+  } else if (key=='h') {
+    camera10();
+  } else if (key=='H') {
+    //
+  } else if (key=='j') {
+    //
+  } else if (key=='J') {
+    //
+  } else if (key=='k') {
+    //
+  } else if (key=='k') {
+    //
+  } else if (key=='l') {
+    //
+  } else if (key=='L') {
+    //
+  }
+
+  //THIRD ROW ZXCVBNM
+
+  if (key=='z') {
     systemState= State.fadetoblack; //fadeout all particles from everything
   } else if (key=='Z') {
   } else if (key=='x') {
@@ -290,87 +352,24 @@ void keyPressed() {
   } else if (key=='c') {
     scene.camera().interpolateToFitScene(); //if any screen frame translations ahve happened this will jump :-/ hmm. otherwise its a nice zoom to fit
   } else if (key=='C') {
+    //
   } else if (key=='v') {
     camera1();
   } else if (key=='V') {
+    //
   } else if (key=='b') {
     camera2();
   } else if (key=='B') {
+    //
   } else if (key=='n') {
     camera3();
   } else if (key=='N') {
-  } else if (key=='h') {
-    camera10();
-  } else if (key=='P') {
-    saveFrame("./screenshots/ringmind_screen-###.jpg");
-  } else if (key=='r') {
-  } else if (key == 'A') {
-    useAdditiveBlend = !useAdditiveBlend;
-  } else if (key == 'T') {
-    useTrace = !useTrace;
-  } else if (key=='F') {
-    useFilters=!useFilters;
+    //
+  } else if (key=='m') {
+    Moonlet = true;
   } else if (key=='M') {
     //turn on this alogorithm to send tony the data
     MoonAlignment = !MoonAlignment;
-  } else if (key=='m') {
-    Moonlet = true;
-  } else if (key=='C') {
-  } else if (key=='G') {
-  } else if (key=='p') {
-  } else if (key=='d') {
-    traceAmount=190;
-  } else if (key=='Y') {
-
-
-    Threading=false;
-    Tilting=false;
-    Shearing=false;
-    //zoomedCamera();
-    initCamera();
-    Saturn = new RingSystem(13, 0, true);
-
-    applyBasicMaterials();
-    for (Ring r : Saturn.rings) {
-      r.material = RingMat5;
-    }
-  } else if (key=='y') {
-
-    Saturn.rings.add(new Ring(1, 1, 3, 0));
-    Saturn.addParticlesFromTable("outputParticles.csv");
-    Saturn.rings.get(1).setMaxRenderedParticle(Saturn.rings.get(1).particles.size());
-
-    applyBasicMaterials();
-    for (Ring r : Saturn.rings) {
-      r.material = RingMat5;
-    }
-  } else if (key=='D') {
-    Threading=false;
-    Tilting=false;
-    Shearing=false;
-
-    Saturn.rings.remove(0);
-
-    applyBasicMaterials();
-    for (Ring r : Saturn.rings) {
-      r.material = RingMat5;
-    }
-  } else if (key=='N') {
-    Saturn.rings.get(0).material = RingMat1;
-    Saturn.rings.get(1).material = RingMat3; //same as below
-    Saturn.rings.get(2).material = RingMat3;
-    Saturn.rings.get(3).material = RingMat1;
-    Saturn.rings.get(4).material = RingMat1;
-    Saturn.rings.get(5).material = RingMat5;
-
-    closerCamera();
-    Connecting=false; 
-    Shearing=false;
-    Tilting=false;
-    // useAdditiveBlend=true;
-    useFilters=false;
-
-    sendOSC(Saturn);
   }
 }
 
@@ -382,6 +381,24 @@ public void keyReleased() {
     scene.saveConfig(); //outputs the camera path to a json file.
     println("camera pathways saved");
   }
+}
+
+//---------------------------- MOUSE -----------------------------------------------------------------------
+
+public void mouseReleased() {
+  //lets debug print all the camera stuff to help figure out what data we need for each scene
+  println("****** camera debug info ******");
+  println();
+  println("camera orientation");
+  Rotation r = scene.camera().frame().orientation();
+  r.print();
+  println();
+  println("camera position");
+  println(scene.camera().position());
+  println();
+  println("view direction");
+  println(scene.camera().viewDirection());
+  println();
 }
 
 //----------------------------
@@ -410,3 +427,35 @@ public void keyReleased() {
 //    systemState= State.fadeup;
 
 //------------------------------------
+
+
+//Threading=false;
+//    Tilting=false;
+//    Shearing=false;
+
+//    Saturn.rings.remove(0);
+
+//    applyBasicMaterials();
+//    for (Ring r : Saturn.rings) {
+//      r.material = RingMat5;
+//    }
+
+//--------------------------------------------------------------------------
+
+//Saturn.rings.get(0).material = RingMat1;
+//Saturn.rings.get(1).material = RingMat3; //same as below
+//Saturn.rings.get(2).material = RingMat3;
+//Saturn.rings.get(3).material = RingMat1;
+//Saturn.rings.get(4).material = RingMat1;
+//Saturn.rings.get(5).material = RingMat5;
+
+//closerCamera();
+//Connecting=false; 
+//Shearing=false;
+//Tilting=false;
+//// useAdditiveBlend=true;
+//useFilters=false;
+
+//sendOSC(Saturn);
+
+//------------------------------------------------------------------------

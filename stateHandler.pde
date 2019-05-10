@@ -17,7 +17,10 @@ enum State {
     ringmindStableState, 
     ringmindUnstableState, 
     connectedState, 
-    saturnState, 
+    saturnState,
+    ringboarderState,
+    addAlienLettersState,
+    
 
     fadetoblack, 
     fadeup, 
@@ -186,6 +189,33 @@ void setupStates() {
       r.material = RingMat1;
     }
     break;
+    
+  case ringboarderState:
+
+    Threading=false;
+    Tilting=false;
+    Shearing=false;
+    //zoomedCamera();
+    initCamera();
+    Saturn = new RingSystem(13, 0, true);
+
+    applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat5;
+    }
+    
+  break;
+  case addAlienLettersState:
+  
+    Saturn.rings.add(new Ring(1, 1, 3, 0));
+    Saturn.addParticlesFromTable("outputParticles.csv");
+    Saturn.rings.get(1).setMaxRenderedParticle(Saturn.rings.get(1).particles.size());
+
+    applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat5;
+    }
+  break;
 
   case makingState:
     break;
