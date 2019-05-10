@@ -33,8 +33,8 @@ class RingSystem {
 
 
   //pass them in instead
-  int RING_INDEX =6;
-  int MOON_INDEX =0;
+  int ring_index =6;
+  int moon_index =0;
 
   boolean[][] Aligned;
 
@@ -53,8 +53,8 @@ class RingSystem {
     rings = new ArrayList<Ring>();
     moons = new ArrayList<Moon>();
 
-    this.RING_INDEX = ringIndex;
-    this.MOON_INDEX = moonIndex;
+    this.ring_index = ringIndex;
+    this.moon_index = moonIndex;
 
     if (type==true) {
       println("making normal ring system");
@@ -124,7 +124,7 @@ class RingSystem {
     moons.clear();
 
 
-    switch(MOON_INDEX) {
+    switch(moon_index) {
 
       case(1):
       //no moons
@@ -169,7 +169,7 @@ class RingSystem {
   void initialiseRings() {
     //***********Initialise Rings********************* 
     rings.clear();
-    switch(RING_INDEX) {
+    switch(ring_index) {
     case 1:
       //Generic Disc of Particles
       rings.add(new Ring(0, 1.1, 4.9, N_PARTICLES));
@@ -362,12 +362,6 @@ class RingSystem {
     //if ((frameCount)%50 ==0) {
     //  saveTable(g.get(0).gridToTable(g.get(0).grid), "./files/output.csv");
     //}
-
-
-
-
-
-
     // moon alignment only with moon 1
 
 
@@ -589,12 +583,11 @@ class RingSystem {
   }
 }
 
-/**Class Ring
+/**
+ * Class Ring
  * @author Thomas Cann
- * @version 1.0
+ * @author ashley james brown
  */
-
-//class extension ashley james brown
 
 
 class Ring {

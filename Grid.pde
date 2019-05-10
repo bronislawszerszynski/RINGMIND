@@ -1,6 +1,6 @@
-/**Class Grid //<>//
+/** //<>//
+ * Class Grid 
  * @author Thomas Cann
- * @version 1.0
  */
 
 //Global Variables 

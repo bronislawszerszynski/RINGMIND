@@ -14,6 +14,11 @@ enum State {
     tuningState, 
     outroState, 
 
+    ringmindStableState, 
+    ringmindUnstableState, 
+    connectedState, 
+    saturnState, 
+
     fadetoblack, 
     fadeup, 
     nocamlock
@@ -65,40 +70,177 @@ abstract class Scenario {
 
 void setupStates() {
 
-  //here wa can create the scenarios of each type.
-}
+  Shearing=false;
+  Tilting=false; 
+  Connecting=false;
+  Threading=false;
 
-
-//---------------------------------------------------------------------------------------------------
-
-// evaluate what state determine time and then transition to the next state
-
-
-void evaluateScenario() {
-
-  int t =millis();
 
   switch(systemState) {
   case initState:
-
+    //init with = rings 10,  moons 4, rendering normal =true (titl would be false);
+    Saturn = new RingSystem(10, 4, true);
     break;
 
   case introState:
+
+    //create a new system.
+
+    Saturn = new RingSystem(2, 2, true); //ringtpe, moon type, tilt/nottilt
+    applyBasicMaterials();
+
+    //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat3;
+    }
+
+
+    initCamera();
+
+    sendOSC(Saturn);
+    useAdditiveBlend=false;
+
     break;
 
-  case ringmindState:
+  case ringmindStableState:
+
+    Threading=false;
+    useTrace=false;
+
+    Saturn = new RingSystem(10, 4, true);
+
+    applyBasicMaterials();
+    //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat3;
+    }
+
+    Saturn.rings.get(0).material = RingMat4;
+    Saturn.rings.get(1).material = RingMat2; //same as below
+    Saturn.rings.get(2).material = RingMat2;
+    Saturn.rings.get(3).material = RingMat6;
+    Saturn.rings.get(4).material = RingMat6;
+    Saturn.rings.get(5).material = RingMat5;
+
+    closerCamera();
+    Connecting=false; 
+    Shearing=false;
+    Tilting=false;
+    useAdditiveBlend=true;
+    useFilters=false;
+
+    sendOSC(Saturn);
+
+    break;
+
+  case ringmindUnstableState:
+
+    G=6.67408E-9;
+    //reinit
+    Saturn = new RingSystem(11, 4, true);
+    applyBasicMaterials();
+    //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat3;
+    }
+
+
+    Saturn.rings.get(0).material = RingMat4;
+    Saturn.rings.get(1).material = RingMat2; //same as below
+    Saturn.rings.get(2).material = RingMat2;
+    Saturn.rings.get(3).material = RingMat6;
+    Saturn.rings.get(4).material = RingMat6;
+    Saturn.rings.get(5).material = RingMat5;
+
+    closerCamera();
+
+
+    break;
+
+  case connectedState:
+
+    //connected
+    Saturn = new RingSystem(1, 2, true);
+    Saturn.rings.get(0).material = RingMat2;
+
+    Connecting=true; 
+    Shearing=false;
+    Tilting=false;
+    //simToRealTimeRatio = 360.0/1.0; //slow it down
+    zoomedCamera();
+    useAdditiveBlend=true;
+    useFilters=false;
+    oscRingDensity(Saturn);
+    oscRingRotationRate(Saturn);
+
+    break;
+
+  case saturnState:
+
+    Threading=false;
+    useTrace=false;
+    useAdditiveBlend=false;
+    //reinit
+    Saturn = new RingSystem(2, 4, true);
+
+    applyBasicMaterials();
+    //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat1;
+    }
     break;
 
   case makingState:
     break;
 
   case chaosState:
+
+    //tilting
+    zoomedCamera();
+    useAdditiveBlend=true;
+    Saturn = new RingSystem(9, 2, false); //ring type 9 as its a tilt type, moon type2 and tilt type2
+    //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat1;
+    }
+    println(Saturn.rings.get(0).Tparticles.size());
+    Shearing=false;
+    Connecting=false;
+    Tilting=true; 
+    Threading=false;
+
     break;
 
   case orbitalState:
+
+    Saturn = new RingSystem(1, 2, true);
+    applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat5;
+    }
+    for (Moon m : Saturn.moons) {
+      m.radius = 1;
+    }
+    drawMoons=false;
+    Threading=true;
+    G=6.67408E-13;
+    Saturn.moons.get(2).GM =4.529477495e13;
+    Saturn.moons.get(0).GM =2.529477495e13;
+    toptiltCamera();
+    Connecting =false;
+    Shearing=false;
+    Tilting=false;
     break;
 
   case shearState:
+    s = new ShearingBox();
+    zoomedCamera();
+    useAdditiveBlend=true;
+    Shearing=!Shearing;
+    Tilting=false;
+    Connecting=false;
+    Threading=false;
+
     break;
 
   case followState:
@@ -128,8 +270,19 @@ void evaluateScenario() {
 }
 
 
+//---------------------------------------------------------------------------------------------------
 
-// update scenario method so depending on whcih scenario do different things and render differently etc
+// evaluate what state determine time and then transition to the next state
+
+
+void evaluateScenario() {
+
+  int t =millis();
+}
+
+
+
+// update scenario method so depending on which scenario do different things and render differently etc
 // basically like a void draw for each scneario and we switch to its one depending on what scene we in.
 
 void updateCurrentScene(int t) {
@@ -153,7 +306,7 @@ void updateCurrentScene(int t) {
     //overwrite default and chose this material to begin with for all rings
     Saturn.rings.get(0).material = RingMat1; 
 
-    s.material = ShearMat1;
+    
     //when all camerasa are correct lock them to the scene
     //initCamera();
 
@@ -178,6 +331,7 @@ void updateCurrentScene(int t) {
     break;
 
   case shearState:
+  s.material = ShearMat1;
     break;
 
   case followState:
@@ -258,9 +412,9 @@ void updateCurrentScene(int t) {
     renderOffScreenOnPGraphics();
     //rsRenderer.render(Saturn, rsRenderContext,2);
     rsRenderer.renderComms(Saturn, rsRenderContext, 1);
-  } else if (Finale){
+  } else if (Finale) {
     renderOffScreenOnPGraphics();
-    rsRenderer.renderComms(Saturn, rsRenderContext,1);
+    rsRenderer.renderComms(Saturn, rsRenderContext, 1);
   } else {
     rsRenderer.render(Saturn, rsRenderContext, 1); //1 for points
   }

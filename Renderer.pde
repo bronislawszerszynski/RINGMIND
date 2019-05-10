@@ -106,10 +106,12 @@ class RingSystemRenderer {
         //translate(width/2, height/2);
         fill(m.c);
         stroke(m.c);
-        strokeWeight(m.moonWeight);
+        //strokeWeight(m.radius*SCALE);
+        strokeWeight(1);
+        
         //beginShape(POINTS);
-         translate(SCALE*m.position.x, SCALE*m.position.y, 2*m.radius*SCALE);
-         sphere(m.moonWeight);
+         translate(SCALE*m.position.x, SCALE*m.position.y, 0);
+         sphere(m.radius*SCALE);
         //vertex(SCALE*m.position.x, SCALE*m.position.y, 2*m.radius*SCALE);
         //endShape();
         // circle(scale*position.x, scale*position.y, 2*radius*scale);

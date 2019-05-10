@@ -71,11 +71,7 @@ class TiltParticle extends Particle {
   
 }
 
-
-
-
-
-//-------------------
+//---------------------------------------------------------------------------------------------------------------------------------------
 
 PVector displayRotate(TiltParticle p) {
   PVector temp = p.position.copy();

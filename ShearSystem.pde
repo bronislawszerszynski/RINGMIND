@@ -1,6 +1,6 @@
 Boolean Moonlet = false;
 Boolean Self_Grav = false;
-Boolean Collisions =true;
+Boolean Collisions =false;
 Boolean A1 =true;
 Boolean A2 =true;
 Boolean Guides = false;
