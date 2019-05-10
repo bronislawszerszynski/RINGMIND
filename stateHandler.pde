@@ -93,10 +93,7 @@ void setupStates() {
     for (Ring r : Saturn.rings) {
       r.material = RingMat3;
     }
-
-
     initCamera();
-
     sendOSC(Saturn);
     useAdditiveBlend=false;
 

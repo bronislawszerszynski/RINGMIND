@@ -6,8 +6,6 @@
  * @author ashley james brown
  */
 
-
-
 class Moon extends Particle implements Alignable {
 
   int moonID = 0;
@@ -17,8 +15,6 @@ class Moon extends Particle implements Alignable {
 
   final float moonSizeScale= 2;
   
-
-
   /**
    *  Class Constuctor - General Moon object with random angle. 
    */

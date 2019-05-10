@@ -1,6 +1,7 @@
 /**Class RingSystem collection of Rings, Ringlets and Gaps for a planetary ring system. 
  *
  * @author Thomas Cann
+ * @author Sam Hinson
  * @version 1.0
  */
 
@@ -583,6 +584,8 @@ class RingSystem {
   }
 }
 
+//***********************************************************************//
+
 /**
  * Class Ring
  * @author Thomas Cann
@@ -601,13 +604,12 @@ class Ring {
   float r_inner, r_outer, Omega0, density;
   color c;
 
-  
+
   /**
    *  Class Constuctor - General need passing all the values. 
    */
   Ring(int rnum, float Inner, float Outer, int n_particles) {
     this.ringID = rnum;
-
     this.r_inner = Inner;
     this.r_outer = Outer;
 
@@ -663,7 +665,7 @@ class Ring {
   }
 
 
-  
+
   /** Method to calculate the density of particles in ring.
    *@return denstiy [N/A].
    */
