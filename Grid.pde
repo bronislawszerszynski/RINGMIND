@@ -364,7 +364,7 @@ class Grid {
    */
   void displayVector(int i, int j, PVector v) {
     push();
-    translate(width/2, height/2);
+    //translate(width/2, height/2);
     stroke(255);
     strokeWeight(1);
     PVector cofc = centreofCell(i, j);
@@ -383,7 +383,7 @@ class Grid {
   void displaycell(int i, int j) {
     push();
     //Style and Matrix Tranformation Information
-    translate(width/2, height/2);
+    //translate(width/2, height/2);
     noFill();
     stroke(255);
     strokeWeight(1);

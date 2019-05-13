@@ -35,7 +35,7 @@ float totalSimTime =0.0;                       // Tracks length of time simulati
 void settings() {
 
   //fullScreen(P3D, 1);
-  size (1900, 1080, P3D);
+  size (960, 1020, P3D);
   smooth(); //noSmooth();
 }
 
@@ -184,11 +184,11 @@ void keyPressed() {
   //---------------------------SECOND ROW ASDFGHJKL--------------------------------------------
 
   if (key == 'a') {
-    //
+    //Proscene - 3 Axis Markers
   } else if (key == 'A') {
     useAdditiveBlend = !useAdditiveBlend;
   } else if (key=='s') {
-    //
+    //Proscene - Fill Screen
   } else if (key=='S') {
     //
   } else if (key=='d') {
@@ -200,7 +200,7 @@ void keyPressed() {
   } else if (key=='F') {
     useFilters=!useFilters;
   } else if (key=='g') {
-    //
+    //Proscene - Grid Square
   } else if (key=='G') {
     //
   } else if (key=='h') {

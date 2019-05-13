@@ -12,9 +12,8 @@ class Moon extends Particle implements Alignable {
   float GM;
   float radius;
   color c ;
-
   final float moonSizeScale= 2;
-  
+
   /**
    *  Class Constuctor - General Moon object with random angle. 
    */
@@ -56,7 +55,7 @@ class Moon extends Particle implements Alignable {
   }
 
   /**
-   *  Display Method - Renders this object to screen displaying its position and colour.
+   *Display Method - Renders this object to screen displaying its position and colour.
    */
   void display() {
     push();
@@ -67,18 +66,10 @@ class Moon extends Particle implements Alignable {
     circle(SCALE*position.x, SCALE*position.y, 2*moonSizeScale*radius*SCALE);
     pop();
   }
-  //  void render(PGraphics x) {
-  //  x.push();
-  //  x.translate(width/2, height/2);
-  //  x.ellipseMode(CENTER);
-  //  x.fill(c);
-  //  x.stroke(c);
-  //  x.circle(scale*position.x, scale*position.y, 2*moonSizeScale*radius*scale);
-  //  x.pop();
-  //}
 
-  /**
-   *  Calculates the acceleration on this particle (based on its current position) (Does not override value of acceleration of particle)
+  /**Calculates the acceleration on this particle (based on its current position) (Does not override value of acceleration of particle)
+   * @param rs RingSystem Object
+   * @return current acceleration of this moon due to rest of RingSystem. 
    */
   PVector getAcceleration(RingSystem rs) {
 
@@ -88,7 +79,6 @@ class Moon extends Particle implements Alignable {
     // acceleration due the moons on this particle.
     for (Moon m : rs.moons) {
       if (m != this) {
-
         PVector dist = PVector.sub(m.position, position);
         PVector a = PVector.mult(dist, m.GM/pow(dist.mag(), 3));
         a_grav.add(a);
@@ -98,26 +88,26 @@ class Moon extends Particle implements Alignable {
     return a_grav;
   }
 
-// moon 360 position is missing.
-
+  /**Returns a boolean of true when 2 alignable object are within angular threshold
+   * @param Object that implements Alignable.
+   * @return Returns true when 2 alignable object are within angular threshold.
+   */
   boolean isAligned(Alignable other) {
     boolean temp =false;
     Moon otherMoon = (Moon)other;
     float dAngle = this.position.heading() - otherMoon.position.heading();
-    
+
     float angleThreshold = radians(1);
-    if ( abs(dAngle) < angleThreshold) {//% PI
+    if ( abs(dAngle) < angleThreshold) { //abs(dAngle) % PI could be used to have alignments on either side of the planet!
       temp =true;
-      //if(dAngle >0){
-      //}
-      //alignment test
-      //println(otherMoon.moonID + " aligned with "+ this.moonID);
-      //this.c= color(0, 0, 255);
-      //otherMoon.c= color(0, 0, 255);
     } 
     return temp;
   }
 
+  /** Time taken for two Alignale objects to align. 
+   * @param Object that implements Alignable.
+   * @return time taken for two Alignale objects to align. 
+   */
   float timeToAlignment(Alignable other) {
     Moon otherMoon = (Moon)other;
     float dAngle = this.position.heading() - otherMoon.position.heading();
@@ -132,16 +122,22 @@ class Moon extends Particle implements Alignable {
   float kepler_omega(Moon m) {
     return sqrt(GMp/(pow(m.position.mag(), 3.0)));
   }
-  
-    //method to get the angle in degrees of the moon
-  
-  float moonAngle(Moon m){
-    PVector center = new PVector(0,0,0);
-    PVector mm = new PVector(m.position.x,m.position.y,0);
-    return degrees(PVector.angleBetween(center,mm));
-  } 
+
+
+  /**Method to get the angle in degrees of the moon
+   * @param m Moon Object.
+   * @return [degrees].
+   */
+  float moonAngle(Moon m) {
+    PVector center = new PVector(0, 0, 0);
+    PVector mm = new PVector(m.position.x, m.position.y, 0);
+    return degrees(PVector.angleBetween(center, mm));
+  }
 }
 
+/**Interface Alignable - template for checking if different objects types of objects align. 
+ * @author Thomas Cann
+ */
 public interface Alignable {
   public boolean isAligned(Alignable other); //Alignment Threshold
   //public float timeToAlignment(Alignable other); //What units? [s]

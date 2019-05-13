@@ -20,6 +20,9 @@ float R_MAX = 5;
 final float Rp = 60268e3;          // Length scale (1 Saturn radius) [m]
 final float SCALE = 100/Rp;        // Converts from [m] to [pixel] with planetary radius (in pixels) equal to the numerator. Size of a pixel represents approximately 600km.
 
+/**
+ *
+ */
 class RingSystem {
 
   ArrayList<Particle> totalParticles;
@@ -342,6 +345,10 @@ class RingSystem {
     for (Grid x : g) {
       x.update(this);
     }
+
+    for (Grid x : g) {
+      x.display(this);
+    }
     for (Particle p : totalParticles) {
       p.updateVelocity(p.getAcceleration(this));
     }
@@ -371,7 +378,7 @@ class RingSystem {
     }
   }//end update
 
- void tiltupdate() {
+  void tiltupdate() {
     for (TiltParticle p : totalTParticles) {
       p.set_getAcceleration(this);
     }

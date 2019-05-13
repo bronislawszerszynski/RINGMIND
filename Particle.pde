@@ -122,29 +122,31 @@ abstract class Particle {
   }
 
   /**
-   *  Display Method - Renders this object to screen displaying its position and colour.
+   * Display Method - Renders this object to screen displaying its position and colour.
    */
   void display() {
   }
 
   /**
-   *
+   * Render Method - Renders this object to PGraphics Object. 
    */
   void render(PGraphics x) {
   }
 
   ///**
   // *  Clone Method - Return New Object with same properties.
+  // * @return particle object a deep copy of this. 
   // */
   //Particle clone() {
-  //  Particle p = new Particle();
+  //  Particle p = new Particle(); //Cannot make instances of interfaces or Abstract Class  (Particle is an abstract class).
   //  p.position= this.position.copy();
   //  p.velocity = this.velocity.copy();
   //  return p;
   //}
 
-  /**
-   *  Calculates the acceleration on this particle (based on its current position) (Does not override value of acceleration of particle)
+  /**Calculates the acceleration on this particle (based on its current position) (Does not override value of acceleration of particle)
+   * @param rs
+   * @return acceleration on the particle PVector[m.s^-2,m.s^-2,m.s^-2]
    */
   PVector getAcceleration(RingSystem rs) {
 
@@ -159,22 +161,23 @@ abstract class Particle {
     return a_grav;
   }
 
-  /**
-   *
+  /** Calculates the acceleration on this particle (based on its current position) (Overrides value of acceleration stored by particle)
+   * @param rs
    */
   void set_getAcceleration(RingSystem rs) {
     acceleration = getAcceleration(rs);
   }
 
-  /**
-   *
+  /** 
+   *  Update Position of particle based of Velocity and Acceleration. 
    */
   void updatePosition() {
     position.add(velocity.copy().mult(dt)).add(acceleration.copy().mult(0.5*sq(dt)));
   }
 
   /**
-   *    Updates the velocity of this Ring Particle (Based on Velocity Verlet) using 2 accelerations.  
+   * Updates the velocity of this Particle (Based on Velocity Verlet) using 2 accelerations. 
+   * @param a current acceleration of particle
    */
   void updateVelocity(PVector a) {
     this.velocity.add(PVector.add(acceleration.copy(), a).mult(0.5 *dt));

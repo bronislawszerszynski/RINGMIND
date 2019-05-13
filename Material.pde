@@ -5,6 +5,19 @@
 //153,21,245
 //----------------------------------
 
+//-----------------------------------------------------------------------------------------
+
+class Material {
+  PImage diffTexture;
+  PImage spriteTexture;
+  float partWeight = 1;  //do not change or sprite texture wont show unles its 1
+  color strokeColor = 255;
+  float partAlpha = 0; //trick t fade out to black
+  float strokeWeight = 1; //usually 1 so we can see our texture but if we turn off we can make a smaller particle point as liong as the weight above is bigger than 1
+}
+
+//-----------------------------------------------------------------------------------------
+
 Material RingMat1, RingMat2, RingMat3, RingMat4, RingMat5, RingMat6;
 
 Material ShearMat1;

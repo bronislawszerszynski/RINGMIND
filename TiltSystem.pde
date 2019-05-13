@@ -1,7 +1,7 @@
 float MAX_INCLINATION=80;
 float MIN_INCLINATION=1;
-float LAMBDA= 3E-5;
-
+//float LAMBDA= 3E-5;
+float LAMBDA= 8E-5;
 class TiltParticle extends Particle {
 
   float rotation;

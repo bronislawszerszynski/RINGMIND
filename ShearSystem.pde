@@ -1,6 +1,7 @@
 Boolean Moonlet = false;
 Boolean Self_Grav = false;
 Boolean Collisions =false;
+Boolean Output = false;
 Boolean A1 =true;
 Boolean A2 =true;
 Boolean Guides = false;
@@ -121,20 +122,22 @@ class ShearingBox {
     pop();
   }
 
-  /** Method to update position
+  /** Update Method of Shearing System - 
    */
   void update() {
-    for (ShearParticle sp : Sparticles) {
-      sp.highlight = false;
-    }
 
     step_verlet();
-    //if ( frameCount %100 == 0) {
-    //  saveTable(particlesToTable(), "/files/output.csv");
-    //}
-    //   if (Collisions) {
 
-    //  grid_update();
+    if (Collisions) {
+      for (ShearParticle sp : Sparticles) {
+        sp.highlight = false;
+      }
+      grid_update();
+    }
+
+    //if ( frameCount %100 == 0) {
+    //  //Output all the Particles to CSV File ever 100 Frames  
+    //  saveTable(particlesToTable(), "/files/output.csv");
     //}
   }
 
@@ -501,17 +504,30 @@ class ShearParticle {
     }
     pop();
   }
+
+  /**Display vector from the centre of screen to position that a particle is rendered
+   * @param v vector to display from middle of screen.
+   * @param scale multiple by magnitude.
+   * @param c color of line.
+   */
   void displayPosition(PVector v, float scale, color c) {
     stroke(c);
     line(0, 0, -v.y*scale*width/Ly, -v.x*scale*height/Lx);
-  } 
+  }
+
+  /**Display vector from the centre of screen with length and direction of vector (no screen dimension scaling)
+   * @param v vector to display from middle of screen.
+   * @param scale multiple by magnitude.
+   * @param c color of line.
+   */
   void displayPVector(PVector v, float scale, color c) {
     stroke(c);
     line(0, 0, -v.y*scale, -v.x*scale);
   }
 
-  /**
-   *  Calculates the acceleration on this particle (based on its current position) (Does not override value of acceleration of particle)
+  /**Calculates the acceleration on this particle (based on its current position) (Does not override value of acceleration of particle)
+   * @param sb Shearing Box
+   * @return accleration of this particles due to ShearingBox
    */
   PVector getAcceleration(ShearingBox sb) {
 

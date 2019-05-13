@@ -1,5 +1,6 @@
-// can decide on these as we go along
-
+/**
+ *  Different Display States - to be decided as go along. 
+ */
 enum State {
   initState, 
     introState, 
@@ -27,10 +28,9 @@ enum State {
     nocamlock
 };
 
-// brons scenarios from script
-
 /*
-
+  Brons scenarios from script
+  
  intro - distant view of ring
  ringmind - move in clsoer to view moon and ring
  making - reinit rindmind with particles not in plane, possibly just one 'ring' where they are all over the place but spinning
@@ -44,21 +44,26 @@ enum State {
  outro - what is a ringmind lets return back to the beginning.
  
  */
-
+ 
 State systemState;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Boolean Running;
-Boolean Add, clear; // for when we switch from ringsystem to shearsystem
+Boolean Add, clear; // for when we switch from ringsystem to shearsystem5
 Boolean Tilting, Shearing; // for when we switch to titl system
 Boolean Connecting = false;
 Boolean MoonAlignment = false; // for when we want to send moon alignment info to tony and we need to not thread the system.
 Boolean Threading = false;
 Boolean Finale=false;
 
+/**
+* Method that called at the start of the state. 
+*/
 void setupStates() {
   Running = true;
+  Add=false;
+  clear=false;
   Shearing=false;
   Tilting=false; 
   Connecting=false;
@@ -69,6 +74,7 @@ void setupStates() {
   drawMoons=true;
 
   G=6.67408E-11;
+  simToRealTimeRatio = 3600.0/1.0;  
 
   switch(systemState) {
   case initState:
@@ -114,7 +120,6 @@ void setupStates() {
     break;
 
   case ringmindUnstableState:
-
 
     closerCamera();
     useAdditiveBlend=true;
@@ -173,14 +178,14 @@ void setupStates() {
     }
     break;
 
-  case makingState:
-    break;
+  //case makingState:
+  //  break;
 
   case chaosState:
 
     Tilting=true; 
     useAdditiveBlend=true;
-    zoomedCamera();
+    //zoomedCamera();
     Saturn = new RingSystem(9, 2, false); //ring type 9 as its a tilt type, moon type2 and tilt type2 //new materials for every ring
     for (Ring r : Saturn.rings) {
       r.material = RingMat1;
@@ -208,7 +213,7 @@ void setupStates() {
     break;
 
   case shearState:
-
+    simToRealTimeRatio = 2000.0/1.0;  
     Shearing=true;
     useAdditiveBlend=true;
     zoomedCamera();
@@ -216,29 +221,29 @@ void setupStates() {
 
     break;
 
-  case followState:
-    break;
+//  case followState:
+//    break;
 
-  case posiedState:
-    break;
+//  case posiedState:
+//    break;
 
-  case ringmoonState:
-    break;
+//  case ringmoonState:
+//    break;
 
-  case tuningState:
-    break;
+//  case tuningState:
+//    break;
 
-  case outroState:
-    break;
+//  case outroState:
+//    break;
 
-  case fadetoblack:
-    break;
+//  case fadetoblack:
+//    break;
 
-  case fadeup:
-    break;
+//  case fadeup:
+//    break;
 
-  case nocamlock:
-    break;
+//  case nocamlock:
+//    break;
   }
 }
 
@@ -267,13 +272,15 @@ void updateCurrentScene(int t) {
       thread("update");
     } else if (Tilting) {
       Saturn.tiltupdate();
+    } else if (Shearing) {
+      s.update();
     } else {
       //thread("update"); //my imac needs this threading or it all slows down computing the physics
       Saturn.update();
     }
   }
 
-  totalSimTime += dt;
+
 
 
   // Display all of the objects to screen using the renderer.
@@ -314,8 +321,6 @@ void updateCurrentScene(int t) {
 
   case shearState:
     s.material = ShearMat1;
-    s.update();
-
     break;
 
   case followState:
@@ -373,6 +378,8 @@ void updateCurrentScene(int t) {
     //no camera settings locked down. meaning when we finish our path1-3 we stay where we end ratehr than jump back to where we were before we triggerd it. this depends on brons scenes
     break;
   }
+
+  totalSimTime += dt;
 
   // renderOffScreenOnPGraphics(); // this fills the diffuse texture
   // renderOffScreenOnPGraphics2(); // this is the keyhole overlay
