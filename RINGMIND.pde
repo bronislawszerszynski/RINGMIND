@@ -34,8 +34,9 @@ float totalSimTime =0.0;                       // Tracks length of time simulati
 
 void settings() {
 
-  //fullScreen(P3D, 1);
-  size (960, 1020, P3D);
+  fullScreen(P3D, 1);
+  //size (1900, 1080, P3D);
+
   smooth(); //noSmooth();
 }
 
@@ -121,6 +122,9 @@ void keyPressed() {
     //shearState
     systemState= State.shearState;
     setupStates();
+  } else if (key=='*') {
+    //Add Moonlet
+    Moonlet = true;
   } else if (key=='9') {
     //TiltSystem
     systemState= State.chaosState;
@@ -131,54 +135,59 @@ void keyPressed() {
   } else if (key==')') {
     systemState= State.addAlienLettersState;
     setupStates();
-  }else if (key=='-') {
+  } else if (key=='-') {
     systemState= State.orbitalState;
     setupStates();
   }
 
 
-  //----------------------------TOP ROW QWERTYUIOP------------------------------------------------
+  //----------------------------TOP ROW QWERTYUIOP[]------------------------------------------------
   if (key=='q') {
-    //
+    camera1();
   } else if (key=='Q') {
     //
   } else if (key=='w') {
-    //
+    camera2();
   } else if (key=='W') {
     //
   } else if (key=='e') {
+    camera3();
     //Proscene -
   } else if (key=='E') {
     //
   } else if (key=='r') {
+    camera4();
     //Proscene - Show Camera Path
   } else if (key=='R') {
     //
   } else if (key=='t') {
-    //
+    zoomedCamera();
   } else if (key=='T') {
-    useTrace = !useTrace;
-  } else if (key=='y') {
     //
+  } else if (key=='y') {
+    camera6();
   } else if (key=='Y') {
     //
   } else if (key=='u') {
-    //
+    closerCamera();
   } else if (key=='U') {
     //
   } else if (key=='i') {
-    //
+    toptiltCamera();
   } else if (key=='I') {
     //
   } else if (key=='o') {
-    //
+    camera9();
   } else if (key=='O') {
-    oscRingDensity(Saturn);
-    oscRingRotationRate(Saturn);
-  } else if (key=='p') {
     //
+  } else if (key=='p') {
+    camera10();
   } else if (key=='P') {
-    saveFrame("./screenshots/ringmind_screen-###.jpg");
+    //
+  } else if (key=='[') {
+    initCamera();
+  } else if (key==']') {
+    scene.camera().interpolateToFitScene(); //if any screen frame translations ahve happened this will jump :-/ hmm. otherwise its a nice zoom to fit
   }
 
   //---------------------------SECOND ROW ASDFGHJKL--------------------------------------------
@@ -188,6 +197,7 @@ void keyPressed() {
   } else if (key == 'A') {
     useAdditiveBlend = !useAdditiveBlend;
   } else if (key=='s') {
+    useTrace = !useTrace;
     //Proscene - Fill Screen
   } else if (key=='S') {
     //
@@ -196,18 +206,19 @@ void keyPressed() {
   } else if (key=='D') {
     //
   } else if (key=='f') {
-    //
-  } else if (key=='F') {
     useFilters=!useFilters;
+
+  } else if (key=='F') {
+    //
   } else if (key=='g') {
+    systemState= State.fadeup; //fade up all particles
     //Proscene - Grid Square
   } else if (key=='G') {
     //
   } else if (key=='h') {
-    camera10();
+    systemState= State.fadetoblack; //fadeout all particles from everything
   } else if (key=='H') {
     //
-    initCamera();
   } else if (key=='j') {
     //
   } else if (key=='J') {
@@ -225,32 +236,35 @@ void keyPressed() {
   //---------------------------THIRD ROW ZXCVBNM--------------------------------------------
 
   if (key=='z') {
-    systemState= State.fadetoblack; //fadeout all particles from everything
+    //
   } else if (key=='Z') {
+    //
   } else if (key=='x') {
-    systemState= State.fadeup; //fade up all particles
+    //
   } else if (key=='X') {
+    //
   } else if (key=='c') {
-    scene.camera().interpolateToFitScene(); //if any screen frame translations ahve happened this will jump :-/ hmm. otherwise its a nice zoom to fit
+    oscRingDensity(Saturn);
+    oscRingRotationRate(Saturn);
   } else if (key=='C') {
     //
   } else if (key=='v') {
-    camera1();
+    saveFrame("./screenshots/ringmind_screen-###.jpg");
   } else if (key=='V') {
     //
   } else if (key=='b') {
-    camera2();
+    //
   } else if (key=='B') {
     //
   } else if (key=='n') {
-    camera3();
+    //
   } else if (key=='N') {
     //
   } else if (key=='m') {
-    Moonlet = true;
-  } else if (key=='M') {
     //turn on this alogorithm to send tony the data
     MoonAlignment = !MoonAlignment;
+  } else if (key=='M') {
+    //
   }
 }
 
