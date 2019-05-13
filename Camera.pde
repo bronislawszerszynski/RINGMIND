@@ -87,6 +87,13 @@ void camera3() {
   scene.camera().setViewDirection(new Vec ( 0.7974214, -5.960465E-8, -0.60342294));
 }
 
+//Zoomed out of Shearing box
+void camera4() {
+  scene.camera().setOrientation(new Quat(0.0, 0.0, 0.0, 0.0));
+  scene.camera().setPosition(new Vec( 0.0, 0.0, 924.92285));
+  scene.camera().setViewDirection(new Vec ( 0.0, 0.0, -1.0));
+}
+
 //left side rotated toward the camera straight in view
 void camera6() {
   scene.camera().setOrientation(new Quat(0.071595766, -0.99373794, 0.08578421, 1.1399398));
