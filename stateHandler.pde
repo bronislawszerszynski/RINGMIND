@@ -49,23 +49,6 @@ State systemState;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// scneario class - aka scene but cant use scene as its inbuilt into proscene
-
-abstract class Scenario {
-  void updatePhysics() {
-  }
-
-  abstract boolean transitionTo(float t);
-
-  void update(int t) {
-  }
-
-  void postRender(int t) {
-  }
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 Boolean Running;
 Boolean Add, clear; // for when we switch from ringsystem to shearsystem
 Boolean Tilting, Shearing; // for when we switch to titl system
@@ -354,12 +337,6 @@ void setupStates() {
 
 //---------------------------------------------------------------------------------------------------
 
-// evaluate what state determine time and then transition to the next state
-
-void evaluateScenario() {
-
-  int t =millis();
-}
 
 // update scenario method so depending on which scenario do different things and render differently etc
 // basically like a void draw for each scneario and we switch to its one depending on what scene we in.
@@ -369,10 +346,8 @@ void updateCurrentScene(int t) {
     //*************time step******************
 
   if (simToRealTimeRatio/frameRate < maxTimeStep) {
-    h_stepsize= simToRealTimeRatio/frameRate;
     dt= simToRealTimeRatio/frameRate;
   } else {
-    h_stepsize= maxTimeStep;
     dt= maxTimeStep;
     println("At Maximum Time Step");
   }
@@ -526,4 +501,27 @@ void updateCurrentScene(int t) {
   if (useFilters) {
     applyFilters();
   }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// scneario class - aka scene but cant use scene as its inbuilt into proscene
+
+abstract class Scenario {
+  void updatePhysics() {
+  }
+
+  abstract boolean transitionTo(float t);
+
+  void update(int t) {
+  }
+
+  void postRender(int t) {
+  }
+}
+// evaluate what state determine time and then transition to the next state
+
+void evaluateScenario() {
+
+  int t =millis();
 }

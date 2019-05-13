@@ -256,7 +256,7 @@ class Grid {
     int i = i(p);
     int j = j(p);
 
-    float r = 1-exp(-(gridNorm[i][j]*drag_p)/h_stepsize);
+    float r = 1-exp(-(gridNorm[i][j]*drag_p)/dt);
     if ( random(1)< r) {
 
       float a, nn;
@@ -348,7 +348,7 @@ class Grid {
 
       if (validij(i, j)) {
         displaycell(i, j );
-        float a = 1-exp(-(gridNorm[i][j]*drag_p)/h_stepsize);
+        float a = 1-exp(-(gridNorm[i][j]*drag_p)/dt);
         String output = "\t Normalised Number Density: " +gridNorm[i][j] + "\n\t Average Velocity: " + gridV[i][j].mag()+ "\n\t Probability Threshold: " + a ;
         text(output, 0.0, 10.0);
         displayVector(i, j, gridV[i][j]);

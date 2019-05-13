@@ -1,4 +1,3 @@
-
 /**Class RingParticle
  * @author Thomas Cann
  * @author Sam Hinson
@@ -53,6 +52,8 @@ class RingParticle extends Particle {
     return a_grav;
   }
 }
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------//
 
 /**Class Particle
  *
@@ -169,14 +170,14 @@ abstract class Particle {
    *
    */
   void updatePosition() {
-    position.add(velocity.copy().mult(h_stepsize)).add(acceleration.copy().mult(0.5*sq(h_stepsize)));
+    position.add(velocity.copy().mult(dt)).add(acceleration.copy().mult(0.5*sq(dt)));
   }
 
   /**
    *    Updates the velocity of this Ring Particle (Based on Velocity Verlet) using 2 accelerations.  
    */
   void updateVelocity(PVector a) {
-    this.velocity.add(PVector.add(acceleration.copy(), a).mult(0.5 *h_stepsize));
+    this.velocity.add(PVector.add(acceleration.copy(), a).mult(0.5 *dt));
   }
 
   /**
@@ -187,11 +188,11 @@ abstract class Particle {
 
     PVector a_grav = PVector.mult(position.copy().normalize(), -GMp/position.copy().magSq());
 
-    PVector tempPosition = PVector.add(position.copy(), velocity.copy().mult(h_stepsize)).add(a_grav.copy().mult(0.5*sq(h_stepsize)));
+    PVector tempPosition = PVector.add(position.copy(), velocity.copy().mult(dt)).add(a_grav.copy().mult(0.5*sq(dt)));
 
     PVector a_grav1 = PVector.mult(tempPosition.copy().normalize(), -GMp/tempPosition.copy().magSq());
 
-    this.velocity.add(PVector.add(a_grav, a_grav1).mult(0.5 *h_stepsize));
+    this.velocity.add(PVector.add(a_grav, a_grav1).mult(0.5 *dt));
     this.position = tempPosition;
   }
 }

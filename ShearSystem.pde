@@ -38,7 +38,7 @@ float num_particles = 50000; //if not using table we can use more than 1000
 float scale =10.0; //Makes Particles Visible
 
 //Simulation Time step [s]
-float dt =100; //Rough Time Set to be able to see affects. 
+//float dt =100; //Rough Time Set to be able to see affects. 
 
 //----------------------------------------------------------------
 
