@@ -7,13 +7,7 @@ import remixlab.fpstiming.*;
 import remixlab.proscene.*;
 import remixlab.util.*;
 
-PImage saturnTex;
-PShape planet;
-
-InteractiveFrame planetSaturn;
 Scene scene;
-
-Trackable lastParticle;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -30,22 +24,14 @@ void initScene() {
   scene.eye().setPosition(new Vec(0, 0, 0)); //center the eye
   scene.camera().lookAt(scene.center()); // point it at 0,0,0
 
-
-  //create an object that can be part of the interactive scene and set its initial positoon
-  //planetSaturn = new InteractiveFrame(scene);
-  //planetSaturn.setPosition(new Vec(0, 0, 0));
-
-  //not ready yet but will allow clicking on any particle or moon to get camera con trol from their perspective
-  scene.mouseAgent().setPickingMode(MouseAgent.PickingMode.CLICK);
-
-  //load json file with predon camera paths.... 
-  scene.loadConfig(); //this also laods how teh camera looks when we startup the very beginning but we will overwrite by using the scenes to change that.
+  //load json file with predone camera paths.... 
+  scene.loadConfig(); //this also laods how the camera looks when we startup the very beginning but we will overwrite by using the scenes to change that.
 
   //trun off debug guides
   scene.setGridVisualHint(false);
   scene.setAxesVisualHint(false);
 
-  //must set scene to be big so it redners proerply
+  //must set scene to be big so it redners properly
   scene.setRadius(500); //how big is the scene - bigger means slower to load at startup
 
   scene.showAll();

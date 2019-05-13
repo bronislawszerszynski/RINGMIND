@@ -24,8 +24,7 @@
 //import codeanticode.syphon.*;
 //SyphonServer server;
 
-//Dynamic Timestep variables
-//float h_stepsize; 
+//Dynamic Timestep variables 
 float dt;                                      //Simulation Time step [s]
 float simToRealTimeRatio = 3600.0/1.0;         // 3600.0/1.0 --> 1hour/second
 final float maxTimeStep = 20* simToRealTimeRatio / 30;
@@ -36,7 +35,7 @@ float totalSimTime =0.0;                       // Tracks length of time simulati
 void settings() {
 
   //fullScreen(P3D, 1);
-  size (1920, 800, P3D);
+  size (1900, 1080, P3D);
   smooth(); //noSmooth();
 }
 
@@ -106,6 +105,10 @@ void keyPressed() {
     //ringmindStableState
     systemState= State.ringmindStableState;
     setupStates();
+  } else if (key=='%') {
+    //Unstable Ringmind State
+    systemState= State.ringmindUnstableState;
+    setupStates();
   } else if (key=='6') {
     //connectedState
     systemState= State.connectedState;
@@ -123,8 +126,16 @@ void keyPressed() {
     systemState= State.chaosState;
     setupStates();
   } else if (key=='0') {
-    initCamera();
+    systemState= State.ringboarderState;
+    setupStates();
+  } else if (key==')') {
+    systemState= State.addAlienLettersState;
+    setupStates();
+  }else if (key=='-') {
+    systemState= State.orbitalState;
+    setupStates();
   }
+
 
   //----------------------------TOP ROW QWERTYUIOP------------------------------------------------
   if (key=='q') {
@@ -196,6 +207,7 @@ void keyPressed() {
     camera10();
   } else if (key=='H') {
     //
+    initCamera();
   } else if (key=='j') {
     //
   } else if (key=='J') {

@@ -57,66 +57,6 @@ Boolean MoonAlignment = false; // for when we want to send moon alignment info t
 Boolean Threading = false;
 Boolean Finale=false;
 
-//----------------------------
-
-//    //reinit plus some options
-//    G=6.67408E-9;
-//    Saturn = new RingSystem(11, 4, true);
-//    applyBasicMaterials();
-
-//    //new materials for every ring
-//    for (Ring r : Saturn.rings) {
-//      r.material = RingMat3;
-//    }
-
-//    for (Moon m : Saturn.moons) {
-//      m.radius = 5;
-//    }
-
-//    camera10();
-//    useAdditiveBlend=true;
-//    useTrace=false;
-//    Threading=false;
-//    Shearing=false;
-//    Tilting=false;
-//    //fade us back up or press x to do it manually
-//    systemState= State.fadeup;
-
-//------------------------------------
-
-
-//Threading=false;
-//    Tilting=false;
-//    Shearing=false;
-
-//    Saturn.rings.remove(0);
-
-//    applyBasicMaterials();
-//    for (Ring r : Saturn.rings) {
-//      r.material = RingMat5;
-//    }
-
-//--------------------------------------------------------------------------
-
-//Saturn.rings.get(0).material = RingMat1;
-//Saturn.rings.get(1).material = RingMat3; //same as below
-//Saturn.rings.get(2).material = RingMat3;
-//Saturn.rings.get(3).material = RingMat1;
-//Saturn.rings.get(4).material = RingMat1;
-//Saturn.rings.get(5).material = RingMat5;
-
-//closerCamera();
-//Connecting=false; 
-//Shearing=false;
-//Tilting=false;
-//// useAdditiveBlend=true;
-//useFilters=false;
-
-//sendOSC(Saturn);
-
-//------------------------------------------------------------------------
-
-
 void setupStates() {
   Running = true;
   Shearing=false;
@@ -132,25 +72,25 @@ void setupStates() {
 
   switch(systemState) {
   case initState:
-  
+
     createMaterials();       //extra materials we can apply to the rings
-    
+
     //init with = rings 10,  moons 4, rendering normal =true (titl would be false);
     Saturn = new RingSystem(10, 4, true);  
     applyBasicMaterials();
     sendOSC(Saturn); //osc sound engine init data
-    
+
     break;
 
   case introState:
-  
+
     initCamera();
     Saturn = new RingSystem(2, 2, true); //ringtpe, moon type, tilt/nottilt
     applyBasicMaterials();
     for (Ring r : Saturn.rings) {
       r.material = RingMat3;
     }
-   
+
     sendOSC(Saturn);
 
     break;
@@ -273,7 +213,7 @@ void setupStates() {
     useAdditiveBlend=true;
     zoomedCamera();
     s = new ShearingBox();
-    
+
     break;
 
   case followState:
@@ -310,8 +250,8 @@ void setupStates() {
 // basically like a void draw for each scneario and we switch to its one depending on what scene we in.
 
 void updateCurrentScene(int t) {
-  
-    //*************time step******************
+
+  //*************time step******************
 
   if (simToRealTimeRatio/frameRate < maxTimeStep) {
     dt= simToRealTimeRatio/frameRate;
@@ -323,8 +263,10 @@ void updateCurrentScene(int t) {
 
   // now regardless of scene do this
   if (Running) {
-    if(Threading) {
+    if (Threading) {
       thread("update");
+    } else if (Tilting) {
+      Saturn.tiltupdate();
     } else {
       //thread("update"); //my imac needs this threading or it all slows down computing the physics
       Saturn.update();
@@ -332,8 +274,8 @@ void updateCurrentScene(int t) {
   }
 
   totalSimTime += dt;
-  
-  
+
+
   // Display all of the objects to screen using the renderer.
   if (useAdditiveBlend) {
     blendMode(ADD);
@@ -373,7 +315,7 @@ void updateCurrentScene(int t) {
   case shearState:
     s.material = ShearMat1;
     s.update();
-    
+
     break;
 
   case followState:
@@ -462,6 +404,54 @@ void updateCurrentScene(int t) {
     applyFilters();
   }
 }
+
+//--------------------------------------------------------------------------------------------------------
+
+//    //reinit plus some options
+//    G=6.67408E-9;
+//    Saturn = new RingSystem(11, 4, true);
+//    applyBasicMaterials();
+
+//    //new materials for every ring
+//    for (Ring r : Saturn.rings) {
+//      r.material = RingMat3;
+//    }
+
+//    for (Moon m : Saturn.moons) {
+//      m.radius = 5;
+//    }
+
+//    camera10();
+//    useAdditiveBlend=true;
+//    useTrace=false;
+//    Threading=false;
+//    Shearing=false;
+//    Tilting=false;
+//    //fade us back up or press x to do it manually
+//    systemState= State.fadeup;
+
+//------------------------------------
+
+//Removes Inner Most Ring
+//Saturn.rings.remove(0);
+
+//--------------------------------------------------------------------------
+
+//Saturn.rings.get(0).material = RingMat1;
+//Saturn.rings.get(1).material = RingMat3; //same as below
+//Saturn.rings.get(2).material = RingMat3;
+//Saturn.rings.get(3).material = RingMat1;
+//Saturn.rings.get(4).material = RingMat1;
+//Saturn.rings.get(5).material = RingMat5;
+
+//closerCamera();
+
+//// useAdditiveBlend=true;
+//useFilters=false;
+
+//sendOSC(Saturn);
+
+//------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
