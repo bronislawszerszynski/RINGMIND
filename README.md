@@ -3,7 +3,7 @@
 ## Keypresses
 
 
-| Action              | Keypress Num Row| Cameras     | 1st Row        | Effects       | 2nd Row        | Other           | 3rd Row      |
+| Action              | Num Row        | Cameras     | 1st Row        | Effects       | 2nd Row        | Other           | 3rd Row      |
 | --------------------| ---------------| ------------|----------------|---------------|----------------|-----------------|--------------|
 | Camera route 1      |  <kbd>1</kbd>  | Camera 1    |  <kbd>q</kbd>  | Additiveblend |  <kbd>a</kbd>  | osc ring density| <kbd>c</kbd> |
 | Camera route 2      |  <kbd>2</kbd>  | Camera 2    |  <kbd>w</kbd>  | Trace         |  <kbd>s</kbd>  | save frame      | <kbd>v</kbd> |
