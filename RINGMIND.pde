@@ -24,7 +24,7 @@
 //import codeanticode.syphon.*;
 //SyphonServer server;
 
-//Dynamic Timestep variables 
+////Dynamic Timestep variables 
 float dt;                                      //Simulation Time step [s]
 float simToRealTimeRatio = 3600.0/1.0;         // 3600.0/1.0 --> 1hour/second
 final float maxTimeStep = 20* simToRealTimeRatio / 30;

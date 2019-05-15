@@ -14,20 +14,26 @@ int ringCnt = 10; // how many rings to render
 
 //----------------------------------------------------------------------------------------------------------------------------------------
 
+
+/** 
+*/
 void renderSetup() {
-    // --------------renderer setup------------------
+  //Renderer Object
   rsRenderer = new RingSystemRenderer();
   rsRenderer.withMoon = false;
+  //PGraphics Object
+  pg = createGraphics(1024, 1024, P3D);
+  //RenderContext Object  
   rsRenderContext = new RenderContext();
   rsRenderContext.pgfx = this;
   rsRenderContext.shader = loadShader("texfrag.glsl", "texvert.glsl");
   rsRenderContext.mat.spriteTexture = loadImage("partsmall.png");
-  pg = createGraphics(1024, 1024, P3D);
   rsRenderContext.mat.diffTexture = pg;
   rsRenderContext.mat.strokeColor = 255;
+  //PShader Object
   offscreenShader = loadShader("cloudy.glsl");
-  
-  loadFilters();    //LOAD CUSTOM FILTERS
+  //LOAD CUSTOM FILTERS
+  loadFilters();
 }
 
 // default overlay render using shader

@@ -30,10 +30,10 @@ enum State {
 
 /*
   Brons scenarios from script
-  
+ 
  intro - distant view of ring
  ringmind - move in clsoer to view moon and ring
- making - reinit rindmind with particles not in plane, possibly just one 'ring' where they are all over the place but spinning
+ 
  chaos - gravity, chaos, all sorts going on
  orbital - initialised new 
  shear - zoom to aboe top down position to watch teh shear on one ring
@@ -44,7 +44,7 @@ enum State {
  outro - what is a ringmind lets return back to the beginning.
  
  */
- 
+
 State systemState;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -58,8 +58,8 @@ Boolean Threading = false;
 Boolean Finale=false;
 
 /**
-* Method that called at the start of the state. 
-*/
+ * Method that called at the start of the state. 
+ */
 void setupStates() {
   Running = true;
   Add=false;
@@ -78,6 +78,10 @@ void setupStates() {
 
   switch(systemState) {
   case initState:
+
+    setupOSC();
+    renderSetup();
+    initScene();   //setup proscene camera and eye viewports etc
 
     createMaterials();       //extra materials we can apply to the rings
 
@@ -178,8 +182,8 @@ void setupStates() {
     }
     break;
 
-  //case makingState:
-  //  break;
+    //case makingState:
+    //  break;
 
   case chaosState:
 
@@ -221,29 +225,29 @@ void setupStates() {
 
     break;
 
-//  case followState:
-//    break;
+    //  case followState:
+    //    break;
 
-//  case posiedState:
-//    break;
+    //  case posiedState:
+    //    break;
 
-//  case ringmoonState:
-//    break;
+    //  case ringmoonState:
+    //    break;
 
-//  case tuningState:
-//    break;
+    //  case tuningState:
+    //    break;
 
-//  case outroState:
-//    break;
+    //  case outroState:
+    //    break;
 
-//  case fadetoblack:
-//    break;
+    //  case fadetoblack:
+    //    break;
 
-//  case fadeup:
-//    break;
+    //  case fadeup:
+    //    break;
 
-//  case nocamlock:
-//    break;
+    //  case nocamlock:
+    //    break;
   }
 }
 
@@ -334,6 +338,7 @@ void updateCurrentScene(int t) {
     break;
 
   case posiedState:
+
     break;
 
   case ringmoonState:

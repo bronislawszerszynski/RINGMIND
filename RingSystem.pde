@@ -12,11 +12,13 @@ float G = 6.67408E-11;       // Gravitational Constant 6.67408E-11[m^3 kg^-1 s^-
 float grid2value = 1E-8;
 
 
-float GMp = 3.7931187e16;    // Gravitational parameter (Saturn)
+
 
 // What are the minimum and maximum extents in r for initialisation
 float R_MIN = 1;
 float R_MAX = 5;
+
+final float GMp = 3.7931187e16;    // Gravitational parameter (Saturn)
 final float Rp = 60268e3;          // Length scale (1 Saturn radius) [m]
 final float SCALE = 100/Rp;        // Converts from [m] to [pixel] with planetary radius (in pixels) equal to the numerator. Size of a pixel represents approximately 600km.
 
@@ -101,7 +103,7 @@ class RingSystem {
 
   void initialise() {
 
-    g.add( new Grid(1.0, 5.0, 1E-8, 1E4));
+    //g.add( new Grid(1.0, 5.0, 1E-8, 1E4));
     //g.add( new Grid(2.5, 5.0, 1E-7, 1E3));
     initialiseMoons();
     initialiseRings();

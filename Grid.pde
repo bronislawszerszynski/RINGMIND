@@ -1,8 +1,4 @@
-/** //<>// //<>//
- * Class Grid 
- * @author Thomas Cann
- * @author Sam Hinson
- */
+ //<>//
 
 //Global Variables 
 float GRID_DELTA_R = 0.1; //[Planetary Radi]  
@@ -10,7 +6,17 @@ float GRID_DELTA_THETA = 1; // [Degrees]
 float GRID_DRAG_CONSTANT = 5E-7;
 float GRID_DRAG_PROBABILITY = 1E4 ;
 
+//class Element{
+//int num;
+//float numDensity;
+//PVector averageVelocity;
+//PVector cofm;
+//}
 
+/**Class Grid 
+ * @author Thomas Cann
+ * @author Sam Hinson
+ */
 class Grid {
 
   protected float dr, dtheta, r_min, r_max; 
@@ -20,6 +26,8 @@ class Grid {
   protected float gridNorm[][];    //Grid to hold Normalised Number Density of Particles in Cell (by Area and Total number).
   protected PVector gridV[][];     //Grid to hold the average velocity of cell. 
   protected PVector gridCofM[][];  //Grid to hold centroid value for cell.
+
+  //protected Element grid[][];
 
   //Optimisation Variables
   private float minSize = 4*(sq(r_min *radians(dtheta)/2)+sq(dr)); //Based on the minimum grid size.

@@ -8,7 +8,7 @@
 
 class Moon extends Particle implements Alignable {
 
-  int moonID = 0;
+  // int moonID = 0;
   float GM;
   float radius;
   color c ;
@@ -23,7 +23,7 @@ class Moon extends Particle implements Alignable {
     this.radius=radius;
     this.c= c; 
 
-    this.moonID = mnum;
+    //   this.moonID = mnum;
   }
   /**
    *  Class Constuctor - General Moon object with random angle. 
@@ -34,7 +34,7 @@ class Moon extends Particle implements Alignable {
     this.radius=radius;
     c= color(random(255), random(255), random(255));
 
-    this.moonID = mnum;
+    //  this.moonID = mnum;
   }
   /**
    *  Class Constuctor - Default Moon object with properties of Mima (loosely). 
