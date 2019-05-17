@@ -469,109 +469,109 @@ class RingSystem {
     switch(i) {
     case 0:
       // Pan Mass 5e15 [kg] Radius 1.7e4 [m] Orbital Radius 133.583e6 [m]
-      m.add(new Moon(0, G*5e15, 1.7e4, 133.5832e6));
+      m.add(new Moon(G*5e15, 1.7e4, 133.5832e6));
       break;
     case 1:
       // Daphnis Mass 1e14 [kg] Radius 4.3e3 [m] Orbital Radius 136.5e6 [m]
-      m.add(new Moon(1, G*1e14, 4.3e3, 136.5e6));
+      m.add(new Moon(G*1e14, 4.3e3, 136.5e6));
       break;
     case 2:
       // Atlas Mass 7e15 [kg] Radius 2e4 [m] Orbital Radius 137.67e6 [m]
-      m.add(new Moon(2, G*7e15, 2.4e4, 137.67e6));
+      m.add(new Moon(G*7e15, 2.4e4, 137.67e6));
       break;
     case 3:
       // Promethieus Mass 1.6e17 [kg] Radius 6.8e4 [m] Orbital Radius 139.353e6 [m]
-      m.add(new Moon(3, G*1.6e17, 6.8e4, 139.353e6));
+      m.add(new Moon(G*1.6e17, 6.8e4, 139.353e6));
       break;
     case 4:
       // Pandora Mass 1.4e17 [kg] Radius 5.2e4 [m] Orbital Radius 141.7e6 [m]
-      m.add(new Moon(4, G*1.4e17, 5.2e4, 141.7e6));
+      m.add(new Moon(G*1.4e17, 5.2e4, 141.7e6));
       break;
     case 5:
       // Epimetheus Mass 5.3e17 [kg] Radius 6.5e4 [m] Orbital Radius 151.422e6 [m]
-      m.add(new Moon(5, G*5.3e17, 6.5e4, 151.422e6, color(0, 255, 0)));
+      m.add(new Moon(G*5.3e17, 6.5e4, 151.422e6, color(0, 255, 0)));
       break;
     case 6:
       // Janus Mass 1.9e18 [kg] Radius 1.02e5 [m] Orbital Radius 151.472e6 [m]
-      m.add(new Moon(6, G*1.9e18, 1.02e5, 151.472e6));
+      m.add(new Moon(G*1.9e18, 1.02e5, 151.472e6));
       break;
     case 7: 
       // Mimas Mass 3.7e19 [kg] Radius 2.08e5 [m] Obital Radius 185.52e6 [m]
-      m.add(new Moon(7, G*3.7e19, 2.08e5, 185.52e6));
+      m.add(new Moon(G*3.7e19, 2.08e5, 185.52e6));
       break;
     case 8:
       // Enceladus Mass 1.08e20 [kg] Radius 2.57e5 [m] Obital Radius 238.02e6 [m]
-      m.add(new Moon(8, G*1.08e20, 2.57e5, 238.02e6));
+      m.add(new Moon(G*1.08e20, 2.57e5, 238.02e6));
       break;
     case 9:
       // Tethys Mass 6.18e20 [kg] Radius 5.38e5 [m] Orbital Radius 294.66e6 [m]
-      m.add(new Moon(9, G*6.18e20, 5.38e5, 294.66e6));
+      m.add(new Moon(G*6.18e20, 5.38e5, 294.66e6));
       break;
     case 10:
       // Calypso Mass 4e15 [kg] Radius 1.5e4 [m] Orbital Radius 294.66e6 [m]
-      m.add(new Moon(10, G*4e15, 1.5e4, 294.66e6));
+      m.add(new Moon(G*4e15, 1.5e4, 294.66e6));
       break;
     case 11:
       // Telesto Mass 7e15 [kg] Radius 1.6e4 [m] Orbital Radius 294.66e6 [m]
-      m.add(new Moon(11, G*7e15, 1.6e4, 294.66e6));
+      m.add(new Moon(G*7e15, 1.6e4, 294.66e6));
       break;
     case 12:
       // Dione Mass 1.1e21 [kg] Radius 5.63e5 [m] Orbital Radius 377.4e6 [m]
-      m.add(new Moon(12, G*1.1e21, 5.63e5, 377.4e6));
+      m.add(new Moon(G*1.1e21, 5.63e5, 377.4e6));
       break;
     case 13:
       // Helele Mass 3e16 [kg] Radius 2.2e4 [m] Orbital Radius 377.4e6[m]
-      m.add(new Moon(13, G*3e16, 2.2e4, 377.4e6));
+      m.add(new Moon(G*3e16, 2.2e4, 377.4e6));
       break;
     case 14:
       // Rhea Mass 2.31e21 [kg] Radius 7.65e5 [m] Orbital Radius 527.04e6 [m]
-      m.add(new Moon(14, G*2.31e21, 7.65e5, 527.4e6));
+      m.add(new Moon(G*2.31e21, 7.65e5, 527.4e6));
       break;
     case 15:
       // Titan Mass 1.3455e23 [kg] Radius 2.575e6 [m] Orbital Radius 1221.83e6 [m]
-      m.add(new Moon(15, G*1.34455e23, 2.57e6, 1221.83e6));
+      m.add(new Moon(G*1.34455e23, 2.57e6, 1221.83e6));
       break;
     case 16:
       // Hyperion Mass 5.6e18 [kg] Radius 1.8e5 [m] Orbital Radius 1481.1e6 [m]
-      m.add(new Moon(16, G*5.6e18, 1.8e5, 1481.1e6));
+      m.add(new Moon(G*5.6e18, 1.8e5, 1481.1e6));
       break;
     case 17:
       // Iapetus Mass 1.81e21 [kg] Radius 7.46e5 [m] Orbital Radius 3561.3e6 [m]
-      m.add(new Moon(17, G*1.81e21, 7.46e5, 3561.3e6));
+      m.add(new Moon(G*1.81e21, 7.46e5, 3561.3e6));
       break;
     case 18:
       // Pheobe Mass 8.3e18 [kg] Radius 1.09e5 [m] Orbital Radius 12944e6 [m] 
-      m.add(new Moon(18, G*8.3e18, 1.09e5, 12994e6));
+      m.add(new Moon(G*8.3e18, 1.09e5, 12994e6));
       break;
     case 19:
-      m.add(new Moon(19, G*3.7e18, 1.77e6, 1.373657091*Rp));    
+      m.add(new Moon(G*3.7e18, 1.77e6, 1.373657091*Rp));    
       break;
     case 20:
-      m.add(new Moon(20, G*1.5e20, 2.66e6, 2.180544711*Rp));
+      m.add(new Moon(G*1.5e20, 2.66e6, 2.180544711*Rp));
       break;
     case 21:
-      m.add(new Moon(21, G*9.0e18, 9.90e5, 2.857321894*Rp));
+      m.add(new Moon(G*9.0e18, 9.90e5, 2.857321894*Rp));
       break;
     case 22:
-      m.add(new Moon(22, G*3.7e19, 1.32e6, 3.226611418*Rp));
+      m.add(new Moon(G*3.7e19, 1.32e6, 3.226611418*Rp));
       break;
     case 23:
-      m.add(new Moon(23, G*3.7e19, 4.08e6, 4.0165977*Rp));
+      m.add(new Moon(G*3.7e19, 4.08e6, 4.0165977*Rp));
       break;
     case 24:
-      m.add(new Moon(24, G*2.31e21, 1.65e7, 8.75091259*Rp));  //Rhea
+      m.add(new Moon(G*2.31e21, 1.65e7, 8.75091259*Rp));  //Rhea
       break;
     case 25:
-      m.add(new Moon(25, G*4.9e20, 6.85e7, 16.49*Rp));  
+      m.add(new Moon(G*4.9e20, 6.85e7, 16.49*Rp));  
       break;
     case 26:
-      m.add(new Moon(26, G*1.34455e23, 8.57e7, 20.27327*Rp));  
+      m.add(new Moon(G*1.34455e23, 8.57e7, 20.27327*Rp));  
       break;
     case 27:
-      m.add(new Moon(27, G*3.7e22, 2.08e8, 34.23*Rp));
+      m.add(new Moon(G*3.7e22, 2.08e8, 34.23*Rp));
       break;
     case 28:
-      m.add(new Moon(28, G*1.81e21, 7.46e7, 49.09*Rp));
+      m.add(new Moon(G*1.81e21, 7.46e7, 49.09*Rp));
       break;
     }
   }

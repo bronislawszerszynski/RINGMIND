@@ -17,7 +17,7 @@ class Moon extends Particle implements Alignable {
   /**
    *  Class Constuctor - General Moon object with random angle. 
    */
-  Moon(int mnum, float Gm, float radius, float orb_radius, color c) {
+  Moon(float Gm, float radius, float orb_radius, color c) {
     super(orb_radius);
     this.GM=Gm;
     this.radius=radius;
@@ -28,7 +28,7 @@ class Moon extends Particle implements Alignable {
   /**
    *  Class Constuctor - General Moon object with random angle. 
    */
-  Moon(int mnum, float Gm, float radius, float orb_radius) {
+  Moon(float Gm, float radius, float orb_radius) {
     super(orb_radius);
     this.GM=Gm;
     this.radius=radius;
@@ -45,7 +45,7 @@ class Moon extends Particle implements Alignable {
     //Radius - 2E5 [m]
     //Obital Radius - 185.52E6 [m]
 
-    this(0, 2.529477495e13, 400e3, 185.52e6);
+    this(2.529477495e13, 400e3, 185.52e6);
     this.position.x = p.x;
     this.position.y = p.y;
     this.position.z = p.z;
