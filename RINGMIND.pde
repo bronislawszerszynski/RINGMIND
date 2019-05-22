@@ -34,9 +34,8 @@ float totalSimTime =0.0;                       // Tracks length of time simulati
 
 void settings() {
 
-  fullScreen(P3D, 1);
-  //size (1900, 1080, P3D);
-
+  //fullScreen(P3D, 1);
+  size (1900, 1080, P3D);
   smooth(); //noSmooth();
 }
 
@@ -47,9 +46,6 @@ void setup() {
   randomSeed(3);
   //windows comment out this
   //server = new SyphonServer(this, "ringmindSyphon");
-  setupOSC();
-  renderSetup();
-  initScene();   //setup proscene camera and eye viewports etc
   systemState = State.initState;  //which state shall we begin with 
   setupStates();    //instantiate the scenarios so they are avialble for the state system to handle
 }
@@ -58,21 +54,9 @@ void setup() {
 
 void draw() {
 
-  if (useTrace) {
-    scene.beginScreenDrawing();
-    fill(0, traceAmount);
-    rect(0, 0, width, height);
-    scene.endScreenDrawing();
-  } else {
-    background(0);
-  }
-
-
   //*************Simulation Update Frame******************
 
   updateCurrentScene(millis());    //calls the render and anything specific to each scene state 
-
-  titleText(); //debug info on frame title
 
   //******************************************************
 
@@ -81,7 +65,7 @@ void draw() {
 }
 
 void update() {
-  Saturn.update();
+  Saturn.update(); // 
 }
 
 //--------------------------- INTERACTION KEYS -------------------------------------------------------------------
@@ -200,7 +184,7 @@ void keyPressed() {
     useTrace = !useTrace;
     //Proscene - Fill Screen
   } else if (key=='S') {
-    //
+    //Save Path to JSON
   } else if (key=='d') {
     traceAmount=190;
   } else if (key=='D') {

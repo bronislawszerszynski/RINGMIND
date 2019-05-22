@@ -76,13 +76,14 @@ void setupStates() {
   G=6.67408E-11;
   simToRealTimeRatio = 3600.0/1.0;  
 
+
+
   switch(systemState) {
   case initState:
 
     setupOSC();
     renderSetup();
     initScene();   //setup proscene camera and eye viewports etc
-
     createMaterials();       //extra materials we can apply to the rings
 
     //init with = rings 10,  moons 4, rendering normal =true (titl would be false);
@@ -255,8 +256,7 @@ void setupStates() {
 //---------------------------------------------------------------------------------------------------
 
 
-// update scenario method so depending on which scenario do different things and render differently etc
-// basically like a void draw for each scneario and we switch to its one depending on what scene we in.
+
 
 void updateCurrentScene(int t) {
 
@@ -284,6 +284,15 @@ void updateCurrentScene(int t) {
     }
   }
 
+
+  if (useTrace) {
+    scene.beginScreenDrawing();
+    fill(0, traceAmount);
+    rect(0, 0, width, height);
+    scene.endScreenDrawing();
+  } else {
+    background(0);
+  }
 
 
 
@@ -410,6 +419,8 @@ void updateCurrentScene(int t) {
   } else {
     rsRenderer.render(Saturn, rsRenderContext, 1); //1 for points
   }
+
+  titleText(); //debug info on frame title
 
   // test for something funky
   if (useFilters) {
