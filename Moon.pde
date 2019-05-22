@@ -13,11 +13,12 @@ class Moon extends Particle implements Alignable {
   float radius;
   color c ;
   final float moonSizeScale= 2;
+  ArrayList<Resonance> r;
 
   /**
    *  Class Constuctor - General Moon object with random angle. 
    */
-  Moon(int mnum, float Gm, float radius, float orb_radius, color c) {
+  Moon(float Gm, float radius, float orb_radius, color c) {
     super(orb_radius);
     this.GM=Gm;
     this.radius=radius;
@@ -28,7 +29,7 @@ class Moon extends Particle implements Alignable {
   /**
    *  Class Constuctor - General Moon object with random angle. 
    */
-  Moon(int mnum, float Gm, float radius, float orb_radius) {
+  Moon(float Gm, float radius, float orb_radius) {
     super(orb_radius);
     this.GM=Gm;
     this.radius=radius;
@@ -45,7 +46,7 @@ class Moon extends Particle implements Alignable {
     //Radius - 2E5 [m]
     //Obital Radius - 185.52E6 [m]
 
-    this(0, 2.529477495e13, 400e3, 185.52e6);
+    this(2.529477495e13, 400e3, 185.52e6);
     this.position.x = p.x;
     this.position.y = p.y;
     this.position.z = p.z;
@@ -133,6 +134,11 @@ class Moon extends Particle implements Alignable {
     PVector mm = new PVector(m.position.x, m.position.y, 0);
     return degrees(PVector.angleBetween(center, mm));
   }
+
+  void addResonance(float Q) {
+    Resonance R = new Resonance(Q, this);
+    r.add(R);
+  }
 }
 
 /**Interface Alignable - template for checking if different objects types of objects align. 
@@ -142,3 +148,53 @@ public interface Alignable {
   public boolean isAligned(Alignable other); //Alignment Threshold
   //public float timeToAlignment(Alignable other); //What units? [s]
 }
+
+public class Resonance {
+
+  float Q;
+  float rGap;
+  float Effect;
+  float rMax;
+  float bellMag = 100;
+  float bellWidth = 10000;
+
+  Resonance(float Q, Moon m) {
+    this.Q = Q;
+    calcRGap(m);
+    calcEffect(m);
+    calcRmax(m);
+  }
+
+  void calcRGap(Moon m) {
+    rGap = m.position.mag()*pow(Q, (-2/3));
+  }
+  void calcEffect(Moon m) {
+    //Accleration at gap ( Gravitational force due to moon at ring gap --> moonmass/(rmoon -rgap)^2 multiplied by a constant
+  }
+
+  float calcAccleration(float x) {
+
+    // a proportional to GM pow(Q, ?) 
+    return bellMag*exp( -sq(x) /(Q*bellWidth)) + 1;
+  }
+
+
+  void calcRmax(Moon m) {
+    // Bell Curve/ Effect curve gets to f(0)= 1 ---> f(RMax)=0.01
+    rMax = rGap + sqrt((-bellWidth*log(0.01/bellMag))/Q);
+  }
+}
+
+//public class ResonantMoon extends Moon {
+
+//  ArrayList<Resonance> r;
+
+//  ResonantMoon() {
+//    super();
+//    r = new ArrayList();
+//  }
+
+//  void addResonance(float Q) {
+//    R = new Resonance(Q, this);
+//  }
+//}

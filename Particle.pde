@@ -37,7 +37,7 @@ class RingParticle extends Particle {
    */
   PVector getAcceleration(RingSystem rs) {
 
-    // acceleration due planet in centre of the ring. 
+    // acceleration due to planet in centre of the ring. 
     PVector a_grav = PVector.mult(position.copy().normalize(), -GMp/position.copy().magSq());
 
     //Acceleration from the Grid Object
@@ -45,10 +45,23 @@ class RingParticle extends Particle {
       a_grav.add(x.gridAcceleration(this));
     }
     for (Moon m : rs.moons) {
+      //for all resonances of the moon 
+
       PVector dist = PVector.sub(m.position, position);
       PVector a = PVector.mult(dist, m.GM/pow(dist.mag(), 3));
+
+      for (Resonance R : m.r) {
+
+        float x = position.mag();
+        //Check if Particle >Rgap ?&& <Rmax
+        if (x>R.rGap && x<R.rMax) {
+          //Calcuaculate and Apply if it is !
+          a.mult(R.calcAccleration(x-R.rGap));
+        }
+      }
       a_grav.add(a);
     }
+
     return a_grav;
   }
 }
