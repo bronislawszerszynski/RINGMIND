@@ -160,6 +160,11 @@ class RingSystem {
       addMoon(27, moons);
       addMoon(28, moons);
       break;
+      
+      case(5):
+      //mimas
+      addMoon(7, moons);
+      break;
 
     default:
       break;
@@ -172,7 +177,7 @@ class RingSystem {
     switch(ring_index) {
     case 1:
       //Generic Disc of Particles
-      rings.add(new Ring(0, 1.1, 4.9, N_PARTICLES));
+      rings.add(new Ring(0, 1.1, 2.9, N_PARTICLES));
 
       calcDensity();
       break;
@@ -496,7 +501,9 @@ class RingSystem {
       break;
     case 7: 
       // Mimas Mass 3.7e19 [kg] Radius 2.08e5 [m] Obital Radius 185.52e6 [m]
-      m.add(new Moon(G*3.7e19, 2.08e5, 185.52e6));
+      Moon moon =new Moon(G*3.7e19, 2.08e5, 185.52e6);
+      moon.addResonance(2.0);
+      m.add(moon);
       break;
     case 8:
       // Enceladus Mass 1.08e20 [kg] Radius 2.57e5 [m] Obital Radius 238.02e6 [m]
@@ -579,10 +586,6 @@ class RingSystem {
 
 //m = new Moon 
 //m.addResona( 1
-
-//fahldfjka
-
-//afdjiiklsa
 
 //arraylist .add m
 

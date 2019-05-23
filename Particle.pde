@@ -49,15 +49,21 @@ class RingParticle extends Particle {
 
       PVector dist = PVector.sub(m.position, position);
       PVector a = PVector.mult(dist, m.GM/pow(dist.mag(), 3));
-
+       
+      if (m.r != null){
       for (Resonance R : m.r) {
 
         float x = position.mag();
         //Check if Particle >Rgap ?&& <Rmax
+        println(x+" "+R.rGap+ " "+ R.rMax);
         if (x>R.rGap && x<R.rMax) {
           //Calcuaculate and Apply if it is !
+          //println(R.calcAccleration(x-R.rGap));
           a.mult(R.calcAccleration(x-R.rGap));
         }
+      }}else{
+        println("No Resonances ");
+        
       }
       a_grav.add(a);
     }

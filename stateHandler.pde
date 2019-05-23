@@ -13,7 +13,8 @@ enum State {
     posiedState, 
     ringmoonState, 
     tuningState, 
-    outroState, 
+    outroState,
+    resonanceState,
 
     ringmindStableState, 
     ringmindUnstableState, 
@@ -224,6 +225,12 @@ void setupStates() {
     zoomedCamera();
     s = new ShearingBox();
 
+    break;
+    
+  case resonanceState:
+    Saturn = new RingSystem(1, 5, true);
+    applyBasicMaterials();
+    
     break;
 
     //  case followState:

@@ -35,7 +35,7 @@ float totalSimTime =0.0;                       // Tracks length of time simulati
 void settings() {
 
   //fullScreen(P3D, 1);
-  size (1900, 1080, P3D);
+  size (1000, 700, P3D);
   smooth(); //noSmooth();
 }
 
@@ -48,6 +48,8 @@ void setup() {
   //server = new SyphonServer(this, "ringmindSyphon");
   systemState = State.initState;  //which state shall we begin with 
   setupStates();    //instantiate the scenarios so they are avialble for the state system to handle
+  systemState = State.resonanceState;  //which state shall we begin with 
+  setupStates();  
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------------
@@ -65,7 +67,7 @@ void draw() {
 }
 
 void update() {
-  Saturn.update(); // 
+  Saturn.update(); //
 }
 
 //--------------------------- INTERACTION KEYS -------------------------------------------------------------------
@@ -121,6 +123,9 @@ void keyPressed() {
     setupStates();
   } else if (key=='-') {
     systemState= State.orbitalState;
+    setupStates();
+  } else if (key== '=') {
+    systemState= State.resonanceState;
     setupStates();
   }
 
@@ -191,7 +196,6 @@ void keyPressed() {
     //
   } else if (key=='f') {
     useFilters=!useFilters;
-
   } else if (key=='F') {
     //
   } else if (key=='g') {

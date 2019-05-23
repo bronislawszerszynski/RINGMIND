@@ -23,6 +23,7 @@ class Moon extends Particle implements Alignable {
     this.GM=Gm;
     this.radius=radius;
     this.c= c; 
+    r= new ArrayList<Resonance>();
 
     //   this.moonID = mnum;
   }
@@ -34,7 +35,7 @@ class Moon extends Particle implements Alignable {
     this.GM=Gm;
     this.radius=radius;
     c= color(random(255), random(255), random(255));
-
+    r= new ArrayList<Resonance>();
     //  this.moonID = mnum;
   }
   /**
@@ -155,22 +156,22 @@ public class Resonance {
   float rGap;
   float Effect;
   float rMax;
-  float bellMag = 100;
-  float bellWidth = 10000;
+  float bellMag = 1000;
+  float bellWidth = 2000000000;
 
   Resonance(float Q, Moon m) {
     this.Q = Q;
     calcRGap(m);
-    calcEffect(m);
-    calcRmax(m);
+    //calcEffect(m);
+    calcRmax();
   }
 
   void calcRGap(Moon m) {
-    rGap = m.position.mag()*pow(Q, (-2/3));
+    rGap = m.position.mag()*pow(Q, (-2.0/3.0));
   }
-  void calcEffect(Moon m) {
-    //Accleration at gap ( Gravitational force due to moon at ring gap --> moonmass/(rmoon -rgap)^2 multiplied by a constant
-  }
+  //void calcEffect(Moon m) {
+  //  //Accleration at gap ( Gravitational force due to moon at ring gap --> moonmass/(rmoon -rgap)^2 multiplied by a constant
+  //}
 
   float calcAccleration(float x) {
 
@@ -178,8 +179,7 @@ public class Resonance {
     return bellMag*exp( -sq(x) /(Q*bellWidth)) + 1;
   }
 
-
-  void calcRmax(Moon m) {
+  void calcRmax() {
     // Bell Curve/ Effect curve gets to f(0)= 1 ---> f(RMax)=0.01
     rMax = rGap + sqrt((-bellWidth*log(0.01/bellMag))/Q);
   }
