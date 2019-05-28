@@ -156,7 +156,7 @@ public class Resonance {
   float rGap;
   float Effect;
   float rMax;
-  float bellMag = 100;
+  float bellMag = 1e5;
   float bellWidth = 0.001913069;
 
   Resonance(float Q, Moon m) {
@@ -167,7 +167,7 @@ public class Resonance {
   }
 
   void calcRGap(Moon m) {
-    rGap = m.position.mag()*pow(Q, (-2.0/3.0));
+    rGap = (m.position.mag()*pow(Q, (-2.0/3.0)))/60268e3;
   }
   //void calcEffect(Moon m) {
   //  //Accleration at gap ( Gravitational force due to moon at ring gap --> moonmass/(rmoon -rgap)^2 multiplied by a constant

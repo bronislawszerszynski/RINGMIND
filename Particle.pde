@@ -58,7 +58,7 @@ class RingParticle extends Particle {
         //println(x+" "+R.rGap+ " "+ R.rMax);
         if (x>R.rGap && x<R.rMax) {
           //Calcuaculate and Apply if it is !
-          //println(R.calcAccleration(x-R.rGap));
+          println(R.calcAccleration(x-R.rGap));
           a.mult(R.calcAccleration(x-R.rGap));
         }
       }}else{
