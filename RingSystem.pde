@@ -20,7 +20,7 @@ float R_MAX = 5;
 
 final float GMp = 3.7931187e16;    // Gravitational parameter (Saturn)
 final float Rp = 60268e3;          // Length scale (1 Saturn radius) [m]
-final float SCALE = 100/Rp;        // Converts from [m] to [pixel] with planetary radius (in pixels) equal to the numerator. Size of a pixel represents approximately 600km.
+final float SCALE = 200/Rp;        // Converts from [m] to [pixel] with planetary radius (in pixels) equal to the numerator. Size of a pixel represents approximately 600km.
 
 /**
  *

@@ -156,8 +156,8 @@ public class Resonance {
   float rGap;
   float Effect;
   float rMax;
-  float bellMag = 1000;
-  float bellWidth = 2000000000;
+  float bellMag = 100;
+  float bellWidth = 0.001913069;
 
   Resonance(float Q, Moon m) {
     this.Q = Q;

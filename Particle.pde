@@ -53,9 +53,9 @@ class RingParticle extends Particle {
       if (m.r != null){
       for (Resonance R : m.r) {
 
-        float x = position.mag();
+        float x = position.mag()/60268e3;
         //Check if Particle >Rgap ?&& <Rmax
-        println(x+" "+R.rGap+ " "+ R.rMax);
+        //println(x+" "+R.rGap+ " "+ R.rMax);
         if (x>R.rGap && x<R.rMax) {
           //Calcuaculate and Apply if it is !
           //println(R.calcAccleration(x-R.rGap));
