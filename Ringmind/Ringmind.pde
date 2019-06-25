@@ -123,10 +123,9 @@ void keyPressed() {
   } else if (key=='E') {
     //
   } else if (key=='r') {
-    camera4();
     //Proscene - Show Camera Path
   } else if (key=='R') {
-    //
+    camera4();
   } else if (key=='t') {
     zoomedCamera();
   } else if (key=='T') {
@@ -164,7 +163,6 @@ void keyPressed() {
   } else if (key == 'A') {
     useAdditiveBlend = !useAdditiveBlend;
   } else if (key=='s') {
-    useTrace = !useTrace;
     //Proscene - Fill Screen
   } else if (key=='S') {
     //Release to Save Path to JSON
@@ -191,7 +189,7 @@ void keyPressed() {
   } else if (key=='H') {
     //
   } else if (key=='j') {
-    //
+    useTrace = !useTrace;
   } else if (key=='J') {
     //
   } else if (key=='k') {
