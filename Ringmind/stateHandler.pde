@@ -116,7 +116,7 @@ void setupStates() {
 
   case shearState:
     useAdditiveBlend=true;
-    zoomedCamera();
+    camera4();
     s = new ShearSystem(false);
     s.simToRealTimeRatio = 2000.0/1.0;  
     break;
