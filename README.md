@@ -5,10 +5,10 @@
 
 | Action              | Num Row        | Cameras     | 1st Row        | Effects       | 2nd Row        | Other           | 3rd Row      |
 | --------------------| :-------------:| ------------|:--------------:|---------------|:--------------:|-----------------|:------------:|
-| Camera route 1      |  <kbd>1</kbd>  | Camera 1    |  <kbd>q</kbd>  | Additiveblend |  <kbd>a</kbd>  | osc ring density| <kbd>c</kbd> |
-| Camera route 2      |  <kbd>2</kbd>  | Camera 2    |  <kbd>w</kbd>  | Trace         |  <kbd>s</kbd>  | save frame      | <kbd>v</kbd> |
+| Camera route 1      |  <kbd>1</kbd>  | Camera 1    |  <kbd>q</kbd>  | Additiveblend |  <kbd>A</kbd>  | osc ring density| <kbd>c</kbd> |
+| Camera route 2      |  <kbd>2</kbd>  | Camera 2    |  <kbd>w</kbd>  | Trace         |  <kbd>j</kbd>  | save frame      | <kbd>v</kbd> |
 | Camera route 3      |  <kbd>3</kbd>  | Camera 3    |  <kbd>e</kbd>  | Trace 190     |  <kbd>d</kbd>  | moon alignment  | <kbd>m</kbd> |
-| introstate          |  <kbd>4</kbd>  | Shear Out   |  <kbd>r</kbd>  | Filters       |  <kbd>f</kbd>  | save Camera path| <kbd>S</kbd> |
+| introstate          |  <kbd>4</kbd>  | Shear Out   |  <kbd>R</kbd>  | Filters       |  <kbd>f</kbd>  | save Camera path| <kbd>S</kbd> |
 | stable RINGMIND     |  <kbd>5</kbd>  | zoomed      |  <kbd>t</kbd>  | Fade up       |  <kbd>g</kbd>  | Grid squares    | <kbd></kbd>  |
 | unstable RINGMID    |  <kbd>%</kbd>  | Camera 6    |  <kbd>y</kbd>  | Fade to black |  <kbd>h</kbd>  | 3 axis makers   | <kbd></kbd>  |
 | Connected State     |  <kbd>6</kbd>  | closer      |  <kbd>u</kbd>  |
