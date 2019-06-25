@@ -62,6 +62,7 @@ void setupStates() {
   case introState:
 
     initCamera();
+    G=6.67408E-11;
     s = new RingmindSystem(2, 2); 
     break;
 
@@ -69,6 +70,7 @@ void setupStates() {
 
     useAdditiveBlend=true;
     closerCamera();
+    G=6.67408E-11;
     s = new RingmindSystem(10, 4);
 
 
@@ -93,6 +95,7 @@ void setupStates() {
     break;
 
   case saturnState:
+    G=6.67408E-11;
     s = new RingmindSystem(2, 4);
     break;
 
