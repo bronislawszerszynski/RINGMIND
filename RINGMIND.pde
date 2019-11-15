@@ -34,8 +34,8 @@ float totalSimTime =0.0;                       // Tracks length of time simulati
 
 void settings() {
 
-  //fullScreen(P3D, 1);
-  size (1000, 700, P3D);
+  fullScreen(P3D, 2);
+  //size (1000, 700, P3D);
   smooth(); //noSmooth();
 }
 
@@ -115,18 +115,18 @@ void keyPressed() {
     //TiltSystem
     systemState= State.chaosState;
     setupStates();
-  } else if (key=='0') {
-    systemState= State.ringboarderState;
-    setupStates();
-  } else if (key==')') {
-    systemState= State.addAlienLettersState;
-    setupStates();
-  } else if (key=='-') {
-    systemState= State.orbitalState;
-    setupStates();
-  } else if (key== '=') {
-    systemState= State.resonanceState;
-    setupStates();
+  //} else if (key=='0') {
+  //  systemState= State.ringboarderState;
+  //  setupStates();
+  //} else if (key==')') {
+  //  systemState= State.addAlienLettersState;
+  //  setupStates();
+  //} else if (key=='-') {
+  //  systemState= State.orbitalState;
+  //  setupStates();
+  //} else if (key== '=') {
+  //  systemState= State.resonanceState;
+  //  setupStates();
   }
 
 

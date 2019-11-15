@@ -13,8 +13,8 @@ enum State {
     posiedState, 
     ringmoonState, 
     tuningState, 
-    outroState,
-    resonanceState,
+    outroState, 
+    resonanceState, 
 
     ringmindStableState, 
     ringmindUnstableState, 
@@ -22,6 +22,10 @@ enum State {
     saturnState, 
     ringboarderState, 
     addAlienLettersState, 
+
+    RingLife1, 
+    RingLife2, 
+    RingLife3, 
 
 
     fadetoblack, 
@@ -226,12 +230,49 @@ void setupStates() {
     s = new ShearingBox();
 
     break;
-    
+
   case resonanceState:
     Saturn = new RingSystem(1, 5, true);
     applyBasicMaterials();
-    
+
     break;
+
+    case RingLife1:
+    Tilting=true; 
+    useTrace=true;
+    cameraChaos();
+    Saturn = new RingSystem(9, 2, false); //ring type 9 as its a tilt type, moon type2 and tilt type2 //new materials for every ring
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat1;
+    }
+    break;
+
+    case RingLife2:
+    closerCamera();
+    useAdditiveBlend=true;
+    G=6.67408E-9;
+    Saturn = new RingSystem(11, 4, true);
+    applyBasicMaterials();
+    for (Ring r : Saturn.rings) {
+      r.material = RingMat3;
+    }
+    Saturn.rings.get(0).material = RingMat4;
+    Saturn.rings.get(1).material = RingMat2;
+    Saturn.rings.get(2).material = RingMat2;
+    Saturn.rings.get(3).material = RingMat6;
+    Saturn.rings.get(4).material = RingMat6;
+    Saturn.rings.get(5).material = RingMat5;
+    break;
+
+    case RingLife3:
+    useAdditiveBlend=true;
+    Connecting=true; 
+    //simToRealTimeRatio = 360.0/1.0; //slow it down
+    camera4();
+    Saturn = new RingSystem(1, 2, true);
+    Saturn.rings.get(0).material = RingMat2;
+    break;
+
 
     //  case followState:
     //    break;
@@ -263,8 +304,9 @@ void setupStates() {
 //---------------------------------------------------------------------------------------------------
 
 
-
-
+float showtime =1*60*1000.00;  // In Minute * Seconds * Milli Seconds
+int sceneNumber;
+int sceneCount =3;
 void updateCurrentScene(int t) {
 
   //*************time step******************
@@ -276,6 +318,50 @@ void updateCurrentScene(int t) {
     println("At Maximum Time Step");
   }
 
+  if(sceneNumber != floor(floor(t/showtime) % sceneCount)+1){
+    sceneNumber = floor(floor(t/showtime) % sceneCount)+1;
+    if ( sceneNumber== 1  ) {
+    println("1");
+    systemState= State.RingLife1;
+    setupStates();
+    
+    //Add audio in here
+    
+    player5.pause();
+    player6.pause();
+    
+    player1.loop();
+    player2.loop();
+    
+    
+  } else if (sceneNumber ==2 ) {
+    systemState= State.RingLife2;
+    setupStates();
+    println("2");
+    
+    //Add audio in here
+        player1.pause();
+    player2.pause();
+    
+    player3.loop();
+    player4.loop();
+    
+    
+  } else if (sceneNumber ==3) {
+    systemState= State.RingLife3;
+    setupStates();
+    
+            player3.pause();
+    player4.pause();
+    
+    player5.loop();
+    player6.loop();
+    
+    println("3");
+  } else {
+    println("problem");
+  }
+}
 
   // now regardless of scene do this
   if (Running) {
@@ -323,6 +409,8 @@ void updateCurrentScene(int t) {
     //initCamera();
 
     break;
+    
+    
 
   case introState:
     break;
