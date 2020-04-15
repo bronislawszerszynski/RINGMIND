@@ -8,6 +8,8 @@
  * @author Thomas Cann
  * @author Sam Hinson
  */
+ import java.util.Random;
+
 abstract class Particle {
 
   PVector position; // Position float x1, x2, x3; 
@@ -600,14 +602,7 @@ class ShearParticle extends Particle {
     acceleration = new PVector();
     //
     position.x= (random(1)-0.5)*s.Lx;
-    //
-    if (position.x >0) {
-      position.y = -s.Ly/2;
-    } else if (position.x ==0) {
-      position.y =0; //Think about this !!
-    } else {
-      position.y = s.Ly/2;
-    }
+    position.y= (random(1)-0.5)*s.Ly;
     //  
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
@@ -675,16 +670,55 @@ class ShearParticle extends Particle {
   void Reset(ShearSystem s) {
     acceleration.x=0;
     acceleration.y=0;
-    //
-    position.x= (random(1)-0.5)*s.Lx;
-    //
-    if (position.x >0) {
-      position.y = -s.Ly/2;
-    } else if (position.x ==0) {
-      position.y =0; //Think about this !!
-    } else {
-      position.y = s.Ly/2;
+    
+    
+      // Splits each half (top/bottom) into k number of orbital heights
+    int k=250;
+    
+    Random r = new Random();
+    
+        // First, generate a number from 1 to T_k
+    int triangularK = k * (k + 1) / 2;
+    
+    int x = r.nextInt(triangularK) + 1;
+    
+    // Next, figure out which bucket x fits into, bounded by
+    // triangular numbers by taking the triangular root    
+    // We're dealing strictly with positive integers, so we can
+    // safely ignore the - part of the +/- in the triangular root equation
+    double triangularRoot = (Math.sqrt(8 * x + 1) - 1) / 2;
+    
+    int n = (int) Math.ceil(triangularRoot);  
+        // n has a linear distubution from 0 to k , k being the most likely outcome
+        // normanlise n --> k = 1
+    float XWeight = float(n)/k;
+    
+        // 50/50 change of particle spawning in top or bottom half
+    int Coinflip = int(random(2));
+    if(Coinflip == 0){
+     
+     position.x= XWeight*s.Lx/2;
+     position.y = -s.Ly/2;
     }
+    
+     if(Coinflip == 1){
+     
+     position.x= -XWeight*s.Lx/2;
+     position.y = s.Ly/2;
+    }
+    
+   
+    //Old code I was too scared to remove
+    //
+    //position.x= (random(1)-0.5)*s.Lx;
+    //
+    //if (position.x >0) {
+    //  position.y = -s.Ly/2;
+    //} else if (position.x ==0) {
+    //  position.y =0; //Think about this !!
+    //} else {
+    //  position.y = s.Ly/2;
+    //}
     //  
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;

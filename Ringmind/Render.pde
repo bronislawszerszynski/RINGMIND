@@ -250,14 +250,14 @@ class Renderer {
 
       //moonlet
       if (ss.Moonlet) {
-        if (ss.Guides) {
+       // if (ss.Guides) {
           ellipseMode(CENTER);
           push();
           translate(0, 0);
           fill(255);
           sphere(ss.moonlet.radius/2);
           pop();
-        }
+       // }
       }
     } else if (s instanceof TiltSystem) {
       //--------------------------------------------TiltSystemRender--------------------------------------------------
