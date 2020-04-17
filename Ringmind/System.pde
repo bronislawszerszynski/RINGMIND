@@ -343,7 +343,7 @@ class ShearSystem extends System {
 
   //Simulation dimensions [m]
   int Lx = 1000;       //Extent of simulation box along planet-point line [m].
-  int Ly = 2000;       //Extent of simulation box along orbit [m].
+  int Ly = 4000;       //Extent of simulation box along orbit [m].
 
   //Initialises Simulation Constants
   final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
@@ -383,10 +383,8 @@ class ShearSystem extends System {
     }
     
     if (DynamicMoon = true){
-    
-      moonlet.GetMoonletAcceleration();
-      moonlet.updatePosition(s.dt);
-      moonlet.updateVelocity(moonlet.GetMoonletAcceleration(),s.dt);
+      moonlet.DynamicMoon(this);
+
     }
   }
 

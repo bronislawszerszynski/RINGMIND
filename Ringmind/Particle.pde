@@ -767,8 +767,10 @@ class Moonlet extends ShearParticle {
 
   //Ring Moonlet Properties
   float moonlet_r = 50.0;            //Radius of the moonlet [m].
-  final float moonlet_density =1000.0; //Density of the moonlet [kg/m^3]
+  final float moonlet_density =3000.0; //Density of the moonlet [kg/m^3]
   float moonlet_GM = SG*(4.0*PI/3.0)*pow(moonlet_r, 3.0)*moonlet_density; //Standard gravitational parameter.
+  int AvgX = 200;
+  float AvgAcceleration = 0.00002;
 
   Moonlet(ShearSystem s) {
     position = new PVector();
@@ -777,30 +779,18 @@ class Moonlet extends ShearParticle {
     this.radius = moonlet_r ;
     this.GM = moonlet_GM;
     m= PI*pow(radius, 3.0)*4.0/3.0;
+    //position.x = AvgX + 200;
+    position.x = 0;
+    position.y = s.Ly*0.8/2;
+  }
+     
+   PVector DynamicMoon(ShearSystem s) {
+      float Hours = s.totalSystemTime/3600.0;
+      position.x = 100*cos(Hours*PI/2);  
+      return position;
+  }
+
   
-    position.x = 500;
-    position.y = 500;
-
-}
-   PVector GetMoonletAcceleration(){
-    if(position.x > 0){
-    acceleration.x = -0.00002;
-    }
-    if(position.x < 0){
-    acceleration.x = 0.00002;
-    }
-    //acceleration.x = 0.00001;
-    return acceleration;
-   }
-   
-     void updatePosition(float dt) {
-
-    position.add(velocity.copy().mult(dt)).add(acceleration.copy().mult(0.5*sq(dt)));
-  }
-
-  void updateVelocity(PVector a, float dt) {    
-      velocity.add(PVector.add(acceleration.copy(), a).mult(0.5 *dt));
-  }
    
 }
 //-----------------------------------------Particle I/O--------------------------------------------------------------
