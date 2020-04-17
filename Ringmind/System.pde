@@ -339,6 +339,7 @@ class ShearSystem extends System {
   Boolean A2 =true;
   Boolean Guides = true;
   Boolean Reset =false;
+  Boolean DynamicMoon = true;
 
   //Simulation dimensions [m]
   int Lx = 1000;       //Extent of simulation box along planet-point line [m].
@@ -356,7 +357,7 @@ class ShearSystem extends System {
     this.Guides =Guides;
     g = new ArrayList<Grid>();
     particles = new ArrayList<Particle>();
-    moonlet = new Moonlet();
+    moonlet = new Moonlet(this);
     random_start();
   }
 
@@ -379,6 +380,13 @@ class ShearSystem extends System {
           x.Reset(this);
         }
       }
+    }
+    
+    if (DynamicMoon = true){
+    
+      moonlet.GetMoonletAcceleration();
+      moonlet.updatePosition(s.dt);
+      moonlet.updateVelocity(moonlet.GetMoonletAcceleration(),s.dt);
     }
   }
 
@@ -410,7 +418,7 @@ class ShearSystem extends System {
    *@param n  Number of Particle to inject.
    */
   void random_inject(float n) {
-    //particles.add(new Moonlet());
+   //particles.add(new Moonlet(this));
     for (int i = 0; i < n; i++) {
       particles.add(new ShearParticle(this));
     }

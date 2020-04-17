@@ -601,8 +601,21 @@ class ShearParticle extends Particle {
     velocity = new PVector();
     acceleration = new PVector();
     //
-    position.x= (random(1)-0.5)*s.Lx;
-    position.y= (random(1)-0.5)*s.Ly;
+  //  position.x= (random(1)-0.5)*s.Lx;
+   position.y= (random(1)-0.5)*s.Ly;  
+    
+    
+    //Gap around the moon
+    //  int Coinflip = int(random(2));
+    //if(Coinflip == 0){
+     
+    // position.x= ((random(1)*s.Lx/2) + 0.1*s.Lx)*0.8;
+    //}
+    // if(Coinflip == 1){   
+     position.x= (-(random(1)*s.Lx/2) - 0.1*s.Lx)*0.8;
+    //}
+    
+    
     //  
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
@@ -639,27 +652,36 @@ class ShearParticle extends Particle {
       a_grav.x += 2.0*ss.Omega0*velocity.y;
     }
     if (ss.Moonlet) {
-      float moonlet_GMr3 = ss.moonlet.GM/pow(position.mag(), 3.0);
-      a_grav.x += -moonlet_GMr3*position.x;
-      a_grav.y += -moonlet_GMr3*position.y;
-    }
-
-    if (ss.Self_Grav) {
-      for (Particle p : ss.particles) {
-        ShearParticle sp = (ShearParticle)p;
-        if (sp!=this) {
-          PVector distanceVect = PVector.sub(position.copy(), sp.position.copy());
-
-          // Calculate magnitude of the vector separating the balls
-          float distanceVectMag = distanceVect.mag();
-          if (distanceVectMag > radius+sp.radius) {
-            distanceVect = distanceVect.mult(sp.GM /pow(distanceVectMag, 3));
+      //float moonlet_GMr3 = ss.moonlet.GM/pow(position.mag(), 3.0);
+      PVector distanceVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
+      
+      float distanceVectMag = distanceVect.mag();
+          if (distanceVectMag > radius+ss.moonlet.radius) {
+            distanceVect = distanceVect.mult(ss.moonlet.GM /pow(distanceVectMag, 3));
             a_grav.x+= -distanceVect.x ;
             a_grav.y+=-distanceVect.y;
-          }
-        }
-      }
+      
+      //a_grav.x += -moonlet_GMr3*position.x;
+      //a_grav.y += -moonlet_GMr3*position.y;
     }
+    }
+
+    //if (ss.Self_Grav) {
+    //  for (Particle p : ss.particles) {
+    //    ShearParticle sp = (ShearParticle)p;
+    //    if (sp!=this) {
+    //      PVector distanceVect = PVector.sub(position.copy(), sp.position.copy());
+
+    //      // Calculate magnitude of the vector separating the balls
+    //      float distanceVectMag = distanceVect.mag();
+    //      if (distanceVectMag > radius+sp.radius) {
+    //        distanceVect = distanceVect.mult(sp.GM /pow(distanceVectMag, 3));
+    //        a_grav.x+= -distanceVect.x ;
+    //        a_grav.y+=-distanceVect.y;
+    //      }
+    //    }
+    //  }
+    //}
     //PVector.mult(position.copy().normalize(), -GMp/position.copy().magSq())
     return a_grav;
   }
@@ -694,18 +716,18 @@ class ShearParticle extends Particle {
     float XWeight = float(n)/k;
     
         // 50/50 change of particle spawning in top or bottom half
-    int Coinflip = int(random(2));
-    if(Coinflip == 0){
+  //  int Coinflip = int(random(2));
+  //  if(Coinflip == 0){
      
-     position.x= XWeight*s.Lx/2;
-     position.y = -s.Ly/2;
-    }
+  //   position.x= (XWeight*s.Lx/2 + 0.2*s.Lx/2)*0.8;
+  //   position.y = -s.Ly/2;
+    //}
     
-     if(Coinflip == 1){
+    // if(Coinflip == 1){
      
-     position.x= -XWeight*s.Lx/2;
+     position.x= (-XWeight*s.Lx/2 - 0.2*s.Lx/2)*0.8;
      position.y = s.Ly/2;
-    }
+    //}
     
    
     //Old code I was too scared to remove
@@ -745,19 +767,42 @@ class Moonlet extends ShearParticle {
 
   //Ring Moonlet Properties
   float moonlet_r = 50.0;            //Radius of the moonlet [m].
-  final float moonlet_density = 1000.0; //Density of the moonlet [kg/m]
+  final float moonlet_density =1000.0; //Density of the moonlet [kg/m^3]
   float moonlet_GM = SG*(4.0*PI/3.0)*pow(moonlet_r, 3.0)*moonlet_density; //Standard gravitational parameter.
 
-  Moonlet() {
+  Moonlet(ShearSystem s) {
     position = new PVector();
     velocity = new PVector();
     acceleration = new PVector();
     this.radius = moonlet_r ;
     this.GM = moonlet_GM;
     m= PI*pow(radius, 3.0)*4.0/3.0;
-  }
-}
+  
+    position.x = 500;
+    position.y = 500;
 
+}
+   PVector GetMoonletAcceleration(){
+    if(position.x > 0){
+    acceleration.x = -0.00002;
+    }
+    if(position.x < 0){
+    acceleration.x = 0.00002;
+    }
+    //acceleration.x = 0.00001;
+    return acceleration;
+   }
+   
+     void updatePosition(float dt) {
+
+    position.add(velocity.copy().mult(dt)).add(acceleration.copy().mult(0.5*sq(dt)));
+  }
+
+  void updateVelocity(PVector a, float dt) {    
+      velocity.add(PVector.add(acceleration.copy(), a).mult(0.5 *dt));
+  }
+   
+}
 //-----------------------------------------Particle I/O--------------------------------------------------------------
 
 /** Method addParticlesFromTable
