@@ -601,21 +601,25 @@ class ShearParticle extends Particle {
     velocity = new PVector();
     acceleration = new PVector();
     //
-  //  position.x= (random(1)-0.5)*s.Lx;
+   position.x= (random(1)-0.5)*s.Lx;
    position.y= (random(1)-0.5)*s.Ly;  
-    
-    
-    //Gap around the moon
-    //  int Coinflip = int(random(2));
-    //if(Coinflip == 0){
-     
-    // position.x= ((random(1)*s.Lx/2) + 0.1*s.Lx)*0.8;
-    //}
-    // if(Coinflip == 1){   
-     position.x= (-(random(1)*s.Lx/2) - 0.1*s.Lx)*0.8;
-    //}
-    
-    
+   
+   if(s.RingGap == true){
+     boolean InGap = true;
+      do{
+       position.x= (random(1)-0.5)*s.Lx;
+       position.y= (random(1)-0.5)*s.Ly;  
+        
+       if(position.x > -s.GapWidth/2 && position.x < s.GapWidth/2){
+      InGap = true;
+      }
+      else{
+      InGap = false;
+      }
+      } while(InGap == true);
+   }
+  
+   
     //  
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
@@ -652,7 +656,6 @@ class ShearParticle extends Particle {
       a_grav.x += 2.0*ss.Omega0*velocity.y;
     }
     if (ss.Moonlet) {
-      //float moonlet_GMr3 = ss.moonlet.GM/pow(position.mag(), 3.0);
       PVector distanceVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
       
       float distanceVectMag = distanceVect.mag();
@@ -660,9 +663,6 @@ class ShearParticle extends Particle {
             distanceVect = distanceVect.mult(ss.moonlet.GM /pow(distanceVectMag, 3));
             a_grav.x+= -distanceVect.x ;
             a_grav.y+=-distanceVect.y;
-      
-      //a_grav.x += -moonlet_GMr3*position.x;
-      //a_grav.y += -moonlet_GMr3*position.y;
     }
     }
 
@@ -697,6 +697,8 @@ class ShearParticle extends Particle {
       // Splits each half (top/bottom) into k number of orbital heights
     int k=250;
     
+    boolean InGap = true;
+    do{
     Random r = new Random();
     
         // First, generate a number from 1 to T_k
@@ -713,35 +715,37 @@ class ShearParticle extends Particle {
     int n = (int) Math.ceil(triangularRoot);  
         // n has a linear distubution from 0 to k , k being the most likely outcome
         // normanlise n --> k = 1
-    float XWeight = float(n)/k;
-    
-        // 50/50 change of particle spawning in top or bottom half
-  //  int Coinflip = int(random(2));
-  //  if(Coinflip == 0){
+    float XWeight = float(n)/k;  
+      
      
-  //   position.x= (XWeight*s.Lx/2 + 0.2*s.Lx/2)*0.8;
-  //   position.y = -s.Ly/2;
-    //}
+    position.x= (-XWeight*s.Lx/2);
+    position.y = s.Ly/2;   
     
-    // if(Coinflip == 1){
-     
-     position.x= (-XWeight*s.Lx/2 - 0.2*s.Lx/2)*0.8;
-     position.y = s.Ly/2;
-    //}
-    
+         //50/50 chance of particle spawning in top or bottom half
+        int Coinflip = int(random(2));
+        if(Coinflip == 0){
+          position.x = XWeight*s.Lx/2;
+          position.y = -s.Ly/2;
+        }
+        if(Coinflip == 1){
+          position.x= (-XWeight*s.Lx/2);
+          position.y = s.Ly/2;
+        }
+        
+        if(s.RingGap == true){
+          if(position.x > -s.GapWidth/2 && position.x < s.GapWidth/2){
+          InGap = true;
+          }
+          else{
+          InGap = false;
+          }
+        }
+        else{
+          InGap =false;
+        }
+    } while(InGap == true);
    
-    //Old code I was too scared to remove
-    //
-    //position.x= (random(1)-0.5)*s.Lx;
-    //
-    //if (position.x >0) {
-    //  position.y = -s.Ly/2;
-    //} else if (position.x ==0) {
-    //  position.y =0; //Think about this !!
-    //} else {
-    //  position.y = s.Ly/2;
-    //}
-    //  
+  
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
     //
@@ -769,8 +773,6 @@ class Moonlet extends ShearParticle {
   float moonlet_r = 50.0;            //Radius of the moonlet [m].
   final float moonlet_density =3000.0; //Density of the moonlet [kg/m^3]
   float moonlet_GM = SG*(4.0*PI/3.0)*pow(moonlet_r, 3.0)*moonlet_density; //Standard gravitational parameter.
-  int AvgX = 200;
-  float AvgAcceleration = 0.00002;
 
   Moonlet(ShearSystem s) {
     position = new PVector();
@@ -781,17 +783,17 @@ class Moonlet extends ShearParticle {
     m= PI*pow(radius, 3.0)*4.0/3.0;
     //position.x = AvgX + 200;
     position.x = 0;
-    position.y = s.Ly*0.8/2;
+    position.y = 0;
+    //position.y = 0.8*s.Ly/2;
   }
      
+     // Moon with eliptical orbit travels according to SMH in the x direction
    PVector DynamicMoon(ShearSystem s) {
       float Hours = s.totalSystemTime/3600.0;
-      position.x = 100*cos(Hours*PI/2);  
+      position.x = 200*cos(Hours*PI/2);  
       return position;
   }
 
-  
-   
 }
 //-----------------------------------------Particle I/O--------------------------------------------------------------
 
