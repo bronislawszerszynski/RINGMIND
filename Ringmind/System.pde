@@ -335,17 +335,16 @@ class ShearSystem extends System {
   Boolean Self_Grav = false;
   Boolean Collisions =false;
   Boolean Output = false;
-  Boolean A1 =true;
-  Boolean A2 =true;
+  Boolean A =true;
   Boolean Guides = true;
   Boolean Reset =false;
-  Boolean DynamicMoon = true;
+  Boolean DynamicMoon = false;
   Boolean RingGap = true;
 
   //Simulation dimensions [m]
   int Lx = 1000;       //Extent of simulation box along planet-point line [m].
   int Ly = 2000;       //Extent of simulation box along orbit [m].
-  int GapWidth = 500;
+  int GapWidth = 400;
 
   //Initialises Simulation Constants
   final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
@@ -377,7 +376,7 @@ class ShearSystem extends System {
       if (particle_outBox(x)) {
         x.Reset(this);
       }
-      if (Moonlet && !DynamicMoon) {
+      if (Moonlet) {
         if (particle_inMoonlet(x)) {
           x.Reset(this);
         }
@@ -407,9 +406,10 @@ class ShearSystem extends System {
    *@return True if out of Shearing Box
    */
   boolean particle_inMoonlet(ShearParticle x) {
-    if ((x.position.mag() < moonlet.radius)) {
-      //moonlet_r +=x.radius*0.1; 
-      //moonlet_GM += x.GM;
+    PVector MoonVect = moonlet.position.copy();
+    PVector Dist_Vector = MoonVect.sub(x.position);
+    
+    if ((Dist_Vector.mag() < moonlet.radius)) {
       return true;
     } else {
       return false;

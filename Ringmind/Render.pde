@@ -255,7 +255,7 @@ class Renderer {
           //push();
           translate(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 0);
           fill(255);
-          sphere(ss.moonlet.radius/2);
+          sphere(ss.moonlet.radius);
           //pop();
         //}
       }

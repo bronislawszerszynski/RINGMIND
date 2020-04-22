@@ -607,7 +607,8 @@ class ShearParticle extends Particle {
    if(s.RingGap == true){
      boolean InGap = true;
       do{
-       position.x= (random(1)-0.5)*s.Lx;
+       //position.x= (random(1)-0.5)*s.Lx;
+       position.x = -(random(1))*s.Lx/2;
        position.y= (random(1)-0.5)*s.Ly;  
         
        if(position.x > -s.GapWidth/2 && position.x < s.GapWidth/2){
@@ -649,11 +650,11 @@ class ShearParticle extends Particle {
     ShearSystem ss = (ShearSystem)s;
     // acceleration due planet in centre of the ring. 
     PVector a_grav = new PVector();
-    if (ss.A1) {
+    if (ss.A) {
       a_grav.x += 2.0*ss.Omega0*ss.S0*position.x;
-    }
-    if (ss.A2) {
       a_grav.x += 2.0*ss.Omega0*velocity.y;
+      a_grav.y += -2.0*ss.Omega0*velocity.x;
+
     }
     if (ss.Moonlet) {
       PVector distanceVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
@@ -695,7 +696,7 @@ class ShearParticle extends Particle {
     
     
       // Splits each half (top/bottom) into k number of orbital heights
-    int k=250;
+    int k=1000;
     
     boolean InGap = true;
     do{
@@ -723,6 +724,7 @@ class ShearParticle extends Particle {
     
          //50/50 chance of particle spawning in top or bottom half
         int Coinflip = int(random(2));
+        Coinflip = 1;
         if(Coinflip == 0){
           position.x = XWeight*s.Lx/2;
           position.y = -s.Ly/2;
@@ -771,7 +773,7 @@ class Moonlet extends ShearParticle {
 
   //Ring Moonlet Properties
   float moonlet_r = 50.0;            //Radius of the moonlet [m].
-  final float moonlet_density =3000.0; //Density of the moonlet [kg/m^3]
+  final float moonlet_density =4000.0; //Density of the moonlet [kg/m^3]
   float moonlet_GM = SG*(4.0*PI/3.0)*pow(moonlet_r, 3.0)*moonlet_density; //Standard gravitational parameter.
 
   Moonlet(ShearSystem s) {
@@ -783,8 +785,8 @@ class Moonlet extends ShearParticle {
     m= PI*pow(radius, 3.0)*4.0/3.0;
     //position.x = AvgX + 200;
     position.x = 0;
-    position.y = 0;
-    //position.y = 0.8*s.Ly/2;
+    //position.y = 0;
+    position.y = 0.8*s.Ly/2;
   }
      
      // Moon with eliptical orbit travels according to SMH in the x direction
