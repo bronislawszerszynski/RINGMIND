@@ -585,6 +585,7 @@ class ShearParticle extends Particle {
   final float particle_lambda = 5;   //Power law index for the size distribution [dimensionless].
   final float particle_D =1.0/( exp(-particle_lambda*particle_a) -exp(-particle_lambda*particle_b));
   final float particle_C =particle_D * exp(-particle_lambda*particle_a);
+ 
 
   //ShearParticle Properties
   float radius;
@@ -607,8 +608,8 @@ class ShearParticle extends Particle {
    if(s.RingGap == true){
      boolean InGap = true;
       do{
-       //position.x= (random(1)-0.5)*s.Lx;
-       position.x = -(random(1))*s.Lx/2;
+       position.x= (random(1)-0.5)*s.Lx;
+       //position.x = -(random(1))*s.Lx/2;
        position.y= (random(1)-0.5)*s.Ly;  
         
        if(position.x > -s.GapWidth/2 && position.x < s.GapWidth/2){
@@ -620,11 +621,10 @@ class ShearParticle extends Particle {
       } while(InGap == true);
    }
   
-   
-    //  
+
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
-    //
+    
 
     this.radius = - log((particle_C-random(1.0))/particle_D)/particle_lambda;
     this.GM = SG* (4.0*PI/3.0)*pow(radius, 3.0)*particle_rho;
@@ -656,9 +656,9 @@ class ShearParticle extends Particle {
       a_grav.y += -2.0*ss.Omega0*velocity.x;
 
     }
+    
     if (ss.Moonlet) {
       PVector distanceVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
-      
       float distanceVectMag = distanceVect.mag();
           if (distanceVectMag > radius+ss.moonlet.radius) {
             distanceVect = distanceVect.mult(ss.moonlet.GM /pow(distanceVectMag, 3));
@@ -666,6 +666,36 @@ class ShearParticle extends Particle {
             a_grav.y+=-distanceVect.y;
     }
     }
+    
+    if(ss.Collisions){
+      if(ss.Moonlet){
+      PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
+      float distVectMag = distVect.mag();
+      PVector distVectNorm = distVect.normalize();
+        if(distVectMag < ss.moonlet.radius){
+          float CorrectionMag = ss.moonlet.radius - distVectMag;
+          PVector CorrectionVect = (distVectNorm.copy()).mult(CorrectionMag);
+          position.add(CorrectionVect);
+          PVector Tangent = new PVector();
+         Tangent = (distVectNorm.copy()).rotate(PI/2);
+         float Theta = PVector.angleBetween(Tangent, velocity);
+         //velocity = (velocity.rotate(2*Theta)).mult(0.8);     //Inelastic
+         velocity = velocity.rotate(2*Theta);                 //Elastic
+        }
+      }
+    }
+    // 2 methods of self gravity, neither work fast enough to maintain fps
+    
+    
+    
+    //if (ss.Self_Grav){
+    //  PVector SelfGrav = new PVector();
+    //    for (Particle p: ss.particles){    
+    //      SelfGrav = ss.SGrid.selfGravAcceleration(p);
+    //      a_grav.x += SelfGrav.x;
+    //      a_grav.y += SelfGrav.y;
+    //    }
+    //}
 
     //if (ss.Self_Grav) {
     //  for (Particle p : ss.particles) {
@@ -702,7 +732,7 @@ class ShearParticle extends Particle {
     do{
     Random r = new Random();
     
-        // First, generate a number from 1 to T_k
+    // First, generate a number from 1 to T_k
     int triangularK = k * (k + 1) / 2;
     
     int x = r.nextInt(triangularK) + 1;
@@ -719,12 +749,12 @@ class ShearParticle extends Particle {
     float XWeight = float(n)/k;  
       
      
-    position.x= (-XWeight*s.Lx/2);
-    position.y = s.Ly/2;   
+   // position.x= (-XWeight*s.Lx/2);
+   // position.y = s.Ly/2;   
     
          //50/50 chance of particle spawning in top or bottom half
         int Coinflip = int(random(2));
-        Coinflip = 1;
+        //Use this to force top or bottom box
         if(Coinflip == 0){
           position.x = XWeight*s.Lx/2;
           position.y = -s.Ly/2;
@@ -783,10 +813,10 @@ class Moonlet extends ShearParticle {
     this.radius = moonlet_r ;
     this.GM = moonlet_GM;
     m= PI*pow(radius, 3.0)*4.0/3.0;
-    //position.x = AvgX + 200;
+    
     position.x = 0;
-    //position.y = 0;
-    position.y = 0.8*s.Ly/2;
+    position.y = 0;
+    //position.y = 0.8*s.Ly/2;
   }
      
      // Moon with eliptical orbit travels according to SMH in the x direction

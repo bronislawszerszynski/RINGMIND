@@ -401,3 +401,122 @@ class Grid {
     return tempTable;
   }
 }
+
+class ShearGrid{
+int dx, dy;
+int sGrid[][];
+float sGridNorm[][];
+PVector sGridCofM[][];
+int sizeX, sizeY;
+int Lx, Ly;
+
+ShearGrid(ShearSystem ss){
+  dx = 10;
+  dy = 10;
+  this.Lx = ss.Lx;
+  this.Ly = ss.Ly;
+  sizeX = Lx/dx;
+  sizeY = Ly/dy;
+  this.sGrid = new int[sizeX][sizeY];
+  this.sGridNorm = new float[sizeX][sizeY];
+  this.sGridCofM = new PVector[sizeX][sizeY];
+  reset();
+
+}
+int Getj(Particle p){
+    Float jPosition = Ly/2 - p.position.y;
+    int j = floor(jPosition/dy);
+  return j;
+}
+int Geti(Particle p){
+    Float iPosition = Lx/2 - p.position.x;
+    int i = floor(iPosition/dx);
+  return i;
+}
+  
+  boolean validij(int i, int j ) {
+    boolean check = false;
+    if (i< sizeX && i>=0  ) {
+      if (j < sizeY && j>=0) {
+        check = true;
+      }
+    }
+    return check;
+  }
+  
+   void reset() {
+    for (int i = 0; i < sizeX; i++) {
+      for (int j = 0; j < sizeY; j++) {
+        sGrid[i][j] = 0;
+        sGridNorm[i][j] = 0;
+        sGridCofM[i][j]= new PVector();
+
+      }
+    }
+  }
+  
+ void Update(ShearSystem ss){ 
+   reset();
+  
+   for (Particle p : ss.particles) {
+          int i = Geti(p);
+          int j = Getj(p);
+          if (validij(i, j)) {
+            sGrid[i][j] +=1;
+            sGridCofM[i][j].add(p.position);
+          }
+   } 
+
+   for (int i = 0; i < sizeX; i++) {
+      for (int j = 0; j < sizeY; j++) {
+         if (sGrid[i][j] !=0) {
+            sGridCofM[i][j].div(sGrid[i][j]);
+         } else {
+            sGridCofM[i][j].set(0.0, 0.0, 0.0);
+         }     
+
+       }
+    }
+ 
+ //  //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
+      //for (int i = 0; i < sizeX; i++) {
+      //  for (int j = 0; j < sizeY; j++) {
+
+      //    sGridNorm[i][j] = sGrid[i][j]/((dx*dy)*ss.n_particles);
+      //  }
+      //}
+ }
+ 
+PVector selfGravAcceleration(Particle p) {
+
+//    //Find which cell the particle is in.
+    int x = Geti(p);
+    int y = Getj(p);
+
+    PVector a_selfgrav = new PVector();
+
+      float a, d; // Strength of the attraction number of particles in the cell. 
+      d=1.0E8;
+
+      int size = 2; //Size of Neighbourhood
+
+//      // Loop over (nearest) neighbours. As defined by Size. 
+
+      for ( int i = x-size; i <= x+size; i++) {
+        for ( int j = y-size; j <= y+size; j++) {
+          if (validij(i, j)) {
+            PVector dist = PVector.sub(sGridCofM[i][j].copy(), p.position);
+            a = dist.magSq();
+            int n = sGrid[i][j];
+            if(a != 0){
+            //a_selfgrav.add(PVector.mult(dist.normalize(), G*n/a));
+            a_selfgrav.add(PVector.mult(dist.normalize(), G*n/a));
+            }else{
+              a_selfgrav.set(0,0,0);
+            }  
+          }
+        }
+    }
+    return a_selfgrav;
+  }   
+}

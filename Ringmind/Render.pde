@@ -222,19 +222,13 @@ class Renderer {
       for (int PP = 0; PP < ss.particles.size(); PP++) {
         ShearParticle sp = (ShearParticle)ss.particles.get(PP);
 
-        //Highlight was boolean flag to show check for collisions in Shearing Particle
-        if (sp.highlight) {
-          fill(255, 0, 0);
-          stroke(255, 0, 0);
-        } else { 
-          fill(255);
-          stroke(255);
-        }
+        fill(255);
+        stroke(255);
         vertex(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, 2*scale*sp.radius*width/ss.Ly, 2*scale*sp.radius*height/ss.Lx);
       }
+      
       endShape();
       pop();
-
       if (ss.Guides) {
         for (int PP = 0; PP < ss.particles.size(); PP++) {
           ShearParticle sp = (ShearParticle)ss.particles.get(PP);
@@ -250,14 +244,8 @@ class Renderer {
 
       //moonlet
       if (ss.Moonlet) {
-       // if (ss.Guides) {
-          ellipseMode(CENTER);
-          //push();
-          translate(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 0);
           fill(255);
-          sphere(ss.moonlet.radius);
-          //pop();
-        //}
+          circle(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.radius*2);
       }
     } else if (s instanceof TiltSystem) {
       //--------------------------------------------TiltSystemRender--------------------------------------------------
