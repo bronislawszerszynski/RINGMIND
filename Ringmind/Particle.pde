@@ -673,15 +673,20 @@ class ShearParticle extends Particle {
       float distVectMag = distVect.mag();
       PVector distVectNorm = distVect.normalize();
         if(distVectMag < ss.moonlet.radius){
-          float CorrectionMag = ss.moonlet.radius - distVectMag;
+          float CorrectionMag = (ss.moonlet.radius+5) - distVectMag;
           PVector CorrectionVect = (distVectNorm.copy()).mult(CorrectionMag);
           position.add(CorrectionVect);
           PVector Tangent = new PVector();
          Tangent = (distVectNorm.copy()).rotate(PI/2);
          float Theta = PVector.angleBetween(Tangent, velocity);
-         //velocity = (velocity.rotate(2*Theta)).mult(0.8);     //Inelastic
-         velocity = velocity.rotate(2*Theta);                 //Elastic
-        }
+         if(Theta > PI/2){
+           Theta = PI - Theta;
+           velocity = velocity.rotate(2*Theta);                 //Elastic
+         }else{
+         velocity = (velocity.rotate(2*Theta)).mult(0.8);     //Inelastic
+         //velocity = velocity.rotate(-2*Theta);                 //Elastic
+         } 
+      }
       }
     }
     // 2 methods of self gravity, neither work fast enough to maintain fps
