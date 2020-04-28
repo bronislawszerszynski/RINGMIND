@@ -363,7 +363,7 @@ class ShearSystem extends System {
     this.Guides =Guides;
     SGrid = new ShearGrid(this);
     particles = new ArrayList<Particle>();
-    moonlet = new Moonlet(this);
+    moonlet = new Moonlet();
     random_start();
   }
 

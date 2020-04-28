@@ -683,7 +683,7 @@ class ShearParticle extends Particle {
            Theta = PI - Theta;
            velocity = velocity.rotate(2*Theta);                 //Elastic
          }else{
-         velocity = (velocity.rotate(2*Theta)).mult(0.8);     //Inelastic
+         velocity = (velocity.rotate(-2*Theta)).mult(0.8);     //Inelastic
          //velocity = velocity.rotate(-2*Theta);                 //Elastic
          } 
       }
@@ -808,10 +808,10 @@ class Moonlet extends ShearParticle {
 
   //Ring Moonlet Properties
   float moonlet_r = 50.0;            //Radius of the moonlet [m].
-  final float moonlet_density =4000.0; //Density of the moonlet [kg/m^3]
+  final float moonlet_density =3500.0; //Density of the moonlet [kg/m^3]
   float moonlet_GM = SG*(4.0*PI/3.0)*pow(moonlet_r, 3.0)*moonlet_density; //Standard gravitational parameter.
 
-  Moonlet(ShearSystem s) {
+  Moonlet() {
     position = new PVector();
     velocity = new PVector();
     acceleration = new PVector();
