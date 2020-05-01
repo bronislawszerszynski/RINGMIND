@@ -8,7 +8,7 @@
  * @author Thomas Cann
  * @author Sam Hinson
  */
- import java.util.Random;
+import java.util.Random;
 
 abstract class Particle {
 
@@ -585,10 +585,12 @@ class ShearParticle extends Particle {
   final float particle_lambda = 5;   //Power law index for the size distribution [dimensionless].
   final float particle_D =1.0/( exp(-particle_lambda*particle_a) -exp(-particle_lambda*particle_b));
   final float particle_C =particle_D * exp(-particle_lambda*particle_a);
- 
+
 
   //ShearParticle Properties
   float radius;
+  float RadiusMultiplier = 10;
+  float MinRadius = 3;
   float GM;
   float m;
 
@@ -602,31 +604,29 @@ class ShearParticle extends Particle {
     velocity = new PVector();
     acceleration = new PVector();
     //
-   position.x= (random(1)-0.5)*s.Lx;
-   position.y= (random(1)-0.5)*s.Ly;  
-   
-   if(s.RingGap == true){
-     boolean InGap = true;
-      do{
-       position.x= (random(1)-0.5)*s.Lx;
-       //position.x = -(random(1))*s.Lx/2;
-       position.y= (random(1)-0.5)*s.Ly;  
-        
-       if(position.x > -s.GapWidth/2 && position.x < s.GapWidth/2){
-      InGap = true;
-      }
-      else{
-      InGap = false;
-      }
-      } while(InGap == true);
-   }
-  
+    position.x= (random(1)-0.5)*s.Lx;
+    position.y= (random(1)-0.5)*s.Ly;  
+
+    if (s.RingGap == true) {
+      boolean InGap = true;
+      do {
+        position.x= (random(1)-0.5)*s.Lx;
+        //position.x = -(random(1))*s.Lx/2;
+        position.y= (random(1)-0.5)*s.Ly;  
+
+        if (position.x > -s.GapWidth/2 && position.x < s.GapWidth/2) {
+          InGap = true;
+        } else {
+          InGap = false;
+        }
+      } while (InGap == true);
+    }
+
 
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
-    
 
-    this.radius = - log((particle_C-random(1.0))/particle_D)/particle_lambda;
+    this.radius = RadiusMultiplier*(-log((particle_C-random(1.0))/particle_D)/particle_lambda) + MinRadius;
     this.GM = SG* (4.0*PI/3.0)*pow(radius, 3.0)*particle_rho;
     m= PI*pow(radius, 3.0)*4.0/3.0;
   }
@@ -654,45 +654,23 @@ class ShearParticle extends Particle {
       a_grav.x += 2.0*ss.Omega0*ss.S0*position.x;
       a_grav.x += 2.0*ss.Omega0*velocity.y;
       a_grav.y += -2.0*ss.Omega0*velocity.x;
-
     }
-    
+
     if (ss.Moonlet) {
       PVector distanceVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
       float distanceVectMag = distanceVect.mag();
-          if (distanceVectMag > radius+ss.moonlet.radius) {
-            distanceVect = distanceVect.mult(ss.moonlet.GM /pow(distanceVectMag, 3));
-            a_grav.x+= -distanceVect.x ;
-            a_grav.y+=-distanceVect.y;
-    }
-    }
-    
-    if(ss.Collisions){
-      if(ss.Moonlet){
-      PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
-      float distVectMag = distVect.mag();
-      PVector distVectNorm = distVect.normalize();
-        if(distVectMag < ss.moonlet.radius){
-          float CorrectionMag = (ss.moonlet.radius+5) - distVectMag;
-          PVector CorrectionVect = (distVectNorm.copy()).mult(CorrectionMag);
-          position.add(CorrectionVect);
-          PVector Tangent = new PVector();
-         Tangent = (distVectNorm.copy()).rotate(PI/2);
-         float Theta = PVector.angleBetween(Tangent, velocity);
-         if(Theta > PI/2){
-           Theta = PI - Theta;
-           velocity = velocity.rotate(2*Theta);                 //Elastic
-         }else{
-         velocity = (velocity.rotate(-2*Theta)).mult(0.8);     //Inelastic
-         //velocity = velocity.rotate(-2*Theta);                 //Elastic
-         } 
-      }
+      if (distanceVectMag > radius+ss.moonlet.radius) {
+        distanceVect = distanceVect.mult(ss.moonlet.GM /pow(distanceVectMag, 3));
+        a_grav.x+= -distanceVect.x ;
+        a_grav.y+=-distanceVect.y;
       }
     }
+   
+         
     // 2 methods of self gravity, neither work fast enough to maintain fps
-    
-    
-    
+
+
+
     //if (ss.Self_Grav){
     //  PVector SelfGrav = new PVector();
     //    for (Particle p: ss.particles){    
@@ -728,65 +706,63 @@ class ShearParticle extends Particle {
   void Reset(ShearSystem s) {
     acceleration.x=0;
     acceleration.y=0;
-    
-    
-      // Splits each half (top/bottom) into k number of orbital heights
+
+
+    // Splits each half (top/bottom) into k number of orbital heights
     int k=1000;
-    
+
     boolean InGap = true;
-    do{
-    Random r = new Random();
-    
-    // First, generate a number from 1 to T_k
-    int triangularK = k * (k + 1) / 2;
-    
-    int x = r.nextInt(triangularK) + 1;
-    
-    // Next, figure out which bucket x fits into, bounded by
-    // triangular numbers by taking the triangular root    
-    // We're dealing strictly with positive integers, so we can
-    // safely ignore the - part of the +/- in the triangular root equation
-    double triangularRoot = (Math.sqrt(8 * x + 1) - 1) / 2;
-    
-    int n = (int) Math.ceil(triangularRoot);  
-        // n has a linear distubution from 0 to k , k being the most likely outcome
-        // normanlise n --> k = 1
-    float XWeight = float(n)/k;  
-      
-     
-   // position.x= (-XWeight*s.Lx/2);
-   // position.y = s.Ly/2;   
-    
-         //50/50 chance of particle spawning in top or bottom half
-        int Coinflip = int(random(2));
-        //Use this to force top or bottom box
-        if(Coinflip == 0){
-          position.x = XWeight*s.Lx/2;
-          position.y = -s.Ly/2;
-        }
-        if(Coinflip == 1){
-          position.x= (-XWeight*s.Lx/2);
-          position.y = s.Ly/2;
-        }
-        
-        if(s.RingGap == true){
-          if(position.x > -s.GapWidth/2 && position.x < s.GapWidth/2){
+    do {
+      Random r = new Random();
+
+      // First, generate a number from 1 to T_k
+      int triangularK = k * (k + 1) / 2;
+
+      int x = r.nextInt(triangularK) + 1;
+
+      // Next, figure out which bucket x fits into, bounded by
+      // triangular numbers by taking the triangular root    
+      // We're dealing strictly with positive integers, so we can
+      // safely ignore the - part of the +/- in the triangular root equation
+      double triangularRoot = (Math.sqrt(8 * x + 1) - 1) / 2;
+
+      int n = (int) Math.ceil(triangularRoot);  
+      // n has a linear distubution from 0 to k , k being the most likely outcome
+      // normanlise n --> k = 1
+      float XWeight = float(n)/k;  
+
+
+      // position.x= (-XWeight*s.Lx/2);
+      // position.y = s.Ly/2;   
+
+      //50/50 chance of particle spawning in top or bottom half
+      int Coinflip = int(random(2));
+      //Use this to force top or bottom box
+      if (Coinflip == 0) {
+        position.x = XWeight*s.Lx/2;
+        position.y = -s.Ly/2;
+      }
+      if (Coinflip == 1) {
+        position.x= (-XWeight*s.Lx/2);
+        position.y = s.Ly/2;
+      }
+
+      if (s.RingGap == true) {
+        if (position.x > -s.GapWidth/2 && position.x < s.GapWidth/2) {
           InGap = true;
-          }
-          else{
+        } else {
           InGap = false;
-          }
         }
-        else{
-          InGap =false;
-        }
-    } while(InGap == true);
-   
-  
+      } else {
+        InGap =false;
+      }
+    } while (InGap == true);
+
+
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
     //
-    this.radius = - log((particle_C-random(1))/particle_D)/particle_lambda;
+    this.radius = RadiusMultiplier*(- log((particle_C-random(1))/particle_D)/particle_lambda) + MinRadius;
     this.GM = SG* (4*PI/3)*pow(radius, 3)*particle_rho;
   }
 
@@ -800,15 +776,126 @@ class ShearParticle extends Particle {
     p.acceleration = this.acceleration.copy();
     return p;
   }
-}
 
+
+
+//  void MoonletCollisionCheckB(ShearSystem ss) {
+//    PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
+//    PVector distVectNorm = (distVect.copy()).normalize();
+//    PVector Tangent = new PVector();
+
+//    float x_0 = distVect.x;
+//    float y_0 = distVect.y;
+//    float V_x = velocity.x;
+//    float V_y = velocity.y;
+//    float R = ss.moonlet.radius;
+//    float Discriminant = sq((x_0*V_x)+(y_0*V_y)) - 4*(sq(V_x) + sq(V_y))*(sq(x_0) + sq(y_0) - sq(R));
+//    if (Discriminant > 0) {   
+//      float Delta_T =   (-((x_0*V_x)+(y_0*V_y)) - sqrt(Discriminant))/(2*(sq(V_x) + sq(V_y)));
+//     // print(Delta_T + "  ");
+//      //if (Delta_T < s.dt) {            
+//        Tangent = (distVectNorm.copy()).rotate(PI/2);
+//          float Theta = PVector.angleBetween(Tangent.copy(), velocity.copy());
+//          if(Theta > PI/2){
+//            Theta = PI - Theta;
+//            //velocity = velocity.rotate(2*Theta).mult(0.8);     //Elastic
+//            velocity = velocity.rotate(2*Theta);                 //Inelastic
+//        }else{
+//          //velocity = (velocity.rotate(-2*Theta)).mult(0.8);   //Inelastic
+//          velocity = velocity.rotate(-2*Theta);                 //Elastic
+//      }
+//      print(Theta, "  ");
+//    //}
+//    //velocity.set(velocity.mult(-1));
+//  }
+//}
+
+  void MoonletCollisionCheck(ShearSystem ss) {
+    PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
+    PVector distVectNorm = (distVect.copy()).normalize();
+    PVector Tangent = new PVector();
+    float distVectMag = distVect.copy().mag();
+    
+          if(distVectMag < (ss.moonlet.radius + radius)){
+            float CorrectionMag = (ss.moonlet.radius+5) - distVectMag;
+            PVector CorrectionVect = (distVectNorm.copy()).mult(CorrectionMag);
+            position.add(CorrectionVect);
+           Tangent = (distVectNorm.copy()).rotate(PI/2);
+           float Theta = PVector.angleBetween(Tangent, velocity);
+           if(Theta > PI/2){
+             Theta = PI - Theta;
+            //velocity = velocity.rotate(2*Theta);                 //Elastic
+            velocity = (velocity.rotate(2*Theta)).mult(0.8);     //Inelastic
+           }else{
+           velocity = (velocity.rotate(-2*Theta)).mult(0.8);     //Inelastic
+           //velocity = velocity.rotate(-2*Theta);                 //Elastic
+           } 
+        }
+      }
+
+
+void ParticleCollisionCheck(ShearSystem ss){
+
+    for (Particle p : ss.particles) { 
+       ShearParticle sp = (ShearParticle)p;
+       if (sp!=this) {
+         if(position.mag() <ss.moonlet.radius*2){
+         PVector distanceVect = PVector.sub(position.copy(), sp.position.copy());
+      
+         float distVectMag = distanceVect.mag();
+         if(distVectMag < (radius + sp.radius)){
+           
+           Float CorrectionMag = ((radius + sp.radius) - distanceVect.mag())/2.0;
+           PVector d = distanceVect.copy();
+           PVector CorrectionVect = d.normalize().mult(CorrectionMag);
+           position.add(CorrectionVect);
+           float M = m + sp.m;
+           float x1 = (velocity.x*(m - sp.m) + 2*sp.m*sp.velocity.x)/M;
+           float y1 = (velocity.y*(m - sp.m) + 2*sp.m*sp.velocity.y)/M;
+           //float x2 = (sp.velocity.x*(sp.m - m) + 2*m*velocity.x)/M;
+           //float y2 = (sp.velocity.y*(sp.m - m) + 2*m*velocity.y)/M;
+           velocity.set(x1*0.8,y1*0.8,0);
+           //sp.velocity.set(x2*0.9,y2*0.9,0);
+         }
+        } 
+     }
+    }
+  }
+  
+  void ParticleCollisionCheck(ShearParticle sp, ShearSystem ss){
+
+         if(position.mag() <ss.moonlet.radius*2){
+         PVector distanceVect = PVector.sub(position.copy(), sp.position.copy());
+      
+         float distVectMag = distanceVect.mag();
+         if(distVectMag < (radius + sp.radius)){
+           
+           Float CorrectionMag = ((radius + sp.radius) - distanceVect.mag())/2.0;
+           PVector d = distanceVect.copy();
+           PVector CorrectionVect = d.normalize().mult(CorrectionMag);
+           position.add(CorrectionVect);
+           sp.position.sub(CorrectionVect);
+           float M = m + sp.m;
+           float x1 = (velocity.x*(m - sp.m) + 2*sp.m*sp.velocity.x)/M;
+           float y1 = (velocity.y*(m - sp.m) + 2*sp.m*sp.velocity.y)/M;
+           float x2 = (sp.velocity.x*(sp.m - m) + 2*m*velocity.x)/M;
+           float y2 = (sp.velocity.y*(sp.m - m) + 2*m*velocity.y)/M;
+           velocity.set(x1*0.8,y1*0.8,0);
+           sp.velocity.set(x2*0.8,y2*0.8,0);
+         }
+        } 
+     }
+  
+  
+  
+}
 //-----------------------------------------MOONLET---------------------------------------------------------------
 
 class Moonlet extends ShearParticle {
 
   //Ring Moonlet Properties
-  float moonlet_r = 50.0;            //Radius of the moonlet [m].
-  final float moonlet_density =3500.0; //Density of the moonlet [kg/m^3]
+  float moonlet_r = 150.0;            //Radius of the moonlet [m].
+  final float moonlet_density = 1000.0; //Density of the moonlet [kg/m^3]
   float moonlet_GM = SG*(4.0*PI/3.0)*pow(moonlet_r, 3.0)*moonlet_density; //Standard gravitational parameter.
 
   Moonlet() {
@@ -818,19 +905,18 @@ class Moonlet extends ShearParticle {
     this.radius = moonlet_r ;
     this.GM = moonlet_GM;
     m= PI*pow(radius, 3.0)*4.0/3.0;
-    
+
     position.x = 0;
     position.y = 0;
-    //position.y = 0.8*s.Ly/2;
-  }
-     
-     // Moon with eliptical orbit travels according to SMH in the x direction
-   PVector DynamicMoon(ShearSystem s) {
-      float Hours = s.totalSystemTime/3600.0;
-      position.x = 200*cos(Hours*PI/2);  
-      return position;
+    //position.y = 750;
   }
 
+  // Moon with eliptical orbit travels according to SMH in the x direction
+  PVector DynamicMoon(ShearSystem s) {
+    float Hours = s.totalSystemTime/3600.0;
+    position.x = 200*cos(Hours*PI/2);  
+    return position;
+  }
 }
 //-----------------------------------------Particle I/O--------------------------------------------------------------
 
@@ -895,15 +981,15 @@ void importFromFileToGrid(System s, String filename) {
   table = loadTable("./files/" + filename); //DEBUG println(table.getRowCount()+" "+ table.getColumnCount());
 
   //Check that there is a ArrayList of Grid objects and it is not empty.
-  
 
-    //If Statement to depending on System.
-    if (s instanceof RingSystem) {
 
-      //If Multiple Grids will always use Index 0. 
-      int index =0;
-      RingSystem rs = (RingSystem)s;
-      if (rs.g != null && !rs.g.isEmpty()) {
+  //If Statement to depending on System.
+  if (s instanceof RingSystem) {
+
+    //If Multiple Grids will always use Index 0. 
+    int index =0;
+    RingSystem rs = (RingSystem)s;
+    if (rs.g != null && !rs.g.isEmpty()) {
       rs.rings.add(new Ring( 1, 3, 0));
       ArrayList<RingParticle> tempParticles = new ArrayList<RingParticle>();
       for (int i = 0; i < table.getRowCount(); i++) {

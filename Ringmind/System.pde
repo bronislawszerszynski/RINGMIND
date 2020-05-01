@@ -336,7 +336,7 @@ class AlignableMoonSystem extends MoonSystem {
  */
 class ShearSystem extends System {
 
-  Boolean Moonlet = false;
+  Boolean Moonlet = true;
   Boolean Self_Grav = false;
   Boolean Collisions = true;
   Boolean Output = false;
@@ -371,24 +371,43 @@ class ShearSystem extends System {
    * Additional Method to Check if particles have left simulation.
    */
   @Override void update() {
-    super.update();
+   
+    
+   super.update();
 
+    
     
     //Have any particles left the simulation box, or collided with the moonlet?
     //If so, remove and replace them.
     for (Particle p : particles) {   
-      
+       
       ShearParticle x =(ShearParticle)p;
+    
       if (particle_outBox(x)) {
         x.Reset(this);
       }
-      if (Moonlet) {
-        if (particle_inMoonlet(x)) {
-          //x.Reset(this);
+      if(Collisions){
+        //x.ParticleCollisionCheck(this);
+        if (Moonlet) {
+            x.MoonletCollisionCheck(this);
+          if (particle_inMoonlet(x)) {
+            //x.Reset(this);
+          }
         }
-      }
+      }  
     }
     
+
+    int n = particles.size();
+    for(int i=0; i < n; i++){ 
+        ShearParticle A = (ShearParticle)particles.get(i);
+      for(int j=i+1; j<n; j++){
+        ShearParticle B = (ShearParticle)particles.get(j);
+        
+        A.ParticleCollisionCheck(B, this);
+  
+      }
+    }
     if (DynamicMoon == true){
       moonlet.DynamicMoon(this);
 

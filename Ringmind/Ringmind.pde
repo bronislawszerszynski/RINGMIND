@@ -23,8 +23,9 @@ Boolean Running= true;
 void settings() {
 
   //fullScreen(P3D, 1);
-  size (1000, 800, P3D);
+  size (1800, 900, P3D);
   smooth(); //noSmooth();
+ 
 }
 
 void setup() {
@@ -33,6 +34,7 @@ void setup() {
   systemState = State.initState;  //which state shall we begin with 
   setupStates();    //instantiate the scenarios so they are avialble for the state system to handle
   systemState = State.shearState;  //which state shall we begin with 
+
   setupStates();
 }
 
@@ -83,6 +85,7 @@ void keyPressed() {
     //shearState
     systemState= State.shearState;
     setupStates();
+
   } else if (key=='*') {
     //Toggle Moonlet
     if (s instanceof ShearSystem) {

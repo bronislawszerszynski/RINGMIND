@@ -18,6 +18,7 @@ void renderSetup() {
   renderer.withMoon = true;
   //PGraphics Object
   pg = createGraphics(1024, 1024, P3D);
+
   //RenderContext Object
   renderContext = new RenderContext();
   renderContext.pgfx = this;
@@ -218,17 +219,27 @@ class Renderer {
       ctx.shader.set("diffTex", mat.diffTexture);
       ctx.shader.set("view", pg.camera); //don't touch that :-)
 
-      beginShape(POINTS);
-      for (int PP = 0; PP < ss.particles.size(); PP++) {
-        ShearParticle sp = (ShearParticle)ss.particles.get(PP);
+      //beginShape(POINTS);
+      //for (int PP = 0; PP < ss.particles.size(); PP++) {
+      //  ShearParticle sp = (ShearParticle)ss.particles.get(PP);
 
-        fill(255);
-        stroke(255);
-        vertex(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, 2*scale*sp.radius*width/ss.Ly, 2*scale*sp.radius*height/ss.Lx);
+      //  fill(255);
+      //  stroke(255);
+      //  vertex(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, 2*scale*sp.radius*width/ss.Ly, 2*scale*sp.radius*height/ss.Lx);
+      //}
+      
+      //endShape();
+      pop();
+      
+      for (int PP = 0; PP < ss.particles.size(); PP++) {
+           ShearParticle sp = (ShearParticle)ss.particles.get(PP);
+          //fill(255);
+          fill(255,0,255);
+          circle(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, sp.radius);      
+      
       }
       
-      endShape();
-      pop();
+      
       if (ss.Guides) {
         for (int PP = 0; PP < ss.particles.size(); PP++) {
           ShearParticle sp = (ShearParticle)ss.particles.get(PP);
@@ -244,8 +255,11 @@ class Renderer {
 
       //moonlet
       if (ss.Moonlet) {
-          fill(255);
-          circle(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.radius*2);
+          //fill(0,100,0);
+          //circle(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.radius*2);
+          fill(100);
+          ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);          
+          
       }
     } else if (s instanceof TiltSystem) {
       //--------------------------------------------TiltSystemRender--------------------------------------------------

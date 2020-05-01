@@ -121,7 +121,7 @@ void setupStates() {
     useAdditiveBlend=true;
     camera4();
     s = new ShearSystem(false);
-    s.simToRealTimeRatio = 2000.0/1.0;  
+    s.simToRealTimeRatio = 2000.0/1.0;
     break;
     
    case resonanceState:
