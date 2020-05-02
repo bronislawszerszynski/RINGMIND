@@ -13,7 +13,7 @@
  * Physics Coding by Lancaster University Physics Graduates.
  * @author Thomas Cann
  * @author Sam Hinson
- *
+ *-
  * Interaction design and audio visual system 
  * @author ashley james brown march-may.2019 
  */
@@ -91,7 +91,8 @@ void keyPressed() {
     if (s instanceof ShearSystem) {
       ShearSystem ss = (ShearSystem) s;
       ss.Moonlet = !ss.Moonlet;
-    }
+      ss.ClearMoonlet = true;
+     }
   } else if (key=='9') {
     //TiltSystem
     systemState= State.formingState;

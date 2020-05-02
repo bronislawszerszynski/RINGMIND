@@ -585,11 +585,13 @@ class ShearParticle extends Particle {
   final float particle_lambda = 5;   //Power law index for the size distribution [dimensionless].
   final float particle_D =1.0/( exp(-particle_lambda*particle_a) -exp(-particle_lambda*particle_b));
   final float particle_C =particle_D * exp(-particle_lambda*particle_a);
-
+  PVector InitPosition = new PVector();
 
   //ShearParticle Properties
   float radius;
-  float RadiusMultiplier = 10;
+  
+  // Modifies the minimum radius and range of radii each particle can have
+  float RadiusMultiplier = 5;
   float MinRadius = 3;
   float GM;
   float m;
@@ -621,7 +623,7 @@ class ShearParticle extends Particle {
         }
       } while (InGap == true);
     }
-
+   InitPosition = position.copy();
 
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
@@ -650,12 +652,13 @@ class ShearParticle extends Particle {
     ShearSystem ss = (ShearSystem)s;
     // acceleration due planet in centre of the ring. 
     PVector a_grav = new PVector();
+   //Shear forces on particles
     if (ss.A) {
-      a_grav.x += 2.0*ss.Omega0*ss.S0*position.x;
-      a_grav.x += 2.0*ss.Omega0*velocity.y;
-      a_grav.y += -2.0*ss.Omega0*velocity.x;
+      a_grav.x += (-2.0*ss.Omega0*ss.S0*position.x);
+      a_grav.x += (-2.0*ss.Omega0*velocity.y);
+      a_grav.y += (2.0*ss.Omega0*velocity.x);
     }
-
+    //Gravitational attraction of the moonlet
     if (ss.Moonlet) {
       PVector distanceVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
       float distanceVectMag = distanceVect.mag();
@@ -668,7 +671,6 @@ class ShearParticle extends Particle {
    
          
     // 2 methods of self gravity, neither work fast enough to maintain fps
-
 
 
     //if (ss.Self_Grav){
@@ -758,6 +760,7 @@ class ShearParticle extends Particle {
       }
     } while (InGap == true);
 
+    InitPosition = position.copy();
 
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
@@ -777,7 +780,7 @@ class ShearParticle extends Particle {
     return p;
   }
 
-
+    // Chris A's version of moonlet collision, not yet working
 
 //  void MoonletCollisionCheckB(ShearSystem ss) {
 //    PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
@@ -810,6 +813,7 @@ class ShearParticle extends Particle {
 //  }
 //}
 
+      // Checks for particles colliding with the moonlet
   void MoonletCollisionCheck(ShearSystem ss) {
     PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
     PVector distVectNorm = (distVect.copy()).normalize();
@@ -817,50 +821,24 @@ class ShearParticle extends Particle {
     float distVectMag = distVect.copy().mag();
     
           if(distVectMag < (ss.moonlet.radius + radius)){
-            float CorrectionMag = (ss.moonlet.radius+5) - distVectMag;
+            float CorrectionMag = (ss.moonlet.radius+10) - distVectMag;
             PVector CorrectionVect = (distVectNorm.copy()).mult(CorrectionMag);
             position.add(CorrectionVect);
            Tangent = (distVectNorm.copy()).rotate(PI/2);
            float Theta = PVector.angleBetween(Tangent, velocity);
            if(Theta > PI/2){
              Theta = PI - Theta;
-            //velocity = velocity.rotate(2*Theta);                 //Elastic
-            velocity = (velocity.rotate(2*Theta)).mult(0.8);     //Inelastic
+            velocity = velocity.rotate(2*Theta);                 //Elastic
+            //velocity = (velocity.rotate(2*Theta)).mult(0.8);     //Inelastic
            }else{
-           velocity = (velocity.rotate(-2*Theta)).mult(0.8);     //Inelastic
-           //velocity = velocity.rotate(-2*Theta);                 //Elastic
+           //velocity = (velocity.rotate(-2*Theta)).mult(0.8);     //Inelastic
+           velocity = velocity.rotate(-2*Theta);                 //Elastic
            } 
         }
       }
-
-
-void ParticleCollisionCheck(ShearSystem ss){
-
-    for (Particle p : ss.particles) { 
-       ShearParticle sp = (ShearParticle)p;
-       if (sp!=this) {
-         if(position.mag() <ss.moonlet.radius*2){
-         PVector distanceVect = PVector.sub(position.copy(), sp.position.copy());
-      
-         float distVectMag = distanceVect.mag();
-         if(distVectMag < (radius + sp.radius)){
-           
-           Float CorrectionMag = ((radius + sp.radius) - distanceVect.mag())/2.0;
-           PVector d = distanceVect.copy();
-           PVector CorrectionVect = d.normalize().mult(CorrectionMag);
-           position.add(CorrectionVect);
-           float M = m + sp.m;
-           float x1 = (velocity.x*(m - sp.m) + 2*sp.m*sp.velocity.x)/M;
-           float y1 = (velocity.y*(m - sp.m) + 2*sp.m*sp.velocity.y)/M;
-           //float x2 = (sp.velocity.x*(sp.m - m) + 2*m*velocity.x)/M;
-           //float y2 = (sp.velocity.y*(sp.m - m) + 2*m*velocity.y)/M;
-           velocity.set(x1*0.8,y1*0.8,0);
-           //sp.velocity.set(x2*0.9,y2*0.9,0);
-         }
-        } 
-     }
-    }
-  }
+  
+  
+        // Checks for particles colliding with each other (withing a meta object around the moonlet)
   
   void ParticleCollisionCheck(ShearParticle sp, ShearSystem ss){
 
@@ -880,8 +858,8 @@ void ParticleCollisionCheck(ShearSystem ss){
            float y1 = (velocity.y*(m - sp.m) + 2*sp.m*sp.velocity.y)/M;
            float x2 = (sp.velocity.x*(sp.m - m) + 2*m*velocity.x)/M;
            float y2 = (sp.velocity.y*(sp.m - m) + 2*m*velocity.y)/M;
-           velocity.set(x1*0.8,y1*0.8,0);
-           sp.velocity.set(x2*0.8,y2*0.8,0);
+           velocity.set(x1,y1,0);
+           sp.velocity.set(x2,y2,0);
          }
         } 
      }
@@ -894,8 +872,8 @@ void ParticleCollisionCheck(ShearSystem ss){
 class Moonlet extends ShearParticle {
 
   //Ring Moonlet Properties
-  float moonlet_r = 150.0;            //Radius of the moonlet [m].
-  final float moonlet_density = 1000.0; //Density of the moonlet [kg/m^3]
+  float moonlet_r = 50.0;            //Radius of the moonlet [m].
+  final float moonlet_density = 500.0; //Density of the moonlet [kg/m^3]
   float moonlet_GM = SG*(4.0*PI/3.0)*pow(moonlet_r, 3.0)*moonlet_density; //Standard gravitational parameter.
 
   Moonlet() {
@@ -906,7 +884,7 @@ class Moonlet extends ShearParticle {
     this.GM = moonlet_GM;
     m= PI*pow(radius, 3.0)*4.0/3.0;
 
-    position.x = 0;
+    position.x = 0;          // Change the starting position of the moonlet
     position.y = 0;
     //position.y = 750;
   }

@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 2000;                       //Used for system initialiations 
+  int n_particles = 5000;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -336,20 +336,22 @@ class AlignableMoonSystem extends MoonSystem {
  */
 class ShearSystem extends System {
 
-  Boolean Moonlet = true;
-  Boolean Self_Grav = false;
-  Boolean Collisions = true;
-  Boolean Output = false;
-  Boolean A = true;
-  Boolean Guides = true;
-  Boolean Reset = false;
-  Boolean DynamicMoon = false;
-  Boolean RingGap = false;
+  Boolean Moonlet = false; //Adds in the moonlet
+  Boolean ClearMoonlet = false; // Clears a space for the moonlet to fit in, leave this off
+  Boolean Self_Grav = false; // Doesn't do anything yet
+  Boolean MoonletCollisions = false; // Particles can collide with the moonlet
+  Boolean ParticleCollisions = false; // Particles can collide with one another (no grid implentation yet, runs super slow)
+  Boolean Output = false; //no idea
+  Boolean A = true; // shear forces that make this part of a sing and not just particles in a box
+  Boolean Guides = true; // shows particle trajectories
+  Boolean Reset = false; // leave this off
+  Boolean DynamicMoon = false; // Moon oscillates up and down
+  Boolean RingGap = false;   // Creates a ring gap
 
   //Simulation dimensions [m]
   int Lx = 1000;       //Extent of simulation box along planet-point line [m].
   int Ly = 2000;       //Extent of simulation box along orbit [m].
-  int GapWidth = 400;
+  int GapWidth = 500;  //Width of the ring gap
 
   //Initialises Simulation Constants
   final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
@@ -372,6 +374,7 @@ class ShearSystem extends System {
    */
   @Override void update() {
    
+   
     
    super.update();
 
@@ -379,35 +382,42 @@ class ShearSystem extends System {
     
     //Have any particles left the simulation box, or collided with the moonlet?
     //If so, remove and replace them.
-    for (Particle p : particles) {   
-       
+    for (Particle p : particles) {          
       ShearParticle x =(ShearParticle)p;
+            
+       if(ClearMoonlet){
+            float distance = (x.position).dist(moonlet.position);
+               if(distance < moonlet.radius*2){
+               x.Reset(this);
+               } 
+       }
     
       if (particle_outBox(x)) {
         x.Reset(this);
       }
-      if(Collisions){
-        //x.ParticleCollisionCheck(this);
-        if (Moonlet) {
-            x.MoonletCollisionCheck(this);
-          if (particle_inMoonlet(x)) {
-            //x.Reset(this);
-          }
-        }
-      }  
-    }
+      if(ParticleCollisions){ 
+          int n = particles.size();
+          for(int i=0; i < n; i++){ 
+            ShearParticle A = (ShearParticle)particles.get(i);
+            for(int j=i+1; j<n; j++){
+              ShearParticle B = (ShearParticle)particles.get(j);      
+              A.ParticleCollisionCheck(B, this);
     
-
-    int n = particles.size();
-    for(int i=0; i < n; i++){ 
-        ShearParticle A = (ShearParticle)particles.get(i);
-      for(int j=i+1; j<n; j++){
-        ShearParticle B = (ShearParticle)particles.get(j);
-        
-        A.ParticleCollisionCheck(B, this);
-  
+            }
+          }
       }
+    
+        if (Moonlet) {
+          if(MoonletCollisions){
+            x.MoonletCollisionCheck(this);
+          }
+          if (particle_inMoonlet(x)) {
+           x.Reset(this);       
+          }
+        }  
     }
+    ClearMoonlet= false;
+    
     if (DynamicMoon == true){
       moonlet.DynamicMoon(this);
 
