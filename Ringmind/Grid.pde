@@ -401,25 +401,34 @@ class Grid {
     return tempTable;
   }
 }
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+////// Grid for the ShearSystem  ///////
+
 
 class ShearGrid{
 int dx, dy;
 int sGrid[][];
+int sGrid2[][][];
+
+ArrayList<ShearParticle> CellParticles[][];
 float sGridNorm[][];
 PVector sGridCofM[][];
 int sizeX, sizeY;
 int Lx, Ly;
 
 ShearGrid(ShearSystem ss){
-  dx = 10;
-  dy = 10;
+  dx = 50;
+  dy = 100;
   this.Lx = ss.Lx;
   this.Ly = ss.Ly;
   sizeX = Lx/dx;
   sizeY = Ly/dy;
+
   this.sGrid = new int[sizeX][sizeY];
+  this.sGrid2 = new int[sizeX][sizeY][ss.n_particles];
   this.sGridNorm = new float[sizeX][sizeY];
   this.sGridCofM = new PVector[sizeX][sizeY];
+  this.CellParticles = new ArrayList[sizeX][sizeY];
   reset();
 
 }
@@ -450,6 +459,7 @@ int Geti(Particle p){
         sGrid[i][j] = 0;
         sGridNorm[i][j] = 0;
         sGridCofM[i][j]= new PVector();
+        this.CellParticles[i][j] = new ArrayList();
 
       }
     }
@@ -463,20 +473,19 @@ int Geti(Particle p){
           int j = Getj(p);
           if (validij(i, j)) {
             sGrid[i][j] +=1;
-            sGridCofM[i][j].add(p.position);
+            //sGridCofM[i][j].add(p.position);
           }
    } 
+   //for (int i = 0; i < sizeX; i++) {
+   //   for (int j = 0; j < sizeY; j++) {
+   //      if (sGrid[i][j] !=0) {
+   //         sGridCofM[i][j].div(sGrid[i][j]);
+   //      } else {
+   //         sGridCofM[i][j].set(0.0, 0.0, 0.0);
+   //      }     
 
-   for (int i = 0; i < sizeX; i++) {
-      for (int j = 0; j < sizeY; j++) {
-         if (sGrid[i][j] !=0) {
-            sGridCofM[i][j].div(sGrid[i][j]);
-         } else {
-            sGridCofM[i][j].set(0.0, 0.0, 0.0);
-         }     
-
-       }
-    }
+   //    }
+   // }
  
  //  //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
       //for (int i = 0; i < sizeX; i++) {
@@ -487,6 +496,54 @@ int Geti(Particle p){
       //}
  }
  
+ void FillGrid(ShearSystem ss){
+ 
+   for (Particle p : ss.particles) {
+     ShearParticle sp = (ShearParticle)p;
+            int i = Geti(p);
+            int j = Getj(p);
+            if (validij(i, j)) {
+              CellParticles[i][j].add(sp);        
+            }
+     }
+ }
+ 
+ void CollisionCheck(){
+    for(int i=0; i < sizeX; i++){
+      for(int j=0; j< sizeY; j++){
+          int n = CellParticles[i][j].size();
+          for(int x=0; x < n; x++){
+            for(int y=x+1; y<n; y++){
+              
+              
+         ShearParticle A = CellParticles[i][j].get(x);     
+         ShearParticle B = CellParticles[i][j].get(y);
+         PVector distanceVect = PVector.sub(A.position.copy(), B.position.copy());
+      
+         float distVectMag = distanceVect.mag();
+         if(distVectMag < (A.radius + B.radius)){
+           
+           Float CorrectionMag = ((A.radius + B.radius) - distanceVect.mag())/2.0;
+           PVector d = distanceVect.copy();
+           PVector CorrectionVect = d.normalize().mult(CorrectionMag);
+           A.position.add(CorrectionVect);
+           B.position.sub(CorrectionVect);
+           float EnergyModifier = 1;
+           float M = A.m + B.m;
+           float x1 = EnergyModifier*(A.velocity.x*(A.m - B.m) + 2*B.m*B.velocity.x)/M;
+           float y1 = EnergyModifier*(A.velocity.y*(A.m - B.m) + 2*B.m*B.velocity.y)/M;
+           float x2 = EnergyModifier*(B.velocity.x*(B.m - A.m) + 2*A.m*A.velocity.x)/M;
+           float y2 = EnergyModifier*(B.velocity.y*(B.m - A.m) + 2*A.m*A.velocity.y)/M;
+           A.velocity.set(x1,y1,0);
+           B.velocity.set(x2,y2,0);
+         }              
+                      
+        
+            }
+          }
+      }
+    }
+ }
 PVector selfGravAcceleration(Particle p) {
 
 //    //Find which cell the particle is in.

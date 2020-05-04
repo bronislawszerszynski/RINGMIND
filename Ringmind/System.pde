@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 5000;                       //Used for system initialiations 
+  int n_particles = 1000;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -75,7 +75,7 @@ public abstract class System {
     }
     }else{
       ShearSystem ss = (ShearSystem)s;
-        ss.SGrid.Update(ss);
+        ss.SG.Update(ss);
     }
     for (Particle p : particles) {
       p.updateVelocity(p.getAcceleration(s), s.dt);
@@ -339,8 +339,8 @@ class ShearSystem extends System {
   Boolean Moonlet = false; //Adds in the moonlet
   Boolean ClearMoonlet = false; // Clears a space for the moonlet to fit in, leave this off
   Boolean Self_Grav = false; // Doesn't do anything yet
-  Boolean MoonletCollisions = false; // Particles can collide with the moonlet
-  Boolean ParticleCollisions = false; // Particles can collide with one another (no grid implentation yet, runs super slow)
+  Boolean MoonletCollisions = true; // Particles can collide with the moonlet
+  Boolean ParticleCollisions = true; // Particles can collide with one another (no grid implentation yet, runs super slow)
   Boolean Output = false; //no idea
   Boolean A = true; // shear forces that make this part of a sing and not just particles in a box
   Boolean Guides = true; // shows particle trajectories
@@ -359,11 +359,11 @@ class ShearSystem extends System {
   final float Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
   final float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
   Moonlet moonlet;
-  ShearGrid SGrid ;
+  ShearGrid SG ;
   
   ShearSystem(boolean Guides) {
     this.Guides =Guides;
-    SGrid = new ShearGrid(this);
+    SG = new ShearGrid(this);
     particles = new ArrayList<Particle>();
     moonlet = new Moonlet();
     random_start();
@@ -374,17 +374,20 @@ class ShearSystem extends System {
    */
   @Override void update() {
    
-   
+    if(ParticleCollisions){
+    SG.FillGrid(this);
+    SG.CollisionCheck();
     
+    
+    }
    super.update();
 
-    
     
     //Have any particles left the simulation box, or collided with the moonlet?
     //If so, remove and replace them.
     for (Particle p : particles) {          
       ShearParticle x =(ShearParticle)p;
-            
+       
        if(ClearMoonlet){
             float distance = (x.position).dist(moonlet.position);
                if(distance < moonlet.radius*2){
@@ -394,17 +397,6 @@ class ShearSystem extends System {
     
       if (particle_outBox(x)) {
         x.Reset(this);
-      }
-      if(ParticleCollisions){ 
-          int n = particles.size();
-          for(int i=0; i < n; i++){ 
-            ShearParticle A = (ShearParticle)particles.get(i);
-            for(int j=i+1; j<n; j++){
-              ShearParticle B = (ShearParticle)particles.get(j);      
-              A.ParticleCollisionCheck(B, this);
-    
-            }
-          }
       }
     
         if (Moonlet) {
@@ -456,8 +448,11 @@ class ShearSystem extends System {
   void random_inject(float n) {
    //particles.add(new Moonlet(this));
     for (int i = 0; i < n; i++) {
-      particles.add(new ShearParticle(this));
-    }
+      ShearParticle p = new ShearParticle(this);
+      //particles.add(new ShearParticle(this));
+      particles.add(p);
+      p.Index=i;
+}
   }
 
   /** Method to Initialise the simulation with a random set of starting particles at the edges (in y).
