@@ -237,20 +237,22 @@ class Renderer {
         // fill() determines the colour by fill(Red,Green,Blue) 
            ShearParticle sp = (ShearParticle)ss.particles.get(PP);
           fill(255);//White
-          if(sp.InitPosition.x > 300){
+          if(sp.InitPosition.x > ss.Lx/3){
           fill(225,0,255);//Purple
-          }else if(sp.InitPosition.x > 100 && sp.InitPosition.x <= 300){
-          fill(0,0,255);//Blue     
-          }else if(sp.InitPosition.x >= -100 && sp.InitPosition.x <= 100){
+          }else if(sp.InitPosition.x > ss.Lx/6 && sp.InitPosition.x <= ss.Lx/3){
+          fill(0,100,255);//Blue     
+          }else if(sp.InitPosition.x > 0  && sp.InitPosition.x <= ss.Lx/6){
           fill(0,255,0);//Green
-          }else if(sp.InitPosition.x >= -300 && sp.InitPosition.x < -100){
-          fill(255,255,0);//Yellow
-          }else if(sp.InitPosition.x < -300){
+          }else if(sp.InitPosition.x >= -ss.Lx/6 && sp.InitPosition.x < 0){
+          fill(255,255,0);//Yellow        
+          }else if(sp.InitPosition.x >= -ss.Lx/3 && sp.InitPosition.x < -ss.Lx/6){
+          fill(255,128,0);//Orange
+          }else if(sp.InitPosition.x < -ss.Lx/3){
           fill(255,0,0);//Red
           }
             
-          //fill(255,0,255);
-          circle(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, sp.radius);      
+          //fill(255);
+          ellipse(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, 2*sp.radius*width/ss.Ly, 2*sp.radius*height/ss.Lx);      
       
       }
       

@@ -417,12 +417,13 @@ int sizeX, sizeY;
 int Lx, Ly;
 
 ShearGrid(ShearSystem ss){
-  dx = 50;
-  dy = 100;
+
   this.Lx = ss.Lx;
   this.Ly = ss.Ly;
-  sizeX = Lx/dx;
-  sizeY = Ly/dy;
+  sizeX = 10;
+  sizeY = 20;
+  dx = ss.Lx/sizeX;
+  dy = ss.Ly/sizeY;
 
   this.sGrid = new int[sizeX][sizeY];
   this.sGrid2 = new int[sizeX][sizeY][ss.n_particles];
@@ -528,7 +529,7 @@ int Geti(Particle p){
            PVector CorrectionVect = d.normalize().mult(CorrectionMag);
            A.position.add(CorrectionVect);
            B.position.sub(CorrectionVect);
-           float EnergyModifier = 1;
+           float EnergyModifier = 0.95;
            float M = A.m + B.m;
            float x1 = EnergyModifier*(A.velocity.x*(A.m - B.m) + 2*B.m*B.velocity.x)/M;
            float y1 = EnergyModifier*(A.velocity.y*(A.m - B.m) + 2*B.m*B.velocity.y)/M;

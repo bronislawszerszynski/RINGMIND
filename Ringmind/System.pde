@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 1000;                       //Used for system initialiations 
+  int n_particles = 6000;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -349,9 +349,9 @@ class ShearSystem extends System {
   Boolean RingGap = false;   // Creates a ring gap
 
   //Simulation dimensions [m]
-  int Lx = 1000;       //Extent of simulation box along planet-point line [m].
-  int Ly = 2000;       //Extent of simulation box along orbit [m].
-  int GapWidth = 500;  //Width of the ring gap
+  int Lx = 3000;       //Extent of simulation box along planet-point line [m].
+  int Ly = 6000;       //Extent of simulation box along orbit [m].
+  int GapWidth = Lx/4;  //Width of the ring gap
 
   //Initialises Simulation Constants
   final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
@@ -365,7 +365,7 @@ class ShearSystem extends System {
     this.Guides =Guides;
     SG = new ShearGrid(this);
     particles = new ArrayList<Particle>();
-    moonlet = new Moonlet();
+    moonlet = new Moonlet(this);
     random_start();
   }
 
@@ -374,12 +374,6 @@ class ShearSystem extends System {
    */
   @Override void update() {
    
-    if(ParticleCollisions){
-    SG.FillGrid(this);
-    SG.CollisionCheck();
-    
-    
-    }
    super.update();
 
     
@@ -390,7 +384,7 @@ class ShearSystem extends System {
        
        if(ClearMoonlet){
             float distance = (x.position).dist(moonlet.position);
-               if(distance < moonlet.radius*2){
+               if(distance < moonlet.radius*1.1){
                x.Reset(this);
                } 
        }
@@ -402,12 +396,21 @@ class ShearSystem extends System {
         if (Moonlet) {
           if(MoonletCollisions){
             x.MoonletCollisionCheck(this);
+            //x.MoonletCollisionCheckB(this);
           }
           if (particle_inMoonlet(x)) {
-           x.Reset(this);       
+           //x.Reset(this);       
           }
         }  
     }
+    
+      if(ParticleCollisions){
+    SG.FillGrid(this);
+    SG.CollisionCheck();
+       }
+    
+    
+    
     ClearMoonlet= false;
     
     if (DynamicMoon == true){
