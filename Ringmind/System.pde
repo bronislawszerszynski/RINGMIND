@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 6000;                       //Used for system initialiations 
+  int n_particles = 1000;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -349,8 +349,8 @@ class ShearSystem extends System {
   Boolean RingGap = false;   // Creates a ring gap
 
   //Simulation dimensions [m]
-  int Lx = 3000;       //Extent of simulation box along planet-point line [m].
-  int Ly = 6000;       //Extent of simulation box along orbit [m].
+  int Lx = 2000;       //Extent of simulation box along planet-point line [m].
+  int Ly = 4000;       //Extent of simulation box along orbit [m].
   int GapWidth = Lx/4;  //Width of the ring gap
 
   //Initialises Simulation Constants
@@ -367,6 +367,38 @@ class ShearSystem extends System {
     particles = new ArrayList<Particle>();
     moonlet = new Moonlet(this);
     random_start();
+    
+   // this is all for testing collsions  
+    ShearParticle A = new ShearParticle(this);
+    ShearParticle B = new ShearParticle(this);
+    ShearParticle C = new ShearParticle(this);
+
+    //particles.add(A);
+    //particles.add(B);
+    //particles.add(C);
+    
+    A.position.x = 0;
+    A.position.y = -2000;   
+    A.velocity.x = 0;
+    A.velocity.y = 0.08;
+    
+    B.position.x = 0;
+    B.position.y = 2000;
+    B.velocity.x = 0;
+    B.velocity.y = -0.08;
+    
+    C.position.x = 0;
+    C.position.y = 0;
+    C.velocity.x = 0;
+    C.velocity.y = 0;
+    
+    A.radius = 50;
+    B.radius = 100;
+    
+    A.m= PI*pow(A.radius, 3.0)*4.0/3.0;
+    B.m= PI*pow(B.radius, 3.0)*4.0/3.0;
+
+
   }
 
   /** Take a step using the Velocity Verlet (Leapfrog) ODE integration algorithm.
@@ -375,13 +407,10 @@ class ShearSystem extends System {
   @Override void update() {
    
    super.update();
-
-    
     //Have any particles left the simulation box, or collided with the moonlet?
     //If so, remove and replace them.
-    for (Particle p : particles) {          
+     for (Particle p : particles) {          
       ShearParticle x =(ShearParticle)p;
-       
        if(ClearMoonlet){
             float distance = (x.position).dist(moonlet.position);
                if(distance < moonlet.radius*1.1){
@@ -390,6 +419,7 @@ class ShearSystem extends System {
        }
     
       if (particle_outBox(x)) {
+        x.velocity.mult(-1);
         x.Reset(this);
       }
     
@@ -403,7 +433,7 @@ class ShearSystem extends System {
           }
         }  
     }
-    
+
       if(ParticleCollisions){
     SG.FillGrid(this);
     SG.CollisionCheck();

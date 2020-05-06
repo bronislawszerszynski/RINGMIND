@@ -420,8 +420,8 @@ ShearGrid(ShearSystem ss){
 
   this.Lx = ss.Lx;
   this.Ly = ss.Ly;
-  sizeX = 10;
-  sizeY = 20;
+  sizeX = 6;
+  sizeY = 10;
   dx = ss.Lx/sizeX;
   dy = ss.Ly/sizeY;
 
@@ -509,42 +509,93 @@ int Geti(Particle p){
      }
  }
  
+ 
+ // Code that checks for collisions between particles that are in the same cell or adjacent cells with no repetition
  void CollisionCheck(){
+   float EnergyModifier = 0.93;
     for(int i=0; i < sizeX; i++){
       for(int j=0; j< sizeY; j++){
           int n = CellParticles[i][j].size();
           for(int x=0; x < n; x++){
-            for(int y=x+1; y<n; y++){
-              
-              
-         ShearParticle A = CellParticles[i][j].get(x);     
-         ShearParticle B = CellParticles[i][j].get(y);
-         PVector distanceVect = PVector.sub(A.position.copy(), B.position.copy());
-      
-         float distVectMag = distanceVect.mag();
-         if(distVectMag < (A.radius + B.radius)){
-           
-           Float CorrectionMag = ((A.radius + B.radius) - distanceVect.mag())/2.0;
-           PVector d = distanceVect.copy();
-           PVector CorrectionVect = d.normalize().mult(CorrectionMag);
-           A.position.add(CorrectionVect);
-           B.position.sub(CorrectionVect);
-           float EnergyModifier = 0.95;
-           float M = A.m + B.m;
-           float x1 = EnergyModifier*(A.velocity.x*(A.m - B.m) + 2*B.m*B.velocity.x)/M;
-           float y1 = EnergyModifier*(A.velocity.y*(A.m - B.m) + 2*B.m*B.velocity.y)/M;
-           float x2 = EnergyModifier*(B.velocity.x*(B.m - A.m) + 2*A.m*A.velocity.x)/M;
-           float y2 = EnergyModifier*(B.velocity.y*(B.m - A.m) + 2*A.m*A.velocity.y)/M;
-           A.velocity.set(x1,y1,0);
-           B.velocity.set(x2,y2,0);
-         }              
-                      
-        
+            ShearParticle A = CellParticles[i][j].get(x);     
+            for(int y=x+1; y<n; y++){     
+             ShearParticle B = CellParticles[i][j].get(y);
+             PVector distanceVect = PVector.sub(A.position.copy(), B.position.copy());
+          
+             float distVectMag = distanceVect.mag();
+               if(distVectMag < (A.radius + B.radius)){
+                 
+                 Float CorrectionMag = ((A.radius + B.radius) - distanceVect.mag())/2.0;
+                 PVector d = distanceVect.copy();
+                 PVector CorrectionVect = d.normalize().mult(CorrectionMag);
+                 A.position.add(CorrectionVect);
+                 B.position.sub(CorrectionVect);
+                 float M = A.m + B.m;
+                 float x1 = EnergyModifier*(A.velocity.x*(A.m - B.m) + 2*B.m*B.velocity.x)/M;
+                 float y1 = EnergyModifier*(A.velocity.y*(A.m - B.m) + 2*B.m*B.velocity.y)/M;
+                 float x2 = EnergyModifier*(B.velocity.x*(B.m - A.m) + 2*A.m*A.velocity.x)/M;
+                 float y2 = EnergyModifier*(B.velocity.y*(B.m - A.m) + 2*A.m*A.velocity.y)/M;
+                 A.velocity.set(x1,y1,0);
+                 B.velocity.set(x2,y2,0);
+               }
             }
+            // Checks for collisions in the 3 neighboring cells directly bellow and diagonally left and right
+               for(int j2 = j-1; j2 <= j+1; j2++){
+                 if(validij(i+1,j2)){
+                  int n2 = CellParticles[i+1][j2].size();
+                  for(int z=0; z<n2; z++){     
+                     ShearParticle C = CellParticles[i+1][j2].get(z);
+                     PVector distanceVect = PVector.sub(A.position.copy(), C.position.copy());
+                     float distVectMag = distanceVect.mag();
+                     if(distVectMag < (A.radius + C.radius)){
+                         
+                         Float CorrectionMag = ((A.radius + C.radius) - distanceVect.mag())/2.0;
+                         PVector d = distanceVect.copy();
+                         PVector CorrectionVect = d.normalize().mult(CorrectionMag);
+                         A.position.add(CorrectionVect);
+                         C.position.sub(CorrectionVect);
+                         float M = A.m + C.m;
+                         float x1 = EnergyModifier*(A.velocity.x*(A.m - C.m) + 2*C.m*C.velocity.x)/M;
+                         float y1 = EnergyModifier*(A.velocity.y*(A.m - C.m) + 2*C.m*C.velocity.y)/M;
+                         float x2 = EnergyModifier*(C.velocity.x*(C.m - A.m) + 2*A.m*A.velocity.x)/M;
+                         float y2 = EnergyModifier*(C.velocity.y*(C.m - A.m) + 2*A.m*A.velocity.y)/M;
+                         A.velocity.set(x1,y1,0);
+                         C.velocity.set(x2,y2,0);
+                     }
+                  }
+                }
+             }
+             // Checks for collsions in the neighboring cell to the right
+             if(validij(i,j+1)){
+                  int n3 = CellParticles[i][j+1].size();
+                  for(int k=0; k<n3; k++){     
+                     ShearParticle D = CellParticles[i][j+1].get(k);
+                     PVector distanceVect = PVector.sub(A.position.copy(), D.position.copy());
+                     float distVectMag = distanceVect.mag();
+                     if(distVectMag < (A.radius + D.radius)){
+                         
+                         Float CorrectionMag = ((A.radius + D.radius) - distanceVect.mag())/2.0;
+                         PVector d = distanceVect.copy();
+                         PVector CorrectionVect = d.normalize().mult(CorrectionMag);
+                         A.position.add(CorrectionVect);
+                         D.position.sub(CorrectionVect);
+                         float M = A.m + D.m;
+                         float x1 = EnergyModifier*(A.velocity.x*(A.m - D.m) + 2*D.m*D.velocity.x)/M;
+                         float y1 = EnergyModifier*(A.velocity.y*(A.m - D.m) + 2*D.m*D.velocity.y)/M;
+                         float x2 = EnergyModifier*(D.velocity.x*(D.m - A.m) + 2*A.m*A.velocity.x)/M;
+                         float y2 = EnergyModifier*(D.velocity.y*(D.m - A.m) + 2*A.m*A.velocity.y)/M;
+                         A.velocity.set(x1,y1,0);
+                         D.velocity.set(x2,y2,0);
+                     }
+                  }
+                }
+                  
+             }
           }
-      }
+       }
     }
- }
+ 
+
 PVector selfGravAcceleration(Particle p) {
 
 //    //Find which cell the particle is in.

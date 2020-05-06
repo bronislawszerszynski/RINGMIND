@@ -583,20 +583,20 @@ class ShearParticle extends Particle {
   final float particle_rho = 900.0;  //Density of a ring particle [kg/m^3].
   final float particle_a = 0.01;     //Minimum size of a ring particle [m].
   final float particle_b = 10.0;     //Maximum size of a ring particle [m].
-  final float particle_lambda = 3;   //Power law index for the size distribution [dimensionless].
+  final float particle_lambda = 2;   //Power law index for the size distribution [dimensionless].
   final float particle_D =1.0/( exp(-particle_lambda*particle_a) -exp(-particle_lambda*particle_b));
   final float particle_C =particle_D * exp(-particle_lambda*particle_a);
   
   float i = 0;
-  float j =0;
+  float j = 0;
   PVector InitPosition = new PVector();
 
   //ShearParticle Properties
   float radius;
   
   // Modifies the minimum radius and range of radii each particle can have
-  float RadiusMultiplier = 4;
-  float MinRadius = 2;
+  float RadiusMultiplier = 6;
+  float MinRadius = 3;
   float GM;
   float m;
 
@@ -672,7 +672,18 @@ class ShearParticle extends Particle {
         a_grav.y+=-distanceVect.y;
       }
     }
-   
+    
+    //for testing collisions
+    //if(this == ss.particles.get(1)){
+      
+    // a_grav.x = 0;
+    // a_grav.y = -0.000008;
+    // }
+    // if(this == ss.particles.get(0)){
+      
+    // a_grav.x = 0;
+    // a_grav.y = 0.000008;
+    // }
          
     // 2 methods of self gravity, neither work fast enough to maintain fps
 
@@ -849,7 +860,7 @@ class ShearParticle extends Particle {
 class Moonlet extends ShearParticle {
 
   //Ring Moonlet Properties
-  float moonlet_r = 400.0;            //Radius of the moonlet [m].
+  float moonlet_r = 300.0;            //Radius of the moonlet [m].
   final float moonlet_density = 300.0; //Density of the moonlet [kg/m^3]
   float moonlet_GM = SG*(4.0*PI/3.0)*pow(moonlet_r, 3.0)*moonlet_density; //Standard gravitational parameter.
 
