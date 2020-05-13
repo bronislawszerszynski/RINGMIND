@@ -255,7 +255,7 @@ class Renderer {
           ellipse(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, 2*sp.radius*width/ss.Ly, 2*sp.radius*height/ss.Lx);      
       
       }
-      
+
       
       if (ss.Guides) {
         for (int PP = 0; PP < ss.particles.size(); PP++) {
@@ -269,14 +269,12 @@ class Renderer {
           pop();
         }
       }
-
       //moonlet
       if (ss.Moonlet) {
           //fill(0,100,0);
           //circle(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.radius*2);
           fill(100);//Grey
           ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);          
-          
       }
     } else if (s instanceof TiltSystem) {
       //--------------------------------------------TiltSystemRender--------------------------------------------------

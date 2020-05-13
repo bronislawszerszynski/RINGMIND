@@ -1,11 +1,11 @@
- 
-  ///////////////
-  //           //
-  //           //
-  // RINGMIND  //
-  //           //
-  //           //
-  ///////////////
+
+///////////////
+//           //
+//           //
+// RINGMIND  //
+//           //
+//           //
+///////////////
 
 /** RINGMIND 
  * A gravitational simulation in a Cartesian coordinate system.
@@ -25,7 +25,6 @@ void settings() {
   //fullScreen(P3D, 1);
   size (1800, 900, P3D);
   smooth(); //noSmooth();
- 
 }
 
 void setup() {
@@ -85,14 +84,13 @@ void keyPressed() {
     //shearState
     systemState= State.shearState;
     setupStates();
-
   } else if (key=='*') {
     //Toggle Moonlet
     if (s instanceof ShearSystem) {
       ShearSystem ss = (ShearSystem) s;
       ss.Moonlet = !ss.Moonlet;
       ss.ClearMoonlet = true;
-     }
+    }
   } else if (key=='9') {
     //TiltSystem
     systemState= State.formingState;
@@ -106,7 +104,7 @@ void keyPressed() {
   } else if (key=='-') {
     systemState= State.threadingState;
     setupStates();
-  }else if (key== '=') {
+  } else if (key== '=') {
     systemState= State.resonanceState;
     setupStates();
   }
@@ -171,11 +169,11 @@ void keyPressed() {
   } else if (key=='S') {
     //Release to Save Path to JSON
   } else if (key=='d') {
-    if(s instanceof ShearSystem){
+    if (s instanceof ShearSystem) {
       ShearSystem ss = (ShearSystem)s;
       ss.Guides= !ss.Guides;
-    }else{
-    traceAmount=190;
+    } else {
+      traceAmount=190;
     }
   } else if (key=='D') {
     //

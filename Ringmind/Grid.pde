@@ -1,3 +1,5 @@
+import java.awt.Rectangle;
+
 //Grid Default Variables 
 float R_MIN = 1;                   //[Planetary Radi] 
 float R_MAX = 5;                   //[Planetary Radi] 
@@ -512,7 +514,6 @@ int Geti(Particle p){
  
  // Code that checks for collisions between particles that are in the same cell or adjacent cells with no repetition
  void CollisionCheck(){
-   float EnergyModifier = 0.93;
     for(int i=0; i < sizeX; i++){
       for(int j=0; j< sizeY; j++){
           int n = CellParticles[i][j].size();
@@ -520,24 +521,8 @@ int Geti(Particle p){
             ShearParticle A = CellParticles[i][j].get(x);     
             for(int y=x+1; y<n; y++){     
              ShearParticle B = CellParticles[i][j].get(y);
-             PVector distanceVect = PVector.sub(A.position.copy(), B.position.copy());
-          
-             float distVectMag = distanceVect.mag();
-               if(distVectMag < (A.radius + B.radius)){
-                 
-                 Float CorrectionMag = ((A.radius + B.radius) - distanceVect.mag())/2.0;
-                 PVector d = distanceVect.copy();
-                 PVector CorrectionVect = d.normalize().mult(CorrectionMag);
-                 A.position.add(CorrectionVect);
-                 B.position.sub(CorrectionVect);
-                 float M = A.m + B.m;
-                 float x1 = EnergyModifier*(A.velocity.x*(A.m - B.m) + 2*B.m*B.velocity.x)/M;
-                 float y1 = EnergyModifier*(A.velocity.y*(A.m - B.m) + 2*B.m*B.velocity.y)/M;
-                 float x2 = EnergyModifier*(B.velocity.x*(B.m - A.m) + 2*A.m*A.velocity.x)/M;
-                 float y2 = EnergyModifier*(B.velocity.y*(B.m - A.m) + 2*A.m*A.velocity.y)/M;
-                 A.velocity.set(x1,y1,0);
-                 B.velocity.set(x2,y2,0);
-               }
+             A.CollisionCheck(B);
+             
             }
             // Checks for collisions in the 3 neighboring cells directly bellow and diagonally left and right
                for(int j2 = j-1; j2 <= j+1; j2++){
@@ -545,23 +530,7 @@ int Geti(Particle p){
                   int n2 = CellParticles[i+1][j2].size();
                   for(int z=0; z<n2; z++){     
                      ShearParticle C = CellParticles[i+1][j2].get(z);
-                     PVector distanceVect = PVector.sub(A.position.copy(), C.position.copy());
-                     float distVectMag = distanceVect.mag();
-                     if(distVectMag < (A.radius + C.radius)){
-                         
-                         Float CorrectionMag = ((A.radius + C.radius) - distanceVect.mag())/2.0;
-                         PVector d = distanceVect.copy();
-                         PVector CorrectionVect = d.normalize().mult(CorrectionMag);
-                         A.position.add(CorrectionVect);
-                         C.position.sub(CorrectionVect);
-                         float M = A.m + C.m;
-                         float x1 = EnergyModifier*(A.velocity.x*(A.m - C.m) + 2*C.m*C.velocity.x)/M;
-                         float y1 = EnergyModifier*(A.velocity.y*(A.m - C.m) + 2*C.m*C.velocity.y)/M;
-                         float x2 = EnergyModifier*(C.velocity.x*(C.m - A.m) + 2*A.m*A.velocity.x)/M;
-                         float y2 = EnergyModifier*(C.velocity.y*(C.m - A.m) + 2*A.m*A.velocity.y)/M;
-                         A.velocity.set(x1,y1,0);
-                         C.velocity.set(x2,y2,0);
-                     }
+                    A.CollisionCheck(C);
                   }
                 }
              }
@@ -570,31 +539,53 @@ int Geti(Particle p){
                   int n3 = CellParticles[i][j+1].size();
                   for(int k=0; k<n3; k++){     
                      ShearParticle D = CellParticles[i][j+1].get(k);
-                     PVector distanceVect = PVector.sub(A.position.copy(), D.position.copy());
-                     float distVectMag = distanceVect.mag();
-                     if(distVectMag < (A.radius + D.radius)){
-                         
-                         Float CorrectionMag = ((A.radius + D.radius) - distanceVect.mag())/2.0;
-                         PVector d = distanceVect.copy();
-                         PVector CorrectionVect = d.normalize().mult(CorrectionMag);
-                         A.position.add(CorrectionVect);
-                         D.position.sub(CorrectionVect);
-                         float M = A.m + D.m;
-                         float x1 = EnergyModifier*(A.velocity.x*(A.m - D.m) + 2*D.m*D.velocity.x)/M;
-                         float y1 = EnergyModifier*(A.velocity.y*(A.m - D.m) + 2*D.m*D.velocity.y)/M;
-                         float x2 = EnergyModifier*(D.velocity.x*(D.m - A.m) + 2*A.m*A.velocity.x)/M;
-                         float y2 = EnergyModifier*(D.velocity.y*(D.m - A.m) + 2*A.m*A.velocity.y)/M;
-                         A.velocity.set(x1,y1,0);
-                         D.velocity.set(x2,y2,0);
-                     }
+                     A.CollisionCheck(D);
+
                   }
                 }
-                  
              }
           }
        }
     }
- 
+
+ void CollisionCheckB(){
+    for(int i=0; i < sizeX; i++){
+      for(int j=0; j< sizeY; j++){
+          int n = CellParticles[i][j].size();
+          for(int x=0; x < n; x++){
+            ShearParticle A = CellParticles[i][j].get(x);     
+            for(int y=x+1; y<n; y++){     
+             ShearParticle B = CellParticles[i][j].get(y);
+             A.CollisionCheckB(B);
+             
+            }
+            // Checks for collisions in the 3 neighboring cells directly bellow and diagonally left and right
+               for(int j2 = j-1; j2 <= j+1; j2++){
+                 if(validij(i+1,j2)){
+                  int n2 = CellParticles[i+1][j2].size();
+                  for(int z=0; z<n2; z++){     
+                     ShearParticle C = CellParticles[i+1][j2].get(z);
+                    A.CollisionCheckB(C);
+                  }
+                }
+             }
+             // Checks for collsions in the neighboring cell to the right
+             if(validij(i,j+1)){
+                  int n3 = CellParticles[i][j+1].size();
+                  for(int k=0; k<n3; k++){     
+                     ShearParticle D = CellParticles[i][j+1].get(k);
+                     A.CollisionCheckB(D);
+
+                  }
+                }
+             }
+          }
+       }
+    }
+
+
+
+
 
 PVector selfGravAcceleration(Particle p) {
 
@@ -628,4 +619,114 @@ PVector selfGravAcceleration(Particle p) {
     }
     return a_selfgrav;
   }   
+}
+
+class QuadTree{
+     int MaxObjects = 10;
+     int MaxLevels = 5;
+     int Level;
+     ArrayList<ShearParticle> Objects;
+     Rectangle bounds;
+     QuadTree[] nodes;
+     
+      QuadTree(int pLevel, Rectangle pBounds){
+       Level = pLevel;
+       Objects = new ArrayList();
+       bounds = pBounds;
+       nodes = new QuadTree[4];
+      }
+      
+    void ClearTree(){
+      Objects.clear();
+      for (int i = 0; i < nodes.length ; i++){
+        if(nodes[i] != null){
+          //nodes[i].clear();
+          nodes[i] = null;
+        }
+      }
+} 
+  
+void SplitTree(){
+       
+      int SubWidth = (int)bounds.getWidth()/2;
+      int SubHeight = (int)bounds.getHeight()/2;
+      int x = (int)bounds.getX();
+      int y = (int)bounds.getY();
+      
+      //These seem a bit backwards becasue of our coordinate system
+      
+       nodes[0] = new QuadTree(Level+1, new Rectangle(x, y, SubWidth, SubHeight));
+       nodes[1] = new QuadTree(Level+1, new Rectangle(x, y - SubHeight, SubWidth, SubHeight));
+       nodes[2] = new QuadTree(Level+1, new Rectangle(x - SubWidth, y, SubWidth, SubHeight));
+       nodes[3] = new QuadTree(Level+1, new Rectangle(x - SubWidth, y - SubHeight, SubWidth, SubHeight));  
+    }
+      
+    int GetIndex(Particle p){
+      int Index = -1;
+      double XMidPoint = bounds.getX() - (bounds.getWidth()/2);
+      double YMidPoint = bounds.getY() - (bounds.getHeight()/2);
+      
+      boolean TopHalf = p.position.x > XMidPoint;
+      boolean LeftHalf = p.position.y > YMidPoint;
+      
+      if(TopHalf){
+        if(LeftHalf){
+          Index = 0;
+        }else{
+          Index = 1;
+        } 
+      }else if(LeftHalf){
+        Index = 2;  
+      }else{
+        Index = 3;
+      }
+      
+      return Index;
+  }
+  
+void Insert(ShearParticle p){
+      if(nodes[0] != null){
+        int Index = GetIndex(p);
+        if(Index != -1){
+          nodes[Index].Insert(p);
+          
+          return;
+        }
+      }
+    
+      Objects.add(p);
+      
+      if(Objects.size() > MaxObjects && Level < MaxLevels){
+        if(nodes[0] == null){
+        SplitTree();
+        }
+        int i = 0;
+        while(i < Objects.size()){
+          int Index = GetIndex(Objects.get(i));
+          if(Index != -1){
+            nodes[Index].Insert(Objects.remove(i));
+          }else{ i++;
+          }  
+        }
+      }
+}
+  
+ArrayList Retrieve(ArrayList ReturnObjects, Particle p){
+    int Index = GetIndex(p);
+    if(Index != -1 && nodes[0] != null){
+      nodes[Index].Retrieve(ReturnObjects, p);
+    }
+  
+    ReturnObjects.addAll(Objects);
+  return ReturnObjects;
+}
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }

@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 1000;                       //Used for system initialiations 
+  int n_particles = 3000;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -349,56 +349,76 @@ class ShearSystem extends System {
   Boolean RingGap = false;   // Creates a ring gap
 
   //Simulation dimensions [m]
-  int Lx = 2000;       //Extent of simulation box along planet-point line [m].
-  int Ly = 4000;       //Extent of simulation box along orbit [m].
+  int Lx = 1000;       //Extent of simulation box along planet-point line [m].
+  int Ly = 2000;       //Extent of simulation box along orbit [m].
   int GapWidth = Lx/4;  //Width of the ring gap
 
   //Initialises Simulation Constants
   final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
-  final float r0 = 130000e3;   //Central position in the ring [m]. Defaults to 130000 km.
+  final float r0 = 95000e3;   //Central position in the ring [m]. Defaults to 130000 km.
   final float Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
   final float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
   Moonlet moonlet;
   ShearGrid SG ;
+  QuadTree QT;
   
   ShearSystem(boolean Guides) {
     this.Guides =Guides;
     SG = new ShearGrid(this);
+    Rectangle Rect = new Rectangle(500, 1000, Lx, Ly);
+    QT = new QuadTree(1 , Rect);
     particles = new ArrayList<Particle>();
     moonlet = new Moonlet(this);
     random_start();
-    
+        
    // this is all for testing collsions  
     ShearParticle A = new ShearParticle(this);
     ShearParticle B = new ShearParticle(this);
     ShearParticle C = new ShearParticle(this);
-
+    ShearParticle D = new ShearParticle(this);
+    
     //particles.add(A);
     //particles.add(B);
     //particles.add(C);
+    //particles.add(D);
     
-    A.position.x = 0;
-    A.position.y = -2000;   
-    A.velocity.x = 0;
-    A.velocity.y = 0.08;
-    
-    B.position.x = 0;
-    B.position.y = 2000;
-    B.velocity.x = 0;
-    B.velocity.y = -0.08;
-    
-    C.position.x = 0;
-    C.position.y = 0;
-    C.velocity.x = 0;
-    C.velocity.y = 0;
-    
-    A.radius = 50;
-    B.radius = 100;
-    
-    A.m= PI*pow(A.radius, 3.0)*4.0/3.0;
-    B.m= PI*pow(B.radius, 3.0)*4.0/3.0;
+    float X = (float)Rect.getX();
+    float Y = (float)Rect.getY();
+    float H = (float)Rect.getHeight();
+    float W = (float)Rect.getWidth();
 
+     
+    A.position.x = X;
+    A.position.y = Y;   
 
+    
+    B.position.x = X;
+    B.position.y = Y - H/2;
+
+    
+    C.position.x = X - W/2;
+    C.position.y = Y;
+
+    D.position.x = X - W/2;
+    D.position.y = Y - H/2;
+    
+    A.velocity.y = B.velocity.y = C.velocity.y = D.velocity.y = 0;
+    
+    int IA = QT.GetIndex(A);
+    int IB = QT.GetIndex(B);
+    int IC = QT.GetIndex(C);
+    int ID = QT.GetIndex(D);
+
+    println("A", IA );
+    println("B", IB );
+    println("C", IC );
+    println("D", ID );
+
+    
+    A.radius = 10;
+    B.radius = 20;
+    C.radius = 30;
+    D.radius = 40;
   }
 
   /** Take a step using the Velocity Verlet (Leapfrog) ODE integration algorithm.
@@ -409,11 +429,21 @@ class ShearSystem extends System {
    super.update();
     //Have any particles left the simulation box, or collided with the moonlet?
     //If so, remove and replace them.
+    //ShearParticle A = (ShearParticle)particles.get(0);
+    //ShearParticle B = (ShearParticle)particles.get(1);
+     
+    //float E1 = A.m * sq(A.velocity.mag())/2;
+    //float E2 = B.m * sq(B.velocity.mag())/2;
+    //float E = E1+ E2;
+    //println(E1, E2, E);
+     
      for (Particle p : particles) {          
       ShearParticle x =(ShearParticle)p;
+      
+      
        if(ClearMoonlet){
-            float distance = (x.position).dist(moonlet.position);
-               if(distance < moonlet.radius*1.1){
+            float ClearRadius = (x.position).dist(moonlet.position);
+               if(ClearRadius < moonlet.radius*1.1){
                x.Reset(this);
                } 
        }
@@ -436,7 +466,8 @@ class ShearSystem extends System {
 
       if(ParticleCollisions){
     SG.FillGrid(this);
-    SG.CollisionCheck();
+    SG.CollisionCheckB();
+    //SG.CollisionCheck();
        }
     
     
