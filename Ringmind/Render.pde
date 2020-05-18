@@ -276,6 +276,8 @@ class Renderer {
           fill(100);//Grey
           ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);          
       }
+      // Marker for the centre of the screen
+     // circle(0,0,10);
     } else if (s instanceof TiltSystem) {
       //--------------------------------------------TiltSystemRender--------------------------------------------------
       push();

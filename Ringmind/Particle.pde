@@ -580,24 +580,23 @@ class ShearParticle extends Particle {
 
   final float SG = 6.67408e-11; //Shear Gravitational Constant
   //ShearParticle Initialisation Properties
-  final float particle_rho = 900.0;  //Density of a ring particle [kg/m^3].
-  final float particle_a = 0.01;     //Minimum size of a ring particle [m].
-  final float particle_b = 10.0;     //Maximum size of a ring particle [m].
-  final float particle_lambda = 3;   //Power law index for the size distribution [dimensionless].
+  final float particle_rho = 1000.0;  //Density of a ring particle [kg/m^3].
+  final float particle_a = 3;     //Minimum size of a ring particle [m].
+  final float particle_b = 20.0;     //Maximum size of a ring particle [m].
+  final float particle_lambda = 2;   //Power law index for the size distribution [dimensionless].
   final float particle_D =1.0/( exp(-particle_lambda*particle_a) -exp(-particle_lambda*particle_b));
   final float particle_C =particle_D * exp(-particle_lambda*particle_a);
-  
+
   float i = 0;
   float j = 0;
   PVector InitPosition = new PVector();
 
   //ShearParticle Properties
   float radius;
-  
+
   // Modifies the minimum radius and range of radii each particle can have
-  float RadiusMultiplier = 3;
-  float MinRadius = 1;
-  float GM;
+  float RadiusMultiplier = 4;
+  float MinRadius = 3;
   float m;
 
   boolean highlight= false;
@@ -627,14 +626,14 @@ class ShearParticle extends Particle {
         }
       } while (InGap == true);
     }
-   InitPosition = position.copy();
+    InitPosition = position.copy();
 
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
 
-    this.radius = RadiusMultiplier*(-log((particle_C-random(1.0))/particle_D)/particle_lambda) + MinRadius;
-    this.GM = SG* (4.0*PI/3.0)*pow(radius, 3.0)*particle_rho;
-    m= PI*pow(radius, 3.0)*(100)*4.0/3.0;
+    //this.radius = RadiusMultiplier*(-log((particle_C-random(1.0))/particle_D)/particle_lambda) + MinRadius;
+    this.radius = (-log((particle_C-random(1.0))/particle_D)/particle_lambda);
+    this.m = (4*PI/3)*pow(radius, 3)*particle_rho;
   }
 
   ShearParticle() {
@@ -644,8 +643,7 @@ class ShearParticle extends Particle {
     acceleration = new PVector();
     //
     this.radius = - log((particle_C-random(1.0))/particle_D)/particle_lambda;
-    this.GM = SG* (4.0*PI/3.0)*pow(radius, 3.0)*particle_rho;
-    m= (PI*pow(radius, 3.0)*4/3)*(1000);
+    this.m = (4*PI/3)*pow(radius, 3)*particle_rho;
   }
 
   /**Calculates the acceleration on this particle (based on its current position) (Does not override value of acceleration of particle)
@@ -656,7 +654,7 @@ class ShearParticle extends Particle {
     ShearSystem ss = (ShearSystem)s;
     // acceleration due planet in centre of the ring. 
     PVector a_grav = new PVector();
-   //Shear forces on particles
+    //Shear forces on particles
     if (ss.A) {
       a_grav.x += (-2.0*ss.Omega0*ss.S0*position.x);
       a_grav.x += (-2.0*ss.Omega0*velocity.y);
@@ -667,53 +665,31 @@ class ShearParticle extends Particle {
       PVector distanceVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
       float distanceVectMag = distanceVect.mag();
       if (distanceVectMag > radius+ss.moonlet.radius) {
-        distanceVect = distanceVect.mult(ss.moonlet.GM /pow(distanceVectMag, 3));
+        distanceVect = distanceVect.mult((SG*ss.moonlet.m)/pow(distanceVectMag, 3));
         a_grav.x+= -distanceVect.x ;
         a_grav.y+=-distanceVect.y;
       }
     }
-    
+
+    if (ss.SelfGrav) {
+    PVector SGrav = new PVector();
+    SGrav = ss.QT.SelfGrav(this);
+    a_grav.x += SGrav.x;
+    a_grav.y += SGrav.y;
+ }
+
+
     //for testing collisions
     //if(this == ss.particles.get(1)){
-      
+
     // a_grav.x = 0;
     // a_grav.y = -0.00008;
     // }
     // if(this == ss.particles.get(0)){
-      
+
     // a_grav.x = 0;
     // a_grav.y = 0.00008;
     // }
-         
-    // 2 methods of self gravity, neither work fast enough to maintain fps
-
-
-    //if (ss.Self_Grav){
-    //  PVector SelfGrav = new PVector();
-    //    for (Particle p: ss.particles){    
-    //      SelfGrav = ss.SGrid.selfGravAcceleration(p);
-    //      a_grav.x += SelfGrav.x;
-    //      a_grav.y += SelfGrav.y;
-    //    }
-    //}
-
-    //if (ss.Self_Grav) {
-    //  for (Particle p : ss.particles) {
-    //    ShearParticle sp = (ShearParticle)p;
-    //    if (sp!=this) {
-    //      PVector distanceVect = PVector.sub(position.copy(), sp.position.copy());
-
-    //      // Calculate magnitude of the vector separating the balls
-    //      float distanceVectMag = distanceVect.mag();
-    //      if (distanceVectMag > radius+sp.radius) {
-    //        distanceVect = distanceVect.mult(sp.GM /pow(distanceVectMag, 3));
-    //        a_grav.x+= -distanceVect.x ;
-    //        a_grav.y+=-distanceVect.y;
-    //      }
-    //    }
-    //  }
-    //}
-    //PVector.mult(position.copy().normalize(), -GMp/position.copy().magSq())
     return a_grav;
   }
 
@@ -780,9 +756,9 @@ class ShearParticle extends Particle {
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
     //
-    this.radius = RadiusMultiplier*(- log((particle_C-random(1))/particle_D)/particle_lambda) + MinRadius;
-    this.GM = SG* (4*PI/3)*pow(radius, 3)*particle_rho;
-    m= (PI*pow(radius, 3.0)*4/3)*(1000);
+    //this.radius = RadiusMultiplier*(- log((particle_C-random(1))/particle_D)/particle_lambda) + MinRadius;
+    this.radius = (-log((particle_C-random(1.0))/particle_D)/particle_lambda);
+    this.m = (4*PI/3)*pow(radius, 3)*particle_rho;
   }
 
   /**Clone Method - Return New Object with same properties.
@@ -796,7 +772,7 @@ class ShearParticle extends Particle {
     return p;
   }
 
-    // Chris A's version of moonlet collision, not yet working
+  // Chris A's version of moonlet collision, not yet working
 
   void MoonletCollisionCheckB(ShearSystem ss) {
     PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
@@ -808,150 +784,145 @@ class ShearParticle extends Particle {
     float V_x = velocity.x;
     float V_y = velocity.y;
     float R = ss.moonlet.radius;// + radius;
-    
+
     float Discriminant = sq(2*((x_0*V_x)+(y_0*V_y))) - 4*(sq(V_x) + sq(V_y))*(sq(x_0) + sq(y_0) - sq(R));
     if (Discriminant > 0) {   
       float T1 =   (-2*((x_0*V_x)+(y_0*V_y)) - sqrt(Discriminant))/(2*(sq(V_x) + sq(V_y)));
       float T2 =   (-2*((x_0*V_x)+(y_0*V_y)) + sqrt(Discriminant))/(2*(sq(V_x) + sq(V_y)));
       float Delta_T = 0;
-      
-      if(T1 < T2){
-          Delta_T = T1;   
-      }
-      if(T2 < T1){
-          Delta_T = T2;
-      }      
-      
-      if (Delta_T < 2*s.dt && Delta_T >= 0) {            
-            Tangent = (distVectNorm.copy()).rotate(PI/2);
-           float Theta = PVector.angleBetween(Tangent, velocity);
-           if(Theta > PI/2){
-             Theta = PI - Theta;
-            //velocity = velocity.rotate(2*Theta);                 //Elastic
-            velocity = (velocity.rotate(2*Theta)).mult(0.9);     //Inelastic
-           }else{
-           velocity = (velocity.rotate(-2*Theta)).mult(0.9);     //Inelastic
-           //velocity = velocity.rotate(-2*Theta);                 //Elastic
-           }
-    }
-     
-    //if(distVect.mag() < ss.moonlet.radius){
-    //  float CorrectionMag = (ss.moonlet.radius+radius) - distVect.mag();
-    //  PVector CorrectionVect = (distVectNorm.copy()).mult(CorrectionMag);
-    //  position.add(CorrectionVect);
-    //  }
-  }
-}
 
-      // Checks for particles colliding with the moonlet
+      if (T1 < T2) {
+        Delta_T = T1;
+      }
+      if (T2 < T1) {
+        Delta_T = T2;
+      }      
+
+      if (Delta_T < 2*s.dt && Delta_T >= 0) {            
+        Tangent = (distVectNorm.copy()).rotate(PI/2);
+        float Theta = PVector.angleBetween(Tangent, velocity);
+        if (Theta > PI/2) {
+          Theta = PI - Theta;
+          //velocity = velocity.rotate(2*Theta);                 //Elastic
+          velocity = (velocity.rotate(2*Theta)).mult(0.9);     //Inelastic
+        } else {
+          velocity = (velocity.rotate(-2*Theta)).mult(0.9);     //Inelastic
+          //velocity = velocity.rotate(-2*Theta);                 //Elastic
+        }
+      }
+
+      //if(distVect.mag() < ss.moonlet.radius){
+      //  float CorrectionMag = (ss.moonlet.radius+radius) - distVect.mag();
+      //  PVector CorrectionVect = (distVectNorm.copy()).mult(CorrectionMag);
+      //  position.add(CorrectionVect);
+      //  }
+    }
+  }
+
+  // Checks for particles colliding with the moonlet
   void MoonletCollisionCheck(ShearSystem ss) {
     PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
     PVector distVectNorm = (distVect.copy()).normalize();
     PVector Tangent = new PVector();
     float distVectMag = distVect.copy().mag();
-    
-          if(distVectMag < (ss.moonlet.radius + radius)){
-            float CorrectionMag = (ss.moonlet.radius+radius) - distVectMag;
-            PVector CorrectionVect = (distVectNorm.copy()).mult(CorrectionMag);
-            position.add(CorrectionVect);
-           Tangent = (distVectNorm.copy()).rotate(PI/2);
-           float Theta = PVector.angleBetween(Tangent, velocity);
-           if(Theta > PI/2){
-             Theta = PI - Theta;
-            //velocity = velocity.rotate(2*Theta);                 //Elastic
-            velocity = (velocity.rotate(2*Theta)).mult(0.8);     //Inelastic
-           }else{
-           velocity = (velocity.rotate(-2*Theta)).mult(0.8);     //Inelastic
-           //velocity = velocity.rotate(-2*Theta);                 //Elastic
-           }
-           
-        }
-      }
 
-    void CollisionCheck(ShearParticle B){
-               float EnergyModifier = 1;
-               PVector distanceVect = PVector.sub(position.copy(), B.position.copy());
-          
-               float distVectMag = distanceVect.mag();
-               if(distVectMag < (radius + B.radius)){
-                 
-                 Float CorrectionMag = ((radius + B.radius + 1) - distanceVect.mag())/2.0;
-                 PVector d = distanceVect.copy();
-                 PVector CorrectionVect = d.normalize().mult(CorrectionMag);
-                 position.add(CorrectionVect);
-                 B.position.sub(CorrectionVect);
-                 float M = m + B.m;
-                 float x1 = EnergyModifier*(velocity.x*(m - B.m) + 2*B.m*B.velocity.x)/M;
-                 float y1 = EnergyModifier*(velocity.y*(m - B.m) + 2*B.m*B.velocity.y)/M;         
-                 float x2 = EnergyModifier*(B.velocity.x*(B.m - m) + 2*m*velocity.x)/M;
-                 float y2 = EnergyModifier*(B.velocity.y*(B.m - m) + 2*m*velocity.y)/M;
-                 velocity.set(x1,y1,0);
-                 B.velocity.set(x2,y2,0);
-               }
+    if (distVectMag < (ss.moonlet.radius + radius)) {
+      float CorrectionMag = (ss.moonlet.radius+radius) - distVectMag;
+      PVector CorrectionVect = (distVectNorm.copy()).mult(CorrectionMag);
+      position.add(CorrectionVect);
+      Tangent = (distVectNorm.copy()).rotate(PI/2);
+      float Theta = PVector.angleBetween(Tangent, velocity);
+      if (Theta > PI/2) {
+        Theta = PI - Theta;
+        //velocity = velocity.rotate(2*Theta);                 //Elastic
+        velocity = (velocity.rotate(2*Theta)).mult(0.8);     //Inelastic
+      } else {
+        velocity = (velocity.rotate(-2*Theta)).mult(0.8);     //Inelastic
+        //velocity = velocity.rotate(-2*Theta);                 //Elastic
+      }
     }
-    
- void CollisionCheckB(ShearParticle B){
-                float EnergyModifier = 0.95;
-                PVector distVect = PVector.sub(position.copy(), B.position.copy());
-                PVector RelVelocity = PVector.sub(velocity.copy(), B.velocity.copy());
-                float distVectMag = distVect.mag();
-               
-                float x_0 = distVect.x;
-                float y_0 = distVect.y;
-                float V_x = RelVelocity.x;
-                float V_y = RelVelocity.y;
-                float R = radius + B.radius;
-                
-                float Discriminant = sq(2*((x_0*V_x)+(y_0*V_y))) - 4*(sq(V_x) + sq(V_y))*(sq(x_0) + sq(y_0) - sq(R));
-                if (Discriminant > 0) {   
-                  float T1 =   (-2*((x_0*V_x)+(y_0*V_y)) - sqrt(Discriminant))/(2*(sq(V_x) + sq(V_y)));
-                  float T2 =   (-2*((x_0*V_x)+(y_0*V_y)) + sqrt(Discriminant))/(2*(sq(V_x) + sq(V_y)));
-                  float Delta_T = 0;
-                  
-                    if(T1 < T2){
-                     Delta_T = T1;   
-                    }
-                    if(T2 < T1){
-                     Delta_T = T2;
-                    }
-                   if(Delta_T < s.dt && Delta_T > 0){    
-                     float M = m + B.m;
-                     float x1 = EnergyModifier*(velocity.x*(m - B.m) + 2*B.m*B.velocity.x)/M;
-                     float y1 = EnergyModifier*(velocity.y*(m - B.m) + 2*B.m*B.velocity.y)/M;
-                     float x2 = EnergyModifier*(B.velocity.x*(B.m - m) + 2*m*velocity.x)/M;
-                     float y2 = EnergyModifier*(B.velocity.y*(B.m - m) + 2*m*velocity.y)/M;
-                     velocity.set(x1,y1,0);
-                     B.velocity.set(x2,y2,0);
-                   }                   
-               }
-               
-               if(distVect.mag() < radius + B.radius){
-               Float CorrectionMag = ((radius + B.radius + 2) - distVect.mag())/2.0;
-                 PVector d = distVect.copy();
-                 PVector CorrectionVect = d.normalize().mult(CorrectionMag);
-                 position.add(CorrectionVect);
-                 B.position.sub(CorrectionVect);
-               }
-               
-    }    
-    
+  }
+
+  void CollisionCheck(ShearParticle B) {
+    float EnergyModifier = 0.97;
+    PVector distanceVect = PVector.sub(position.copy(), B.position.copy());
+
+    float distVectMag = distanceVect.mag();
+    if (distVectMag < (radius + B.radius)) {
+
+      Float CorrectionMag = ((radius + B.radius + 1) - distanceVect.mag())/2.0;
+      PVector d = distanceVect.copy();
+      PVector CorrectionVect = d.normalize().mult(CorrectionMag);
+      position.add(CorrectionVect);
+      B.position.sub(CorrectionVect);
+      float M = m + B.m;
+      float x1 = EnergyModifier*(velocity.x*(m - B.m) + 2*B.m*B.velocity.x)/M;
+      float y1 = EnergyModifier*(velocity.y*(m - B.m) + 2*B.m*B.velocity.y)/M;         
+      float x2 = EnergyModifier*(B.velocity.x*(B.m - m) + 2*m*velocity.x)/M;
+      float y2 = EnergyModifier*(B.velocity.y*(B.m - m) + 2*m*velocity.y)/M;
+      velocity.set(x1, y1, 0);
+      B.velocity.set(x2, y2, 0);
+    }
+  }
+
+  void CollisionCheckB(ShearParticle B) {
+    float EnergyModifier = 0.97;
+    PVector distVect = PVector.sub(position.copy(), B.position.copy());
+    PVector RelVelocity = PVector.sub(velocity.copy(), B.velocity.copy());
+    float distVectMag = distVect.mag();
+
+    float x_0 = distVect.x;
+    float y_0 = distVect.y;
+    float V_x = RelVelocity.x;
+    float V_y = RelVelocity.y;
+    float R = radius + B.radius;
+
+    float Discriminant = sq(2*((x_0*V_x)+(y_0*V_y))) - 4*(sq(V_x) + sq(V_y))*(sq(x_0) + sq(y_0) - sq(R));
+    if (Discriminant > 0) {   
+      float T1 =   (-2*((x_0*V_x)+(y_0*V_y)) - sqrt(Discriminant))/(2*(sq(V_x) + sq(V_y)));
+      float T2 =   (-2*((x_0*V_x)+(y_0*V_y)) + sqrt(Discriminant))/(2*(sq(V_x) + sq(V_y)));
+      float Delta_T = 0;
+
+      if (T1 < T2) {
+        Delta_T = T1;
+      }
+      if (T2 < T1) {
+        Delta_T = T2;
+      }
+      if (Delta_T < s.dt && Delta_T > 0) {    
+        float M = m + B.m;
+        float x1 = EnergyModifier*(velocity.x*(m - B.m) + 2*B.m*B.velocity.x)/M;
+        float y1 = EnergyModifier*(velocity.y*(m - B.m) + 2*B.m*B.velocity.y)/M;
+        float x2 = EnergyModifier*(B.velocity.x*(B.m - m) + 2*m*velocity.x)/M;
+        float y2 = EnergyModifier*(B.velocity.y*(B.m - m) + 2*m*velocity.y)/M;
+        velocity.set(x1, y1, 0);
+        B.velocity.set(x2, y2, 0);
+      }
+    }
+
+    if (distVect.mag() < radius + B.radius) {
+      Float CorrectionMag = ((radius + B.radius + 2) - distVect.mag())/2.0;
+      PVector d = distVect.copy();
+      PVector CorrectionVect = d.normalize().mult(CorrectionMag);
+      position.add(CorrectionVect);
+      B.position.sub(CorrectionVect);
+    }
+  }
 }
 //-----------------------------------------MOONLET---------------------------------------------------------------
 
 class Moonlet extends ShearParticle {
 
   //Ring Moonlet Properties
-  float moonlet_r = 150.0;            //Radius of the moonlet [m].
-  final float moonlet_density = 700.0; //Density of the moonlet [kg/m^3]
-  float moonlet_GM = SG*(4.0*PI/3.0)*pow(moonlet_r, 3.0)*moonlet_density; //Standard gravitational parameter.
+  float moonlet_r = 100.0;            //Radius of the moonlet [m].
+  final float moonlet_density = 1000.0; //Density of the moonlet [kg/m^3]
 
   Moonlet(ShearSystem ss) {
     position = new PVector();
     velocity = new PVector();
     acceleration = new PVector();
     this.radius = moonlet_r ;
-    this.GM = moonlet_GM;
-    m= PI*pow(radius, 3.0)*4.0/3.0;
+    this.m = (4.0*PI/3.0)*pow(moonlet_r, 3.0)*moonlet_density;
 
     position.x = 0;          // Change the starting position of the moonlet
     position.y = 0;

@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 3000;                       //Used for system initialiations 
+  int n_particles = 900;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -338,7 +338,7 @@ class ShearSystem extends System {
 
   Boolean Moonlet = false; //Adds in the moonlet
   Boolean ClearMoonlet = false; // Clears a space for the moonlet to fit in, leave this off
-  Boolean Self_Grav = false; // Doesn't do anything yet
+  Boolean SelfGrav = true; // Doesn't do anything yet
   Boolean MoonletCollisions = true; // Particles can collide with the moonlet
   Boolean ParticleCollisions = true; // Particles can collide with one another (no grid implentation yet, runs super slow)
   Boolean Output = false; //no idea
@@ -349,13 +349,13 @@ class ShearSystem extends System {
   Boolean RingGap = false;   // Creates a ring gap
 
   //Simulation dimensions [m]
-  int Lx = 1000;       //Extent of simulation box along planet-point line [m].
-  int Ly = 2000;       //Extent of simulation box along orbit [m].
+  int Lx = 800;       //Extent of simulation box along planet-point line [m].
+  int Ly = 800;       //Extent of simulation box along orbit [m].
   int GapWidth = Lx/4;  //Width of the ring gap
 
   //Initialises Simulation Constants
   final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
-  final float r0 = 95000e3;   //Central position in the ring [m]. Defaults to 130000 km.
+  final float r0 = 100000e3;   //Central position in the ring [m]. Defaults to 130000 km.
   final float Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
   final float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
   Moonlet moonlet;
@@ -365,7 +365,7 @@ class ShearSystem extends System {
   ShearSystem(boolean Guides) {
     this.Guides =Guides;
     SG = new ShearGrid(this);
-    Rectangle Rect = new Rectangle(500, 1000, Lx, Ly);
+    Rectangle Rect = new Rectangle(Lx/2, Ly/2, Lx, Ly);
     QT = new QuadTree(1 , Rect);
     particles = new ArrayList<Particle>();
     moonlet = new Moonlet(this);
@@ -375,12 +375,11 @@ class ShearSystem extends System {
     ShearParticle A = new ShearParticle(this);
     ShearParticle B = new ShearParticle(this);
     ShearParticle C = new ShearParticle(this);
-    ShearParticle D = new ShearParticle(this);
+    //ShearParticle D = new ShearParticle(this);
     
     //particles.add(A);
     //particles.add(B);
     //particles.add(C);
-    //particles.add(D);
     
     float X = (float)Rect.getX();
     float Y = (float)Rect.getY();
@@ -388,37 +387,30 @@ class ShearSystem extends System {
     float W = (float)Rect.getWidth();
 
      
-    A.position.x = X;
-    A.position.y = Y;   
+    A.position.x = 100;
+    A.position.y = 150;   
 
     
-    B.position.x = X;
-    B.position.y = Y - H/2;
+    B.position.x = 100;
+    B.position.y = -150;
 
     
-    C.position.x = X - W/2;
-    C.position.y = Y;
-
-    D.position.x = X - W/2;
-    D.position.y = Y - H/2;
-    
-    A.velocity.y = B.velocity.y = C.velocity.y = D.velocity.y = 0;
-    
-    int IA = QT.GetIndex(A);
-    int IB = QT.GetIndex(B);
-    int IC = QT.GetIndex(C);
-    int ID = QT.GetIndex(D);
-
-    println("A", IA );
-    println("B", IB );
-    println("C", IC );
-    println("D", ID );
+    C.position.x = 200;
+    C.position.y = -300;
 
     
-    A.radius = 10;
+    A.velocity.y = B.velocity.y = C.velocity.y = 0;    
+    A.radius = 20;
+    A.m = 1e9;
+    B.m = 1e9;
+    C.m = 2e9;
     B.radius = 20;
     C.radius = 30;
-    D.radius = 40;
+    //D.radius = 40;
+   
+   
+    
+    
   }
 
   /** Take a step using the Velocity Verlet (Leapfrog) ODE integration algorithm.
@@ -436,10 +428,12 @@ class ShearSystem extends System {
     //float E2 = B.m * sq(B.velocity.mag())/2;
     //float E = E1+ E2;
     //println(E1, E2, E);
-     
+     println("loop");
+     QT.ClearTree();
      for (Particle p : particles) {          
-      ShearParticle x =(ShearParticle)p;
       
+       ShearParticle x =(ShearParticle)p;
+      QT.Insert(x);           
       
        if(ClearMoonlet){
             float ClearRadius = (x.position).dist(moonlet.position);
@@ -466,19 +460,16 @@ class ShearSystem extends System {
 
       if(ParticleCollisions){
     SG.FillGrid(this);
-    SG.CollisionCheckB();
-    //SG.CollisionCheck();
+    //SG.CollisionCheckB();
+    SG.CollisionCheck();
        }
-    
-    
     
     ClearMoonlet= false;
     
     if (DynamicMoon == true){
       moonlet.DynamicMoon(this);
 
-    }
-    
+    }    
   }
 
   /** Method to boolean if Particle is out of ShearingBox.

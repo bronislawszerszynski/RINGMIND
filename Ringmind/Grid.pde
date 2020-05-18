@@ -620,18 +620,22 @@ PVector selfGravAcceleration(Particle p) {
     return a_selfgrav;
   }   
 }
+//-------------------- QuadTree----------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 class QuadTree{
      int MaxObjects = 10;
-     int MaxLevels = 5;
+     int MaxLevels = 200;
      int Level;
      ArrayList<ShearParticle> Objects;
-     Rectangle bounds;
+     ArrayList<ShearParticle> NodeObjects;
+     Rectangle bounds; 
      QuadTree[] nodes;
      
       QuadTree(int pLevel, Rectangle pBounds){
        Level = pLevel;
        Objects = new ArrayList();
+       NodeObjects = new ArrayList();
        bounds = pBounds;
        nodes = new QuadTree[4];
       }
@@ -720,13 +724,88 @@ ArrayList Retrieve(ArrayList ReturnObjects, Particle p){
     ReturnObjects.addAll(Objects);
   return ReturnObjects;
 }
+
+ArrayList RetrieveNode(ArrayList ReturnObjects){
+     for(int i = 0; i < 4 ; i++){
+         if(nodes[0] != null){
+            nodes[i].RetrieveNode(ReturnObjects);
+         }
+     }
   
+    ReturnObjects.addAll(Objects);
+  return ReturnObjects;
+}
+
+PVector CofM(ArrayList<ShearParticle> NodeObjects){
+    PVector CofM = new PVector();
+    float TotalM = 0;
+    float CofM_X = 0;
+    float CofM_Y = 0;
+    for(ShearParticle p : NodeObjects){
+     TotalM += p.m;
+     CofM_X += p.m*p.position.x;
+     CofM_Y += p.m*p.position.y;
+    }
+    if(TotalM >0){
+      CofM.x = CofM_X/TotalM;
+      CofM.y = CofM_Y/TotalM;  
+      return CofM;
+    }else{
+      CofM.set(0,0,0);
+      return CofM;  
+    }
+}
+
+float TotalM(ArrayList<ShearParticle> NodeObjects){
+  float M = 0;
+  for(ShearParticle p: NodeObjects){
+    M += p.m;
+  }
   
+  return M;
+}
+
   
-  
-  
-  
-  
-  
-  
+PVector SelfGrav(ShearParticle p){
+       
+        NodeObjects.clear();
+        RetrieveNode(NodeObjects);  
+        PVector a_grav = new PVector();
+        int n = NodeObjects.size();
+                
+        if(n == 0){
+          return a_grav;
+        }else if(n == 1){
+          if(NodeObjects.get(0) == p){
+          return a_grav;
+          }else{
+            ShearParticle B = NodeObjects.get(0);
+            PVector dVect = B.position.copy().sub(p.position.copy());
+            PVector a = dVect.mult(p.SG*B.m/(pow(dVect.mag(),3)));
+            a_grav.add(a);
+            return a_grav;
+          }     
+        }else{
+          double s = bounds.getWidth();  
+          PVector CofM = CofM(NodeObjects);
+          PVector dVect = CofM.copy().sub(p.position.copy());
+          float d = dVect.mag();
+          if(nodes[0] != null){
+            if(s/d < 2){
+              float M = TotalM(NodeObjects);
+              PVector a = dVect.mult(p.SG*M/(pow(dVect.mag(),3)));
+              a_grav.add(a);
+              return a_grav;
+            }else{
+              for(int i = 0; i < 4; i++){
+              PVector a = nodes[i].SelfGrav(p);
+              a_grav.add(a);
+              }
+            return a_grav;
+            }        
+          }else{
+            return a_grav;
+          }
+         }
+        }
 }
