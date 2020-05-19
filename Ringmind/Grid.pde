@@ -422,7 +422,7 @@ ShearGrid(ShearSystem ss){
 
   this.Lx = ss.Lx;
   this.Ly = ss.Ly;
-  sizeX = 6;
+  sizeX = 10;
   sizeY = 10;
   dx = ss.Lx/sizeX;
   dy = ss.Ly/sizeY;
@@ -513,40 +513,40 @@ int Geti(Particle p){
  
  
  // Code that checks for collisions between particles that are in the same cell or adjacent cells with no repetition
- void CollisionCheck(){
-    for(int i=0; i < sizeX; i++){
-      for(int j=0; j< sizeY; j++){
-          int n = CellParticles[i][j].size();
-          for(int x=0; x < n; x++){
-            ShearParticle A = CellParticles[i][j].get(x);     
-            for(int y=x+1; y<n; y++){     
-             ShearParticle B = CellParticles[i][j].get(y);
-             A.CollisionCheck(B);
+ //void CollisionCheck(){
+ //   for(int i=0; i < sizeX; i++){
+ //     for(int j=0; j< sizeY; j++){
+ //         int n = CellParticles[i][j].size();
+ //         for(int x=0; x < n; x++){
+ //           ShearParticle A = CellParticles[i][j].get(x);     
+ //           for(int y=x+1; y<n; y++){     
+ //            ShearParticle B = CellParticles[i][j].get(y);
+ //            A.CollisionCheck(B);
              
-            }
-            // Checks for collisions in the 3 neighboring cells directly bellow and diagonally left and right
-               for(int j2 = j-1; j2 <= j+1; j2++){
-                 if(validij(i+1,j2)){
-                  int n2 = CellParticles[i+1][j2].size();
-                  for(int z=0; z<n2; z++){     
-                     ShearParticle C = CellParticles[i+1][j2].get(z);
-                    A.CollisionCheck(C);
-                  }
-                }
-             }
-             // Checks for collsions in the neighboring cell to the right
-             if(validij(i,j+1)){
-                  int n3 = CellParticles[i][j+1].size();
-                  for(int k=0; k<n3; k++){     
-                     ShearParticle D = CellParticles[i][j+1].get(k);
-                     A.CollisionCheck(D);
+ //           }
+ //           // Checks for collisions in the 3 neighboring cells directly bellow and diagonally left and right
+ //              for(int j2 = j-1; j2 <= j+1; j2++){
+ //                if(validij(i+1,j2)){
+ //                 int n2 = CellParticles[i+1][j2].size();
+ //                 for(int z=0; z<n2; z++){     
+ //                    ShearParticle C = CellParticles[i+1][j2].get(z);
+ //                   A.CollisionCheck(C);
+ //                 }
+ //               }
+ //            }
+ //            // Checks for collsions in the neighboring cell to the right
+ //            if(validij(i,j+1)){
+ //                 int n3 = CellParticles[i][j+1].size();
+ //                 for(int k=0; k<n3; k++){     
+ //                    ShearParticle D = CellParticles[i][j+1].get(k);
+ //                    A.CollisionCheck(D);
 
-                  }
-                }
-             }
-          }
-       }
-    }
+ //                 }
+ //               }
+ //            }
+ //         }
+ //      }
+ //   }
 
  void CollisionCheckB(){
     for(int i=0; i < sizeX; i++){
@@ -581,56 +581,21 @@ int Geti(Particle p){
              }
           }
        }
-    }
-
-
-
-
-
-PVector selfGravAcceleration(Particle p) {
-
-//    //Find which cell the particle is in.
-    int x = Geti(p);
-    int y = Getj(p);
-
-    PVector a_selfgrav = new PVector();
-
-      float a, d; // Strength of the attraction number of particles in the cell. 
-      d=1.0E8;
-
-      int size = 2; //Size of Neighbourhood
-
-//      // Loop over (nearest) neighbours. As defined by Size. 
-
-      for ( int i = x-size; i <= x+size; i++) {
-        for ( int j = y-size; j <= y+size; j++) {
-          if (validij(i, j)) {
-            PVector dist = PVector.sub(sGridCofM[i][j].copy(), p.position);
-            a = dist.magSq();
-            int n = sGrid[i][j];
-            if(a != 0){
-            //a_selfgrav.add(PVector.mult(dist.normalize(), G*n/a));
-            a_selfgrav.add(PVector.mult(dist.normalize(), G*n/a));
-            }else{
-              a_selfgrav.set(0,0,0);
-            }  
-          }
-        }
-    }
-    return a_selfgrav;
-  }   
+    }   
 }
 //-------------------- QuadTree----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 class QuadTree{
-     int MaxObjects = 10;
+     int MaxObjects = 1;
      int MaxLevels = 200;
      int Level;
      ArrayList<ShearParticle> Objects;
      ArrayList<ShearParticle> NodeObjects;
      Rectangle bounds; 
      QuadTree[] nodes;
+     float M;
+     PVector CofM;
      
       QuadTree(int pLevel, Rectangle pBounds){
        Level = pLevel;
@@ -638,10 +603,14 @@ class QuadTree{
        NodeObjects = new ArrayList();
        bounds = pBounds;
        nodes = new QuadTree[4];
+       this.M = 0;
+       this.CofM = new PVector();
       }
       
-    void ClearTree(){
+void ClearTree(){
       Objects.clear();
+      M = 0;
+      CofM = new PVector();
       for (int i = 0; i < nodes.length ; i++){
         if(nodes[i] != null){
           //nodes[i].clear();
@@ -689,7 +658,8 @@ void SplitTree(){
   }
   
 void Insert(ShearParticle p){
-      if(nodes[0] != null){
+  
+  if(nodes[0] != null){
         int Index = GetIndex(p);
         if(Index != -1){
           nodes[Index].Insert(p);
@@ -714,16 +684,7 @@ void Insert(ShearParticle p){
         }
       }
 }
-  
-ArrayList Retrieve(ArrayList ReturnObjects, Particle p){
-    int Index = GetIndex(p);
-    if(Index != -1 && nodes[0] != null){
-      nodes[Index].Retrieve(ReturnObjects, p);
-    }
-  
-    ReturnObjects.addAll(Objects);
-  return ReturnObjects;
-}
+
 
 ArrayList RetrieveNode(ArrayList ReturnObjects){
      for(int i = 0; i < 4 ; i++){
@@ -736,40 +697,36 @@ ArrayList RetrieveNode(ArrayList ReturnObjects){
   return ReturnObjects;
 }
 
-PVector CofM(ArrayList<ShearParticle> NodeObjects){
-    PVector CofM = new PVector();
-    float TotalM = 0;
+void TreeCofM(){
+    NodeObjects.clear();
+    RetrieveNode(NodeObjects);
+  
+    M = 0;
     float CofM_X = 0;
     float CofM_Y = 0;
     for(ShearParticle p : NodeObjects){
-     TotalM += p.m;
+     M += p.m;
      CofM_X += p.m*p.position.x;
      CofM_Y += p.m*p.position.y;
     }
-    if(TotalM >0){
-      CofM.x = CofM_X/TotalM;
-      CofM.y = CofM_Y/TotalM;  
-      return CofM;
+    if(M >0){
+      CofM.x = CofM_X/M;
+      CofM.y = CofM_Y/M;  
+      
     }else{
       CofM.set(0,0,0);
-      return CofM;  
+    }
+
+    if(nodes[0] != null){
+      for(int i = 0; i < 4; i++){
+        nodes[i].TreeCofM();
+      }
     }
 }
 
-float TotalM(ArrayList<ShearParticle> NodeObjects){
-  float M = 0;
-  for(ShearParticle p: NodeObjects){
-    M += p.m;
-  }
-  
-  return M;
-}
-
-  
-PVector SelfGrav(ShearParticle p){
+  PVector SelfGrav(ShearParticle p){
        
-        NodeObjects.clear();
-        RetrieveNode(NodeObjects);  
+      
         PVector a_grav = new PVector();
         int n = NodeObjects.size();
                 
@@ -787,12 +744,10 @@ PVector SelfGrav(ShearParticle p){
           }     
         }else{
           double s = bounds.getWidth();  
-          PVector CofM = CofM(NodeObjects);
           PVector dVect = CofM.copy().sub(p.position.copy());
           float d = dVect.mag();
           if(nodes[0] != null){
             if(s/d < 2){
-              float M = TotalM(NodeObjects);
               PVector a = dVect.mult(p.SG*M/(pow(dVect.mag(),3)));
               a_grav.add(a);
               return a_grav;
@@ -807,5 +762,48 @@ PVector SelfGrav(ShearParticle p){
             return a_grav;
           }
          }
-        }
+}
+
+
+
+//PVector SelfGrav(ShearParticle p){
+       
+//        NodeObjects.clear();
+//        RetrieveNode(NodeObjects);  
+//        PVector a_grav = new PVector();
+//        int n = NodeObjects.size();
+                
+//        if(n == 0){
+//          return a_grav;
+//        }else if(n == 1){
+//          if(NodeObjects.get(0) == p){
+//          return a_grav;
+//          }else{
+//            ShearParticle B = NodeObjects.get(0);
+//            PVector dVect = B.position.copy().sub(p.position.copy());
+//            PVector a = dVect.mult(p.SG*B.m/(pow(dVect.mag(),3)));
+//            a_grav.add(a);
+//            return a_grav;
+//          }     
+//        }else{
+//          double s = bounds.getWidth();  
+//          PVector dVect = CofM.copy().sub(p.position.copy());
+//          float d = dVect.mag();
+//          if(nodes[0] != null){
+//            if(s/d < 2){
+//              PVector a = dVect.mult(p.SG*M/(pow(dVect.mag(),3)));
+//              a_grav.add(a);
+//              return a_grav;
+//            }else{
+//              for(int i = 0; i < 4; i++){
+//              PVector a = nodes[i].SelfGrav(p);
+//              a_grav.add(a);
+//              }
+//            return a_grav;
+//            }        
+//          }else{
+//            return a_grav;
+//          }
+//         }
+//        }
 }

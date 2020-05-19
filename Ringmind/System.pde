@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 900;                       //Used for system initialiations 
+  int n_particles = 2000;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -63,9 +63,10 @@ public abstract class System {
       println("At Maximum Time Step");
     }
 
-    for (Particle p : particles) {
-      p.set_getAcceleration(s);
-    }
+    // Is this needed, looks like we calculate the same acceleration twice 
+    //for (Particle p : particles) {
+    //  p.set_getAcceleration(s);
+    //}
     for (Particle p : particles) {
       p.updatePosition(s.dt);
     }
@@ -349,13 +350,13 @@ class ShearSystem extends System {
   Boolean RingGap = false;   // Creates a ring gap
 
   //Simulation dimensions [m]
-  int Lx = 800;       //Extent of simulation box along planet-point line [m].
-  int Ly = 800;       //Extent of simulation box along orbit [m].
+  int Lx = 1500;       //Extent of simulation box along planet-point line [m].
+  int Ly = 1500;       //Extent of simulation box along orbit [m].
   int GapWidth = Lx/4;  //Width of the ring gap
 
   //Initialises Simulation Constants
   final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
-  final float r0 = 100000e3;   //Central position in the ring [m]. Defaults to 130000 km.
+  final float r0 = 110000e3;   //Central position in the ring [m]. Defaults to 130000 km.
   final float Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
   final float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
   Moonlet moonlet;
@@ -375,40 +376,31 @@ class ShearSystem extends System {
     ShearParticle A = new ShearParticle(this);
     ShearParticle B = new ShearParticle(this);
     ShearParticle C = new ShearParticle(this);
-    //ShearParticle D = new ShearParticle(this);
     
     //particles.add(A);
     //particles.add(B);
     //particles.add(C);
     
-    float X = (float)Rect.getX();
-    float Y = (float)Rect.getY();
-    float H = (float)Rect.getHeight();
-    float W = (float)Rect.getWidth();
-
      
     A.position.x = 100;
     A.position.y = 150;   
 
     
-    B.position.x = 100;
+    B.position.x = 400;
     B.position.y = -150;
 
     
-    C.position.x = 200;
-    C.position.y = -300;
+    C.position.x = 400;
+    C.position.y = -350;
 
     
     A.velocity.y = B.velocity.y = C.velocity.y = 0;    
     A.radius = 20;
     A.m = 1e9;
-    B.m = 1e9;
-    C.m = 2e9;
+    B.m = 2e9;
+    C.m = 3e9;
     B.radius = 20;
-    C.radius = 30;
-    //D.radius = 40;
-   
-   
+    C.radius = 20;   
     
     
   }
@@ -450,7 +442,6 @@ class ShearSystem extends System {
         if (Moonlet) {
           if(MoonletCollisions){
             x.MoonletCollisionCheck(this);
-            //x.MoonletCollisionCheckB(this);
           }
           if (particle_inMoonlet(x)) {
            //x.Reset(this);       
@@ -458,10 +449,12 @@ class ShearSystem extends System {
         }  
     }
 
+      QT.TreeCofM();
+      
       if(ParticleCollisions){
     SG.FillGrid(this);
-    //SG.CollisionCheckB();
-    SG.CollisionCheck();
+    SG.CollisionCheckB();
+    //SG.CollisionCheck();
        }
     
     ClearMoonlet= false;
