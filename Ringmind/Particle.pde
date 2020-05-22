@@ -581,9 +581,9 @@ class ShearParticle extends Particle {
   final float SG = 6.67408e-11; //Shear Gravitational Constant
   //ShearParticle Initialisation Properties
   final float particle_rho = 1000.0;  //Density of a ring particle [kg/m^3].
-  final float particle_a = 2;     //Minimum size of a ring particle [m].
+  final float particle_a = 3;     //Minimum size of a ring particle [m].
   final float particle_b = 30.0;     //Maximum size of a ring particle [m].
-  final float particle_lambda = 0.9;   //Power law index for the size distribution [dimensionless].
+  final float particle_lambda = 0.6;   //Power law index for the size distribution [dimensionless].
   final float particle_D =1.0/( exp(-particle_lambda*particle_a) -exp(-particle_lambda*particle_b));
   final float particle_C =particle_D * exp(-particle_lambda*particle_a);
 
@@ -656,8 +656,8 @@ class ShearParticle extends Particle {
     PVector a_grav = new PVector();
     //Shear forces on particles
     if (ss.A) {
-      a_grav.x += (-2.0*ss.Omega0*ss.S0*position.x);
-      a_grav.x += (-2.0*ss.Omega0*velocity.y);
+      a_grav.x += -(2.0*ss.Omega0*ss.S0*position.x);
+      a_grav.x += -(2.0*ss.Omega0*velocity.y);
       a_grav.y += (2.0*ss.Omega0*velocity.x);
     }
     //Gravitational attraction of the moonlet
@@ -672,10 +672,13 @@ class ShearParticle extends Particle {
     }
 
     if (ss.SelfGrav) {
-    PVector SGrav = new PVector();
-    SGrav = ss.QT.SelfGrav(this);
-    a_grav.x += SGrav.x;
-    a_grav.y += SGrav.y;
+        PVector SGrav = new PVector();
+        SGrav = ss.QT.SelfGrav(this);
+        
+        //if(position.y < (ss.Lx/2)*0.5 && position.y > -(ss.Lx/2)*0.5){
+        a_grav.x += SGrav.x;
+        a_grav.y += SGrav.y;        
+        //}
  }
 
 

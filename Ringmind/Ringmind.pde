@@ -23,7 +23,7 @@ Boolean Running= true;
 void settings() {
 
   //fullScreen(P3D, 1);
-  size (900, 900, P3D);
+  size (1800, 900, P3D);
   smooth(); //noSmooth();
 }
 
@@ -35,6 +35,11 @@ void setup() {
   systemState = State.shearState;  //which state shall we begin with 
 
   setupStates();
+  
+  import com.hamoid.*;
+  setupExport();
+  
+  
 }
 
 void draw() {
@@ -44,7 +49,24 @@ void draw() {
   updateCurrentState(millis());    //calls the render and anything specific to each scene state 
 
   //******************************************************
+  
+  drawMovie();
 }
+
+import com.hamoid.*;
+
+VideoExport videoExport;
+
+void setupExport(){
+  videoExport = new VideoExport(this, "myVideo.mp4");
+  videoExport.setFrameRate(30);
+  videoExport.startMovie();
+}
+
+void drawMovie(){
+  videoExport.saveFrame();
+}
+
 
 //--------------------------- INTERACTION KEYS -------------------------------------------------------------------
 

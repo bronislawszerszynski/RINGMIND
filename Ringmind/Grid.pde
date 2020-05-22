@@ -588,7 +588,7 @@ int Geti(Particle p){
 
 class QuadTree{
      int MaxObjects = 1;
-     int MaxLevels = 200;
+     int MaxLevels = 100;
      int Level;
      ArrayList<ShearParticle> Objects;
      ArrayList<ShearParticle> NodeObjects;
@@ -738,16 +738,20 @@ void TreeCofM(){
           }else{
             ShearParticle B = NodeObjects.get(0);
             PVector dVect = B.position.copy().sub(p.position.copy());
-            PVector a = dVect.mult(p.SG*B.m/(pow(dVect.mag(),3)));
-            a_grav.add(a);
-            return a_grav;
+            if(dVect.mag() > 2){
+              PVector a = dVect.mult(p.SG*B.m/(pow(dVect.mag(),3)));
+              a_grav.add(a);
+              return a_grav;
+            }else{
+              return a_grav;
+            }
           }     
         }else{
           double s = bounds.getWidth();  
           PVector dVect = CofM.copy().sub(p.position.copy());
           float d = dVect.mag();
           if(nodes[0] != null){
-            if(s/d < 2){
+            if(s/d < 1){
               PVector a = dVect.mult(p.SG*M/(pow(dVect.mag(),3)));
               a_grav.add(a);
               return a_grav;
@@ -766,44 +770,7 @@ void TreeCofM(){
 
 
 
-//PVector SelfGrav(ShearParticle p){
-       
-//        NodeObjects.clear();
-//        RetrieveNode(NodeObjects);  
-//        PVector a_grav = new PVector();
-//        int n = NodeObjects.size();
-                
-//        if(n == 0){
-//          return a_grav;
-//        }else if(n == 1){
-//          if(NodeObjects.get(0) == p){
-//          return a_grav;
-//          }else{
-//            ShearParticle B = NodeObjects.get(0);
-//            PVector dVect = B.position.copy().sub(p.position.copy());
-//            PVector a = dVect.mult(p.SG*B.m/(pow(dVect.mag(),3)));
-//            a_grav.add(a);
-//            return a_grav;
-//          }     
-//        }else{
-//          double s = bounds.getWidth();  
-//          PVector dVect = CofM.copy().sub(p.position.copy());
-//          float d = dVect.mag();
-//          if(nodes[0] != null){
-//            if(s/d < 2){
-//              PVector a = dVect.mult(p.SG*M/(pow(dVect.mag(),3)));
-//              a_grav.add(a);
-//              return a_grav;
-//            }else{
-//              for(int i = 0; i < 4; i++){
-//              PVector a = nodes[i].SelfGrav(p);
-//              a_grav.add(a);
-//              }
-//            return a_grav;
-//            }        
-//          }else{
-//            return a_grav;
-//          }
-//         }
-//        }
+
+
+
 }

@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 2000;                       //Used for system initialiations 
+  int n_particles = 500;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -339,9 +339,9 @@ class ShearSystem extends System {
 
   Boolean Moonlet = false; //Adds in the moonlet
   Boolean ClearMoonlet = false; // Clears a space for the moonlet to fit in, leave this off
-  Boolean SelfGrav = true; // Doesn't do anything yet
-  Boolean MoonletCollisions = true; // Particles can collide with the moonlet
-  Boolean ParticleCollisions = true; // Particles can collide with one another (no grid implentation yet, runs super slow)
+  Boolean SelfGrav = true; // Toggle Self Gravity between particles
+  Boolean MoonletCollisions = false; // Particles can collide with the moonlet
+  Boolean ParticleCollisions = false; // Particles can collide with one another (no grid implentation yet, runs super slow)
   Boolean Output = false; //no idea
   Boolean A = true; // shear forces that make this part of a sing and not just particles in a box
   Boolean Guides = true; // shows particle trajectories
@@ -350,13 +350,13 @@ class ShearSystem extends System {
   Boolean RingGap = false;   // Creates a ring gap
 
   //Simulation dimensions [m]
-  int Lx = 1500;       //Extent of simulation box along planet-point line [m].
-  int Ly = 1500;       //Extent of simulation box along orbit [m].
+  int Lx = 1000;       //Extent of simulation box along planet-point line [m].
+  int Ly = 2000;       //Extent of simulation box along orbit [m].
   int GapWidth = Lx/4;  //Width of the ring gap
 
   //Initialises Simulation Constants
   final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
-  final float r0 = 110000e3;   //Central position in the ring [m]. Defaults to 130000 km.
+  final float r0 = 130000e3;   //Central position in the ring [m]. Defaults to 130000 km.
   final float Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
   final float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
   Moonlet moonlet;
@@ -380,25 +380,19 @@ class ShearSystem extends System {
     //particles.add(A);
     //particles.add(B);
     //particles.add(C);
-    
      
-    A.position.x = 100;
-    A.position.y = 150;   
+    A.position.x = 0;
+    A.position.y = 0;   
 
     
-    B.position.x = 400;
+    B.position.x = 300;
     B.position.y = -150;
-
     
-    C.position.x = 400;
-    C.position.y = -350;
-
-    
-    A.velocity.y = B.velocity.y = C.velocity.y = 0;    
+    A.velocity.y = B.velocity.y = 0;    
     A.radius = 20;
-    A.m = 1e9;
+    A.m = 2e9;
     B.m = 2e9;
-    C.m = 3e9;
+    C.m = 2e9;
     B.radius = 20;
     C.radius = 20;   
     
@@ -423,10 +417,11 @@ class ShearSystem extends System {
      println("loop");
      QT.ClearTree();
      for (Particle p : particles) {          
-      
        ShearParticle x =(ShearParticle)p;
-      QT.Insert(x);           
-      
+       
+       if(SelfGrav){      
+         QT.Insert(x);           
+       }
        if(ClearMoonlet){
             float ClearRadius = (x.position).dist(moonlet.position);
                if(ClearRadius < moonlet.radius*1.1){
@@ -448,20 +443,25 @@ class ShearSystem extends System {
           }
         }  
     }
-
+    if(SelfGrav){
       QT.TreeCofM();
+      //println(QT.nodes[2].CofM);
+      //ShearParticle A = new ShearParticle();
+      //A.position.set(0,500,0);
+      //PVector G = QT.SelfGrav(A);
+      //println(G);
       
-      if(ParticleCollisions){
-    SG.FillGrid(this);
-    SG.CollisionCheckB();
-    //SG.CollisionCheck();
-       }
+    }
+    if(ParticleCollisions){
+      SG.FillGrid(this);
+      SG.CollisionCheckB();
+      //SG.CollisionCheck();
+    }
     
     ClearMoonlet= false;
     
     if (DynamicMoon == true){
       moonlet.DynamicMoon(this);
-
     }    
   }
 
