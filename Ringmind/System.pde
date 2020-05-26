@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 500;                       //Used for system initialiations 
+  int n_particles = 1500;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -63,10 +63,9 @@ public abstract class System {
       println("At Maximum Time Step");
     }
 
-    // Is this needed, looks like we calculate the same acceleration twice 
-    //for (Particle p : particles) {
-    //  p.set_getAcceleration(s);
-    //}
+    for (Particle p : particles) {
+      p.set_getAcceleration(s);
+    }
     for (Particle p : particles) {
       p.updatePosition(s.dt);
     }
@@ -340,8 +339,8 @@ class ShearSystem extends System {
   Boolean Moonlet = false; //Adds in the moonlet
   Boolean ClearMoonlet = false; // Clears a space for the moonlet to fit in, leave this off
   Boolean SelfGrav = true; // Toggle Self Gravity between particles
-  Boolean MoonletCollisions = false; // Particles can collide with the moonlet
-  Boolean ParticleCollisions = false; // Particles can collide with one another (no grid implentation yet, runs super slow)
+  Boolean MoonletCollisions = true; // Particles can collide with the moonlet
+  Boolean ParticleCollisions = true; // Particles can collide with one another (no grid implentation yet, runs super slow)
   Boolean Output = false; //no idea
   Boolean A = true; // shear forces that make this part of a sing and not just particles in a box
   Boolean Guides = true; // shows particle trajectories
@@ -356,7 +355,7 @@ class ShearSystem extends System {
 
   //Initialises Simulation Constants
   final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
-  final float r0 = 130000e3;   //Central position in the ring [m]. Defaults to 130000 km.
+  final float r0 = 100000e3;   //Central position in the ring [m]. Defaults to 130000 km.
   final float Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
   final float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
   Moonlet moonlet;

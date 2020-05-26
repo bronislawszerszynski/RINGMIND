@@ -738,7 +738,7 @@ void TreeCofM(){
           }else{
             ShearParticle B = NodeObjects.get(0);
             PVector dVect = B.position.copy().sub(p.position.copy());
-            if(dVect.mag() > 2){
+            if(dVect.mag() > 5){
               PVector a = dVect.mult(p.SG*B.m/(pow(dVect.mag(),3)));
               a_grav.add(a);
               return a_grav;

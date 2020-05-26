@@ -675,10 +675,10 @@ class ShearParticle extends Particle {
         PVector SGrav = new PVector();
         SGrav = ss.QT.SelfGrav(this);
         
-        //if(position.y < (ss.Lx/2)*0.5 && position.y > -(ss.Lx/2)*0.5){
+        if(position.y < (ss.Lx/2) && position.y > -(ss.Lx/2)*0.5){
         a_grav.x += SGrav.x;
         a_grav.y += SGrav.y;        
-        //}
+        }
  }
 
 
@@ -797,7 +797,6 @@ class ShearParticle extends Particle {
   }
 
 void CollisionCheckB(ShearParticle B) {
-    float EnergyModifier = 0.96;
     PVector distVect = PVector.sub(position.copy(), B.position.copy());
     PVector RelVelocity = PVector.sub(velocity.copy(), B.velocity.copy());
 
@@ -829,10 +828,16 @@ void CollisionCheckB(ShearParticle B) {
           }
           if (Delta_T < s.dt && Delta_T > 0) {    
             float M = m + B.m;
-            float x1 = EnergyModifier*(velocity.x*(m - B.m) + 2*B.m*B.velocity.x)/M;
-            float y1 = EnergyModifier*(velocity.y*(m - B.m) + 2*B.m*B.velocity.y)/M;
-            float x2 = EnergyModifier*(B.velocity.x*(B.m - m) + 2*m*velocity.x)/M;
-            float y2 = EnergyModifier*(B.velocity.y*(B.m - m) + 2*m*velocity.y)/M;
+            //These are often above 1 and cause chaos
+            float e1 = pow((velocity.mag()/B.velocity.mag()),-0.234);
+            float e2 = pow((B.velocity.mag()/velocity.mag()),-0.234);
+            
+            e1 = e2 = 0.95;
+            float x1 = e1*(velocity.x*(m - B.m) + 2*B.m*B.velocity.x)/M;
+            float y1 = e1*(velocity.y*(m - B.m) + 2*B.m*B.velocity.y)/M;
+            float x2 = e2*(B.velocity.x*(B.m - m) + 2*m*velocity.x)/M;
+            float y2 = e2*(B.velocity.y*(B.m - m) + 2*m*velocity.y)/M;
+            
             velocity.set(x1, y1, 0);
             B.velocity.set(x2, y2, 0);
           }

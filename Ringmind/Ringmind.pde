@@ -37,7 +37,7 @@ void setup() {
   setupStates();
   
   import com.hamoid.*;
-  setupExport();
+  //setupExport();
   
   
 }
@@ -50,7 +50,7 @@ void draw() {
 
   //******************************************************
   
-  drawMovie();
+  //drawMovie();
 }
 
 import com.hamoid.*;
@@ -59,7 +59,7 @@ VideoExport videoExport;
 
 void setupExport(){
   videoExport = new VideoExport(this, "myVideo.mp4");
-  videoExport.setFrameRate(30);
+  videoExport.setFrameRate(60);
   videoExport.startMovie();
 }
 
