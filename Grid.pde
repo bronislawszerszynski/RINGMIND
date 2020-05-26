@@ -1,99 +1,56 @@
- //<>//
+import java.awt.Rectangle;
 
-//Global Variables 
-float GRID_DELTA_R = 0.1; //[Planetary Radi]  
-float GRID_DELTA_THETA = 1; // [Degrees]
-float GRID_DRAG_CONSTANT = 5E-7;
-float GRID_DRAG_PROBABILITY = 1E4 ;
+//Grid Default Variables 
+float R_MIN = 1;                   //[Planetary Radi] 
+float R_MAX = 5;                   //[Planetary Radi] 
+float GRID_DELTA_R = 0.1;          //[Planetary Radi]  
+float GRID_DELTA_THETA = 1;        //[Degrees]
+float GRID_DRAG_CONSTANT = 5E-7;   //[s^{2}]
+float GRID_DRAG_PROBABILITY = 1E4 ;//[[Planetary Radi^{2}.s]
 
-//class Element{
-//int num;
-//float numDensity;
-//PVector averageVelocity;
-//PVector cofm;
-//}
-
-/**Class Grid 
+/**Class Grid - polar spatial subdivision using density of particles, average velocity and center of mass to probabliticly model collisions. 
  * @author Thomas Cann
  * @author Sam Hinson
  */
 class Grid {
 
-  protected float dr, dtheta, r_min, r_max; 
-  protected int sizeTheta, sizeR;
-  protected float drag_c, drag_p;  //Constants for Drag Rule.
+  //Grid Variables
+  protected float dr, dtheta, r_min, r_max;  
+  protected int sizeTheta, sizeR;  
+  protected float drag_c, drag_p;  //Constants for Drag Rule. 
   protected int grid[][];          //Grid to hold the number of particle in each cell
-  protected float gridNorm[][];    //Grid to hold Normalised Number Density of Particles in Cell (by Area and Total number).
-  protected PVector gridV[][];     //Grid to hold the average velocity of cell. 
-  protected PVector gridCofM[][];  //Grid to hold centroid value for cell.
-
-  //protected Element grid[][];
+  protected float gridNorm[][];    //Grid to hold Normalised Number Density of Particles in Cell (# Particles in Cell / ( Area and Total # Particles in Simulation)). [(1/(m^2)]
+  protected PVector gridV[][];     //Grid to hold the average velocity of cell. [ms^-1,ms^-1,ms^-1]
+  protected PVector gridCofM[][];  //Grid to hold centroid value for cell.[m,m,m]
 
   //Optimisation Variables
   private float minSize = 4*(sq(r_min *radians(dtheta)/2)+sq(dr)); //Based on the minimum grid size.
 
   /**
-   *  Class Constuctor - General need passing all the values. 
+   *  Grid Constuctor - General need passing all the values. 
    */
-  Grid(float r_min, float r_max, float drag_c, float drag_p) {
-
-    dr = GRID_DELTA_R;
-    dtheta = GRID_DELTA_THETA;
+  Grid(float r_min, float r_max, float grid_dr, float grid_dtheta, float drag_c, float drag_p) {
+    this.dr = grid_dr;
+    this.dtheta = grid_dtheta;
     this.r_min = r_min;
     this.r_max = r_max;
-    sizeTheta =int(360/dtheta); //Size of 1st Dimension of Grid Arrays
-    sizeR = int((r_max-r_min)/dr); //Size of 2nd Dimension of Grid Arrays
-    grid = new int[sizeTheta][sizeR];
-    gridNorm = new float[sizeTheta][sizeR];
-    gridV = new PVector[sizeTheta][sizeR];
-    gridCofM = new PVector[sizeTheta][sizeR];
-
+    this.sizeTheta =int(360/this.dtheta);               //Size of 1st Dimension of Grid Arrays
+    this.sizeR = int((this.r_max-this.r_min)/this.dr);  //Size of 2nd Dimension of Grid Arrays
+    this.grid = new int[sizeTheta][sizeR];
+    this.gridNorm = new float[sizeTheta][sizeR];
+    this.gridV = new PVector[sizeTheta][sizeR];
+    this.gridCofM = new PVector[sizeTheta][sizeR];
     this.drag_c= drag_c; 
     this.drag_p= drag_p; 
     reset();
-  }  
-
-  /**
-   *  Class Constuctor - General need passing all the values. 
-   */
-  Grid(float r_min, float r_max) {
-
-    dr = GRID_DELTA_R;
-    dtheta = GRID_DELTA_THETA;
-    this.r_min = r_min;
-    this.r_max = r_max;
-    sizeTheta =int(360/dtheta); //Size of 1st Dimension of Grid Arrays
-    sizeR = int((r_max-r_min)/dr); //Size of 2nd Dimension of Grid Arrays
-    grid = new int[sizeTheta][sizeR];
-    gridNorm = new float[sizeTheta][sizeR];
-    gridV = new PVector[sizeTheta][sizeR];
-    gridCofM = new PVector[sizeTheta][sizeR];
-
-    drag_c= GRID_DRAG_CONSTANT; 
-    drag_p= GRID_DRAG_PROBABILITY; 
-    reset();
-  }
-  /**
-   *  Class Constuctor - General need passing all the values. 
-   */
-  Grid() {
-
-    dr = GRID_DELTA_R;
-    dtheta = GRID_DELTA_THETA;
-    r_min = R_MIN;
-    r_max = R_MAX;
-    sizeTheta =int(360/dtheta); //Size of 1st Dimension of Grid Arrays
-    sizeR = int((r_max-r_min)/dr); //Size of 2nd Dimension of Grid Arrays
-    grid = new int[sizeTheta][sizeR];
-    gridNorm = new float[sizeTheta][sizeR];
-    gridV = new PVector[sizeTheta][sizeR];
-    gridCofM = new PVector[sizeTheta][sizeR];
-
-    drag_c= GRID_DRAG_CONSTANT; 
-    drag_p= GRID_DRAG_PROBABILITY; 
-    reset();
   }
 
+  /**
+   *  Grid Constuctor - Taking in a value for r_min and r_max and drag constants but all the other values from global variables. 
+   */
+  Grid(float r_min, float r_max ,float drag_c, float drag_p) {
+    this(r_min, r_max, GRID_DELTA_R, GRID_DELTA_THETA, drag_c, drag_p);
+  }
   /** 
    * Sets all the values in the arrays to zero. Called at start of Update Method.
    */
@@ -171,7 +128,7 @@ class Grid {
    * @return j index of grid[between 0 and ring thickness / dr]
    */
   int j(float radius) {
-    return floor((radius/Rp - r_min)/dr);
+    return floor((radius/System.Rp - r_min)/dr);
   }
 
   /**
@@ -180,7 +137,7 @@ class Grid {
    * @return 
    */
   float radiusCell(int j) {
-    return Rp*(r_min + dr*(j+0.5));
+    return System.Rp*(r_min + dr*(j+0.5));
   }
 
   float radialScaling(Particle p) {
@@ -228,7 +185,7 @@ class Grid {
   PVector keplerianVelocityCell(int i, int j) {
     float r = radiusCell(j);  
     float angle = angleCell(i);
-    return new PVector(sqrt(GMp/(r))*sin(angle), -sqrt(GMp/(r))*cos(angle));
+    return new PVector(sqrt(System.GMp/(r))*sin(angle), -sqrt(System.GMp/(r))*cos(angle));
   }
 
   /**
@@ -236,12 +193,12 @@ class Grid {
    * @param Particle p a particle with a position vector.
    * @return  
    */
-  PVector gridAcceleration(Particle p) {
+  PVector gridAcceleration(Particle p, float dt) {
 
     PVector a_grid = new PVector();
     if (validij(p)) {
       //Fluid Drag Force / Collisions - acceleration to align to particle the average velocity of the cell. 
-      a_grid.add(dragAcceleration(p));
+      a_grid.add(dragAcceleration(p, dt));
 
       // Self Gravity   
       //a_grid.add(selfGravAcceleration(p));
@@ -255,7 +212,7 @@ class Grid {
    * @param Particle p 
    * @return 
    */
-  PVector dragAcceleration(Particle p) {
+  PVector dragAcceleration(Particle p, float dt) {
 
     // Collisions - acceleration due drag (based on number of particles in grid cell).
     PVector a_drag = new PVector();
@@ -277,9 +234,7 @@ class Grid {
     return a_drag;
   }
 
-  /**
-   *  Attraction between particles and nearby grid cells.
-   *
+  /** Attraction between particles and nearby grid cells.
    * @param Particle p 
    * @return 
    */
@@ -319,222 +274,67 @@ class Grid {
     }
     return a_selfgrav;
   }
-
-  /**
-   *    Displays Grid cell mouse is over and relevant informotion when mouse is pressed
-   */
-  void display(RingSystem rs) {
-
-    if (mousePressed) {
-      float r = sqrt(sq(mouseX-width/2)+ sq(mouseY-height/2))/SCALE;
-      float angle = (atan2((mouseY-height/2), mouseX-width/2)+TAU)%(TAU);
-      int i= i(angle);
-      int j = j(r);
-
-      if (Add) {
-        for (int x=0; x<1; x++) { 
-          RingParticle a = new RingParticle(r_min+GRID_DELTA_R*j, GRID_DELTA_R, radians(GRID_DELTA_THETA*i), radians(GRID_DELTA_THETA));
-          rs.rings.get(0).particles.add(a);
-          rs.totalParticles.add(a);
-        }
-      }
-      
-      if (clear) {
-        ArrayList<Particle> temp = new ArrayList<Particle>();
-        for (Particle p: rs.totalParticles) {
-          if (i(p) == i){
-            if (j(p)== j){
-             temp.add(p);
-            }
-          }
-        }
-        for (Particle p: temp) {
-          rs.totalParticles.remove(p);
-          rs.rings.get(0).particles.remove(p);
-        }
-      }
-
-      if (validij(i, j)) {
-        displaycell(i, j );
-        float a = 1-exp(-(gridNorm[i][j]*drag_p)/dt);
-        String output = "\t Normalised Number Density: " +gridNorm[i][j] + "\n\t Average Velocity: " + gridV[i][j].mag()+ "\n\t Probability Threshold: " + a ;
-        text(output, 0.0, 10.0);
-        displayVector(i, j, gridV[i][j]);
-      }
-    }
-  }
-
-  /**
-   * Displays PVectorfrom the centre of a Grid Cell to the Sketch.
-   *
-   * @param i angular index of grid [between 0 and 360/dr]
-   * @param j radial index of grid[between 0 and ring thickness / dr]
-   */
-  void displayVector(int i, int j, PVector v) {
-    push();
-    //translate(width/2, height/2);
-    stroke(255);
-    strokeWeight(1);
-    PVector cofc = centreofCell(i, j);
-    cofc.mult(SCALE);
-    PVector temp = v.copy().mult(5E-3);
-    line(cofc.x, cofc.y, cofc.x + temp.x, cofc.y + temp.y);
-    pop();
-  }
-
-  /**
-   * Displays Outline of Grid Cell to the Sketch.
-   *
-   * @param i angular index of grid [between 0 and 360/dr]
-   * @param j radial index of grid[between 0 and ring thickness / dr]
-   */
-  void displaycell(int i, int j) {
-    push();
-    //Style and Matrix Tranformation Information
-    //translate(width/2, height/2);
-    noFill();
-    stroke(255);
-    strokeWeight(1);
-    //Properties Needed
-    float r = SCALE*Rp*(r_min + dr *j);
-    float R = SCALE*Rp*(r_min + dr *(j+1));
-    float theta = radians(dtheta *i);
-    float N =GRID_DELTA_THETA;
-    beginShape();
-    // Outer circle
-    for (int x = 0; x<=N; x++) {
-      vertex(R*cos(x*radians(dtheta)/N + theta), R*sin(x*radians(dtheta)/N +theta));
-    }
-    // Inner circle
-    for (int x = 0; x<=N; x++) {
-      vertex(r*cos((theta+radians(dtheta))-x*radians(dtheta)/N), r*sin((theta+radians(dtheta))-x*radians(dtheta)/N));
-    }
-    endShape(CLOSE);
-    pop();
-  }
-
+  
   /**
    * Loops through all the particles adding relevant properties to  grids. Will allow generalised rules to be applied to particles.
    *
    * @param rs a collection of particles represent a planetary ring system. 
    */
-  void update(RingSystem rs) {
+  void update(System s) {
 
     //Reset all the grid values.
     reset();
 
-    //Loop through all the particles trying to add them to the grid.
-    for (Ring x : rs.rings) {
-      for (RingParticle r : x.particles) {
-        int i = i(r);
-        int j = j(r);
-        if (validij(i, j)) {
-          grid[i][j] +=1;
-          PVector v = new PVector(r.velocity.x, r.velocity.y);
-          v.rotate(-angleDiff(r)).mult(1/radialScaling(r));
-          gridV[i][j].add(v);
-          gridCofM[i][j].add(r.position);
+    if ( s instanceof RingSystem) {
+
+      RingSystem rs = (RingSystem)s;
+
+      //Loop through all the particles trying to add them to the grid.
+      for (Ring x : rs.rings) {
+        for (RingParticle r : x.particles) {
+          int i = i(r);
+          int j = j(r);
+          if (validij(i, j)) {
+            grid[i][j] +=1;
+            PVector v = new PVector(r.velocity.x, r.velocity.y);
+            v.rotate(-angleDiff(r)).mult(1/radialScaling(r));
+            gridV[i][j].add(v);
+            gridCofM[i][j].add(r.position);
+          }
         }
       }
-    }
 
-    int total =0 ;
-    for (int i = 0; i < int(360/dtheta); i++) {
-      for (int j = 0; j < int((r_max-r_min)/dr); j++) {
-        total += grid[i][j];
-        if (grid[i][j] !=0) {
-          gridCofM[i][j].div(grid[i][j]);
-        } else {
-          gridCofM[i][j].set(0.0, 0.0, 0.0);
+      int total =0 ;
+      for (int i = 0; i < int(360/dtheta); i++) {
+        for (int j = 0; j < int((r_max-r_min)/dr); j++) {
+          total += grid[i][j];
+          if (grid[i][j] !=0) {
+            gridCofM[i][j].div(grid[i][j]);
+          } else {
+            gridCofM[i][j].set(0.0, 0.0, 0.0);
+          }
         }
       }
-    }
-    // Improve the calculate of gridV 
-
-    //As cannot simulate every particle, add constant or multiple number of particles with keplerian velocity to help maintain correct averages.
-
-    //float actualtosimratio = 2; // actual number of particles to simulated 
-
-    //for (int i = 0; i < int(360/dtheta); i++) {
-    //  for (int j = 0; j < int((r_max-r_min)/dr); j++) {
-    //    gridNorm[i][j] = grid[i][j]/((r_min+j*dr+dr/2)*dr*radians(dtheta)*total);
-    //    gridV[i][j].add(keplerianVelocityCell(i, j));
-    //    gridV[i][j].add(keplerianVelocityCell(i, j));
-    //    for (int k = 0; k<grid[i][j]; k ++) {
-    //      gridV[i][j].add(keplerianVelocityCell(i, j));
-    //    }
-    //    gridV[i][j].div(actualtosimratio*(grid[i][j]+1));
-    //  }
-    //}
 
 
 
-    //  //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
-    for (int i = 0; i < int(360/dtheta); i++) {
-      for (int j = 0; j < int((r_max-r_min)/dr); j++) {
 
-        gridNorm[i][j] = grid[i][j]/((r_min+j*dr+dr/2)*dr*radians(dtheta)*total);
+      //  //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
+      for (int i = 0; i < int(360/dtheta); i++) {
+        for (int j = 0; j < int((r_max-r_min)/dr); j++) {
+
+          gridNorm[i][j] = grid[i][j]/((r_min+j*dr+dr/2)*dr*radians(dtheta)*total);
 
 
-        if (grid[i][j] !=0) {
-          gridV[i][j].div(grid[i][j]);
-        } else {
-          gridV[i][j].set(0.0, 0.0, 0.0);
+          if (grid[i][j] !=0) {
+            gridV[i][j].div(grid[i][j]);
+          } else {
+            gridV[i][j].set(0.0, 0.0, 0.0);
+          }
         }
       }
     }
   }
-
-//---------------------------------------
-void tiltupdate(RingSystem rs) {
-
-    //Reset all the grid values.
-    reset();
-
-    //Loop through all the tilt particles trying to add them to the grid.
-    for (Ring x : rs.rings) {
-      for (TiltParticle r : x.Tparticles) {
-        int i = i(r);
-        int j = j(r);
-        if (validij(i, j)) {
-          grid[i][j] +=1;
-          PVector v = new PVector(r.velocity.x, r.velocity.y);
-          v.rotate(-angleDiff(r)).mult(1/radialScaling(r));
-          gridV[i][j].add(v);
-          gridCofM[i][j].add(r.position);
-        }
-      }
-    }
-
-    int total =0 ;
-    for (int i = 0; i < int(360/dtheta); i++) {
-      for (int j = 0; j < int((r_max-r_min)/dr); j++) {
-        total += grid[i][j];
-        if (grid[i][j] !=0) {
-          gridCofM[i][j].div(grid[i][j]);
-        } else {
-          gridCofM[i][j].set(0.0, 0.0, 0.0);
-        }
-      }
-    }
-
-    //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
-    for (int i = 0; i < int(360/dtheta); i++) {
-      for (int j = 0; j < int((r_max-r_min)/dr); j++) {
-
-        gridNorm[i][j] = grid[i][j]/((r_min+j*dr+dr/2)*dr*radians(dtheta)*total);
-
-
-        if (grid[i][j] !=0) {
-          gridV[i][j].div(grid[i][j]);
-        } else {
-          gridV[i][j].set(0.0, 0.0, 0.0);
-        }
-      }
-    }
-  }
-
-//-----------------------------------
 
   /**
    * Returns a Table Object from a 2D array containing Int data type.
@@ -602,4 +402,375 @@ void tiltupdate(RingSystem rs) {
 
     return tempTable;
   }
+}
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+////// Grid for the ShearSystem  ///////
+
+
+class ShearGrid{
+int dx, dy;
+int sGrid[][];
+int sGrid2[][][];
+
+ArrayList<ShearParticle> CellParticles[][];
+float sGridNorm[][];
+PVector sGridCofM[][];
+int sizeX, sizeY;
+int Lx, Ly;
+
+ShearGrid(ShearSystem ss){
+
+  this.Lx = ss.Lx;
+  this.Ly = ss.Ly;
+  sizeX = 10;
+  sizeY = 10;
+  dx = ss.Lx/sizeX;
+  dy = ss.Ly/sizeY;
+
+  this.sGrid = new int[sizeX][sizeY];
+  this.sGrid2 = new int[sizeX][sizeY][ss.n_particles];
+  this.sGridNorm = new float[sizeX][sizeY];
+  this.sGridCofM = new PVector[sizeX][sizeY];
+  this.CellParticles = new ArrayList[sizeX][sizeY];
+  reset();
+
+}
+int Getj(Particle p){
+    Float jPosition = Ly/2 - p.position.y;
+    int j = floor(jPosition/dy);
+  return j;
+}
+int Geti(Particle p){
+    Float iPosition = Lx/2 - p.position.x;
+    int i = floor(iPosition/dx);
+  return i;
+}
+  
+  boolean validij(int i, int j ) {
+    boolean check = false;
+    if (i< sizeX && i>=0  ) {
+      if (j < sizeY && j>=0) {
+        check = true;
+      }
+    }
+    return check;
+  }
+  
+   void reset() {
+    for (int i = 0; i < sizeX; i++) {
+      for (int j = 0; j < sizeY; j++) {
+        sGrid[i][j] = 0;
+        sGridNorm[i][j] = 0;
+        sGridCofM[i][j]= new PVector();
+        this.CellParticles[i][j] = new ArrayList();
+
+      }
+    }
+  }
+  
+ void Update(ShearSystem ss){ 
+   reset();
+  
+   for (Particle p : ss.particles) {
+          int i = Geti(p);
+          int j = Getj(p);
+          if (validij(i, j)) {
+            sGrid[i][j] +=1;
+            //sGridCofM[i][j].add(p.position);
+          }
+   } 
+   //for (int i = 0; i < sizeX; i++) {
+   //   for (int j = 0; j < sizeY; j++) {
+   //      if (sGrid[i][j] !=0) {
+   //         sGridCofM[i][j].div(sGrid[i][j]);
+   //      } else {
+   //         sGridCofM[i][j].set(0.0, 0.0, 0.0);
+   //      }     
+
+   //    }
+   // }
+ 
+ //  //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
+      //for (int i = 0; i < sizeX; i++) {
+      //  for (int j = 0; j < sizeY; j++) {
+
+      //    sGridNorm[i][j] = sGrid[i][j]/((dx*dy)*ss.n_particles);
+      //  }
+      //}
+ }
+ 
+ void FillGrid(ShearSystem ss){
+ 
+   for (Particle p : ss.particles) {
+     ShearParticle sp = (ShearParticle)p;
+            int i = Geti(p);
+            int j = Getj(p);
+            if (validij(i, j)) {
+              CellParticles[i][j].add(sp);        
+            }
+     }
+ }
+ 
+ 
+ // Code that checks for collisions between particles that are in the same cell or adjacent cells with no repetition
+ //void CollisionCheck(){
+ //   for(int i=0; i < sizeX; i++){
+ //     for(int j=0; j< sizeY; j++){
+ //         int n = CellParticles[i][j].size();
+ //         for(int x=0; x < n; x++){
+ //           ShearParticle A = CellParticles[i][j].get(x);     
+ //           for(int y=x+1; y<n; y++){     
+ //            ShearParticle B = CellParticles[i][j].get(y);
+ //            A.CollisionCheck(B);
+             
+ //           }
+ //           // Checks for collisions in the 3 neighboring cells directly bellow and diagonally left and right
+ //              for(int j2 = j-1; j2 <= j+1; j2++){
+ //                if(validij(i+1,j2)){
+ //                 int n2 = CellParticles[i+1][j2].size();
+ //                 for(int z=0; z<n2; z++){     
+ //                    ShearParticle C = CellParticles[i+1][j2].get(z);
+ //                   A.CollisionCheck(C);
+ //                 }
+ //               }
+ //            }
+ //            // Checks for collsions in the neighboring cell to the right
+ //            if(validij(i,j+1)){
+ //                 int n3 = CellParticles[i][j+1].size();
+ //                 for(int k=0; k<n3; k++){     
+ //                    ShearParticle D = CellParticles[i][j+1].get(k);
+ //                    A.CollisionCheck(D);
+
+ //                 }
+ //               }
+ //            }
+ //         }
+ //      }
+ //   }
+
+ void CollisionCheckB(){
+    for(int i=0; i < sizeX; i++){
+      for(int j=0; j< sizeY; j++){
+          int n = CellParticles[i][j].size();
+          for(int x=0; x < n; x++){
+            ShearParticle A = CellParticles[i][j].get(x);     
+            for(int y=x+1; y<n; y++){     
+             ShearParticle B = CellParticles[i][j].get(y);
+             A.CollisionCheckB(B);
+             
+            }
+            // Checks for collisions in the 3 neighboring cells directly bellow and diagonally left and right
+               for(int j2 = j-1; j2 <= j+1; j2++){
+                 if(validij(i+1,j2)){
+                  int n2 = CellParticles[i+1][j2].size();
+                  for(int z=0; z<n2; z++){     
+                     ShearParticle C = CellParticles[i+1][j2].get(z);
+                    A.CollisionCheckB(C);
+                  }
+                }
+             }
+             // Checks for collsions in the neighboring cell to the right
+             if(validij(i,j+1)){
+                  int n3 = CellParticles[i][j+1].size();
+                  for(int k=0; k<n3; k++){     
+                     ShearParticle D = CellParticles[i][j+1].get(k);
+                     A.CollisionCheckB(D);
+
+                  }
+                }
+             }
+          }
+       }
+    }   
+}
+//-------------------- QuadTree----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+class QuadTree{
+     int MaxObjects = 1;
+     int MaxLevels = 100;
+     int Level;
+     ArrayList<ShearParticle> Objects;
+     ArrayList<ShearParticle> NodeObjects;
+     Rectangle bounds; 
+     QuadTree[] nodes;
+     float M;
+     PVector CofM;
+     
+      QuadTree(int pLevel, Rectangle pBounds){
+       Level = pLevel;
+       Objects = new ArrayList();
+       NodeObjects = new ArrayList();
+       bounds = pBounds;
+       nodes = new QuadTree[4];
+       this.M = 0;
+       this.CofM = new PVector();
+      }
+      
+void ClearTree(){
+      Objects.clear();
+      M = 0;
+      CofM = new PVector();
+      for (int i = 0; i < nodes.length ; i++){
+        if(nodes[i] != null){
+          //nodes[i].clear();
+          nodes[i] = null;
+        }
+      }
+} 
+  
+void SplitTree(){
+       
+      int SubWidth = (int)bounds.getWidth()/2;
+      int SubHeight = (int)bounds.getHeight()/2;
+      int x = (int)bounds.getX();
+      int y = (int)bounds.getY();
+      
+      //These seem a bit backwards becasue of our coordinate system
+      
+       nodes[0] = new QuadTree(Level+1, new Rectangle(x, y, SubWidth, SubHeight));
+       nodes[1] = new QuadTree(Level+1, new Rectangle(x, y - SubHeight, SubWidth, SubHeight));
+       nodes[2] = new QuadTree(Level+1, new Rectangle(x - SubWidth, y, SubWidth, SubHeight));
+       nodes[3] = new QuadTree(Level+1, new Rectangle(x - SubWidth, y - SubHeight, SubWidth, SubHeight));  
+    }
+      
+    int GetIndex(Particle p){
+      int Index = -1;
+      double XMidPoint = bounds.getX() - (bounds.getWidth()/2);
+      double YMidPoint = bounds.getY() - (bounds.getHeight()/2);
+      
+      boolean TopHalf = p.position.x > XMidPoint;
+      boolean LeftHalf = p.position.y > YMidPoint;
+      
+      if(TopHalf){
+        if(LeftHalf){
+          Index = 0;
+        }else{
+          Index = 1;
+        } 
+      }else if(LeftHalf){
+        Index = 2;  
+      }else{
+        Index = 3;
+      }
+      
+      return Index;
+  }
+  
+void Insert(ShearParticle p){
+  
+  if(nodes[0] != null){
+        int Index = GetIndex(p);
+        if(Index != -1){
+          nodes[Index].Insert(p);
+          
+          return;
+        }
+      }
+    
+      Objects.add(p);
+      
+      if(Objects.size() > MaxObjects && Level < MaxLevels){
+        if(nodes[0] == null){
+        SplitTree();
+        }
+        int i = 0;
+        while(i < Objects.size()){
+          int Index = GetIndex(Objects.get(i));
+          if(Index != -1){
+            nodes[Index].Insert(Objects.remove(i));
+          }else{ i++;
+          }  
+        }
+      }
+}
+
+
+ArrayList RetrieveNode(ArrayList ReturnObjects){
+     for(int i = 0; i < 4 ; i++){
+         if(nodes[0] != null){
+            nodes[i].RetrieveNode(ReturnObjects);
+         }
+     }
+  
+    ReturnObjects.addAll(Objects);
+  return ReturnObjects;
+}
+
+void TreeCofM(){
+    NodeObjects.clear();
+    RetrieveNode(NodeObjects);
+  
+    M = 0;
+    float CofM_X = 0;
+    float CofM_Y = 0;
+    for(ShearParticle p : NodeObjects){
+     M += p.m;
+     CofM_X += p.m*p.position.x;
+     CofM_Y += p.m*p.position.y;
+    }
+    if(M >0){
+      CofM.x = CofM_X/M;
+      CofM.y = CofM_Y/M;  
+      
+    }else{
+      CofM.set(0,0,0);
+    }
+
+    if(nodes[0] != null){
+      for(int i = 0; i < 4; i++){
+        nodes[i].TreeCofM();
+      }
+    }
+}
+
+  PVector SelfGrav(ShearParticle p){
+       
+      
+        PVector a_grav = new PVector();
+        int n = NodeObjects.size();
+                
+        if(n == 0){
+          return a_grav;
+        }else if(n == 1){
+          if(NodeObjects.get(0) == p){
+          return a_grav;
+          }else{
+            ShearParticle B = NodeObjects.get(0);
+            PVector dVect = B.position.copy().sub(p.position.copy());
+            if(dVect.mag() > 5){
+              PVector a = dVect.mult(p.SG*B.m/(pow(dVect.mag(),3)));
+              a_grav.add(a);
+              return a_grav;
+            }else{
+              return a_grav;
+            }
+          }     
+        }else{
+          double s = bounds.getWidth();  
+          PVector dVect = CofM.copy().sub(p.position.copy());
+          float d = dVect.mag();
+          if(nodes[0] != null){
+            if(s/d < 1){
+              PVector a = dVect.mult(p.SG*M/(pow(dVect.mag(),3)));
+              a_grav.add(a);
+              return a_grav;
+            }else{
+              for(int i = 0; i < 4; i++){
+              PVector a = nodes[i].SelfGrav(p);
+              a_grav.add(a);
+              }
+            return a_grav;
+            }        
+          }else{
+            return a_grav;
+          }
+         }
+}
+
+
+
+
+
+
 }
