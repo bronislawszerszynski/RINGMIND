@@ -609,15 +609,25 @@ class ShearParticle extends Particle {
     velocity = new PVector();
     acceleration = new PVector();
     //
-    position.x= (random(1)-0.5)*s.Lx;
-    position.y= (random(1)-0.5)*s.Ly;  
+    position.y = (random(1)-0.5)*s.Ly;  
+    if(s.HalfRing){
+       position.x = -(random(1))*s.Lx/2;
+    }else{
+      position.x = (random(1)-0.5)*s.Lx;
+    }
+    
+    
 
-    if (s.RingGap == true) {
+    if (s.RingGap) {
       boolean InGap = true;
       do {
-        position.x= (random(1)-0.5)*s.Lx;
-        //position.x = -(random(1))*s.Lx/2;
-        position.y= (random(1)-0.5)*s.Ly;  
+        if(s.HalfRing){
+          position.x = -(random(1))*s.Lx/2;
+        }else{
+          position.x = (random(1)-0.5)*s.Lx;
+        }
+        position.y = (random(1)-0.5)*s.Ly;  
+
 
         if (position.x > -s.GapWidth/2 && position.x < s.GapWidth/2) {
           InGap = true;
@@ -727,29 +737,33 @@ class ShearParticle extends Particle {
       // normanlise n --> k = 1
       float XWeight = float(n)/k;  
 
-      //50/50 chance of particle spawning in top or bottom half
-      int Coinflip = int(random(2));
-      //Use this to force top or bottom box
-      if (Coinflip == 0) {
-        position.x = XWeight*s.Lx/2;
-        position.y = -s.Ly/2;
-      }
-      if (Coinflip == 1) {
+      if(s.HalfRing){
         position.x= (-XWeight*s.Lx/2);
         position.y = s.Ly/2;
-      }
-
-      if (s.RingGap == true) {
-        if (position.x > -s.GapWidth/2 && position.x < s.GapWidth/2) {
-          InGap = true;
-        } else {
-          InGap = false;
+      }else{
+        //50/50 chance of particle spawning in top or bottom half
+        int Coinflip = int(random(2));
+        if (Coinflip == 0) {
+          position.x = XWeight*s.Lx/2;
+          position.y = -s.Ly/2;
         }
-      } else {
-        InGap =false;
+        if (Coinflip == 1) {
+          position.x= (-XWeight*s.Lx/2);
+          position.y = s.Ly/2;
+        }
       }
-    } while (InGap == true);
-
+        if (s.RingGap == true) {
+          if (position.x > -s.GapWidth/2 && position.x < s.GapWidth/2) {
+            InGap = true;
+          } else {
+            InGap = false;
+          }
+        } else {
+          InGap =false;
+        }
+        
+  } while (InGap == true);
+    
     InitPosition = position.copy();
 
     velocity.x = 0;
@@ -773,7 +787,7 @@ class ShearParticle extends Particle {
 
   // Checks for particles colliding with the moonlet
   void MoonletCollisionCheck(ShearSystem ss) {
-    float EM = 0.9;
+    float EM = 1;
     PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
     PVector distVectNorm = (distVect.copy()).normalize();
     PVector Tangent = new PVector();
@@ -832,8 +846,14 @@ void CollisionCheckB(ShearParticle B) {
             //This needs an upper of 1
             float e1 = pow((velocity.mag()/B.velocity.mag()),-0.234);
             float e2 = pow((B.velocity.mag()/velocity.mag()),-0.234);
-            
-            e1 = e2 = 0.95;
+            if(e1 > 1){
+              e1 = 1;
+            }
+            if(e2 > 1){
+              e2 = 1;
+            }
+         
+         
             float x1 = e1*(velocity.x*(m - B.m) + 2*B.m*B.velocity.x)/M;
             float y1 = e1*(velocity.y*(m - B.m) + 2*B.m*B.velocity.y)/M;
             float x2 = e2*(B.velocity.x*(B.m - m) + 2*m*velocity.x)/M;

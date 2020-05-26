@@ -347,7 +347,7 @@ class ShearSystem extends System {
   Boolean Reset = false; // leave this off
   Boolean DynamicMoon = false; // Moon oscillates up and down
   Boolean RingGap = false;   // Creates a ring gap
-
+  Boolean HalfRing = false; 
   //Simulation dimensions [m]
   int Lx = 1000;       //Extent of simulation box along planet-point line [m].
   int Ly = 2000;       //Extent of simulation box along orbit [m].
