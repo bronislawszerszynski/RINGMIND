@@ -829,6 +829,7 @@ void CollisionCheckB(ShearParticle B) {
           if (Delta_T < s.dt && Delta_T > 0) {    
             float M = m + B.m;
             //These are often above 1 and cause chaos
+            //This needs an upper of 1
             float e1 = pow((velocity.mag()/B.velocity.mag()),-0.234);
             float e2 = pow((B.velocity.mag()/velocity.mag()),-0.234);
             
