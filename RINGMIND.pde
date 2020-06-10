@@ -17,6 +17,7 @@
  * Interaction design and audio visual system 
  * @author ashley james brown march-may.2019 
  */
+int TimerReset = 0;
 
 Boolean Running= true;
 
@@ -37,7 +38,7 @@ void setup() {
   setupStates();
   
   import com.hamoid.*;
-  //setupExport();
+  setupExport();
   
   
 }
@@ -50,7 +51,17 @@ void draw() {
 
   //******************************************************
   
-  //drawMovie();
+
+  int(millis());
+  //every 25 ms save frame (40 fps)
+  int timer = int(millis()) - TimerReset;
+  
+  if(timer >= 25){
+    TimerReset += 25;
+    drawMovie();
+
+  }
+  
 }
 
 import com.hamoid.*;
@@ -59,7 +70,7 @@ VideoExport videoExport;
 
 void setupExport(){
   videoExport = new VideoExport(this, "myVideo.mp4");
-  videoExport.setFrameRate(60);
+  videoExport.setFrameRate(40);
   videoExport.startMovie();
 }
 
