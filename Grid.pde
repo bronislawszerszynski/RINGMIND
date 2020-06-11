@@ -704,15 +704,17 @@ void TreeCofM(){
     M = 0;
     float CofM_X = 0;
     float CofM_Y = 0;
+    float CofM_Z = 0;
     for(ShearParticle p : NodeObjects){
      M += p.m;
      CofM_X += p.m*p.position.x;
      CofM_Y += p.m*p.position.y;
-    }
+     CofM_Z += p.m*p.position.z;
+  }
     if(M >0){
       CofM.x = CofM_X/M;
       CofM.y = CofM_Y/M;  
-      
+      CofM.z = CofM_Z/M;
     }else{
       CofM.set(0,0,0);
     }

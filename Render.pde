@@ -250,10 +250,12 @@ class Renderer {
           }else if(sp.InitPosition.x < -ss.Lx/3){
           fill(255,0,0);//Red
           }
-            
-          //fill(255);
-          ellipse(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, 2*sp.radius*width/ss.Ly, 2*sp.radius*height/ss.Lx);      
-      
+            push();
+          //ellipse(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, 2*sp.radius*width/ss.Ly, 2*sp.radius*height/ss.Lx);      
+          translate(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, sp.position.z);
+          sphereDetail(6);
+          sphere(sp.radius*width/ss.Ly);      
+            pop();
       }
 
       
@@ -265,16 +267,19 @@ class Renderer {
           translate(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, 0);
           //circle(0, 0, 2*scale*sp.radius*width/ss.Ly);
           ss.displayPVector(sp.velocity, 1000, color(0, 255, 0)); //green
-          ss.displayPVector(sp.acceleration, 10000000, color(0, 0, 255)); //blue
+          ss.displayPVector(sp.acceleration, 10000000, color(0 , 0, 255)); //blue
           pop();
         }
       }
       //moonlet
       if (ss.Moonlet) {
-          //fill(0,100,0);
-          //circle(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.radius*2);
-          fill(100);//Grey
-          ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);          
+        push();
+          fill(255);//Grey
+          //ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);    
+          translate(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.position.z);
+          sphereDetail(20);
+          sphere(ss.moonlet.radius*width/ss.Ly);
+        pop();
       }
       // Marker for the centre of the screen
      // circle(0,0,10);

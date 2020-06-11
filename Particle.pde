@@ -637,7 +637,8 @@ class ShearParticle extends Particle {
       } while (InGap == true);
     }
     InitPosition = position.copy();
-
+    
+    position.z = random(200) - 100;
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
 
@@ -685,10 +686,11 @@ class ShearParticle extends Particle {
         PVector SGrav = new PVector();
         SGrav = ss.QT.SelfGrav(this);
         
-        if(position.y < (ss.Lx/2) && position.y > -(ss.Lx/2)*0.5){
+        //if(position.y < (ss.Lx/2) && position.y > -(ss.Lx/2)*0.5){
         a_grav.x += SGrav.x;
-        a_grav.y += SGrav.y;        
-        }
+        a_grav.y += SGrav.y;      
+        a_grav.z += SGrav.z;
+        //}
  }
 
 
@@ -765,7 +767,7 @@ class ShearParticle extends Particle {
   } while (InGap == true);
     
     InitPosition = position.copy();
-
+    position.z = random(200) - 100;
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
     //
@@ -856,11 +858,13 @@ void CollisionCheckB(ShearParticle B) {
          
             float x1 = e1*(velocity.x*(m - B.m) + 2*B.m*B.velocity.x)/M;
             float y1 = e1*(velocity.y*(m - B.m) + 2*B.m*B.velocity.y)/M;
+            float z1 = e1*(velocity.z*(m - B.m) + 2*B.m*B.velocity.z)/M;
             float x2 = e2*(B.velocity.x*(B.m - m) + 2*m*velocity.x)/M;
             float y2 = e2*(B.velocity.y*(B.m - m) + 2*m*velocity.y)/M;
-            
-            velocity.set(x1, y1, 0);
-            B.velocity.set(x2, y2, 0);
+            float z2 = e2*(B.velocity.z*(B.m - m) + 2*m*velocity.z)/M;
+
+            velocity.set(x1, y1, z1);
+            B.velocity.set(x2, y2, z2);
           }
         }
     }
@@ -911,6 +915,7 @@ class Moonlet extends ShearParticle {
 
     position.x = 0;          // Change the starting position of the moonlet
     position.y = 0;
+    position.z = 0;
     //position.y = ss.Lx*0.8;
   }
 

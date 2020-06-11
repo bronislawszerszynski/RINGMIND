@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 1000;                       //Used for system initialiations 
+  int n_particles = 500;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -469,7 +469,7 @@ class ShearSystem extends System {
    *@return True if out of Shearing Box
    */
   boolean particle_outBox(ShearParticle x) {
-    if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)) {
+    if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)||(x.position.z > 300)||(x.position.z < -300)){
       return true;
     } else {
       return false;
