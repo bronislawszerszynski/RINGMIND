@@ -595,8 +595,6 @@ class ShearParticle extends Particle {
   float radius;
 
   // Modifies the minimum radius and range of radii each particle can have
-  float RadiusMultiplier = 4;
-  float MinRadius = 3;
   float m;
 
   boolean highlight= false;
@@ -638,11 +636,10 @@ class ShearParticle extends Particle {
     }
     InitPosition = position.copy();
     
-    position.z = random(200) - 100;
+    position.z = random(80) - 40;
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
 
-    //this.radius = RadiusMultiplier*(-log((particle_C-random(1.0))/particle_D)/particle_lambda) + MinRadius;
     this.radius = (-log((particle_C-random(1.0))/particle_D)/particle_lambda);
     this.m = (4*PI/3)*pow(radius, 3)*particle_rho;
   }
@@ -679,6 +676,8 @@ class ShearParticle extends Particle {
         distanceVect = distanceVect.mult((SG*ss.moonlet.m)/pow(distanceVectMag, 3));
         a_grav.x+= -distanceVect.x ;
         a_grav.y+=-distanceVect.y;
+        a_grav.z+=-distanceVect.z;
+
       }
     }
 
@@ -767,9 +766,11 @@ class ShearParticle extends Particle {
   } while (InGap == true);
     
     InitPosition = position.copy();
-    position.z = random(200) - 100;
+    position.z = random(100) - 50;
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
+    velocity.z = 0;
+
     //
     //this.radius = RadiusMultiplier*(- log((particle_C-random(1))/particle_D)/particle_lambda) + MinRadius;
     this.radius = (-log((particle_C-random(1.0))/particle_D)/particle_lambda);
@@ -803,21 +804,86 @@ class ShearParticle extends Particle {
       float Theta = PVector.angleBetween(Tangent, velocity);
       if (Theta > PI/2) {
         Theta = PI - Theta;
-        //velocity = velocity.rotate(2*Theta);                 //Elastic
         velocity = (velocity.rotate(2*Theta)).mult(EM);     //Inelastic
       } else {
         velocity = (velocity.rotate(-2*Theta)).mult(EM);     //Inelastic
-        //velocity = velocity.rotate(-2*Theta);                 //Elastic
       }
     }
   }
+  
+  
+  void MoonletCollision3D(ShearSystem ss){
+      float EM = 1;
+    PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
+    PVector Norm = (distVect.copy()).normalize();
+    float distVectMag = distVect.copy().mag();
+
+    if (distVectMag < (ss.moonlet.radius + radius)) {
+      float CorrectionMag = (ss.moonlet.radius+radius) - distVectMag;
+      PVector CorrectionVect = (Norm.copy()).mult(CorrectionMag);
+      position.add(CorrectionVect);
+      PVector XYVelocity = new PVector();
+      PVector XZVelocity = new PVector();
+      PVector YZVelocity = new PVector();
+      PVector XYNorm = new PVector();
+      PVector XZNorm = new PVector();
+      PVector YZNorm = new PVector();
+      PVector TangentXY = new PVector();
+      PVector TangentXZ = new PVector();      
+      PVector TangentYZ = new PVector();      
+      XYVelocity.set(velocity.x, velocity.y);
+      XZVelocity.set(velocity.x, velocity.z);
+      YZVelocity.set(velocity.y, velocity.z);
+      XYNorm.set(Norm.x,Norm.y);
+      XZNorm.set(Norm.x,Norm.z);
+      YZNorm.set(Norm.y,Norm.z);
+
+      TangentXY = (XYNorm.copy()).rotate(PI/2);
+      TangentXZ = (XZNorm.copy()).rotate(PI/2);
+      TangentYZ = (YZNorm.copy()).rotate(PI/2);
+      
+      
+      float ThetaXY = PVector.angleBetween(TangentXY, XYVelocity);
+      float ThetaXZ = PVector.angleBetween(TangentXZ, XZVelocity);
+      float ThetaYZ = PVector.angleBetween(TangentYZ, YZVelocity);
+      
+      if (ThetaXY > PI/2) {
+        ThetaXY = PI - ThetaXY;
+        XYVelocity = (XYVelocity.rotate(2*ThetaXY)).mult(EM);   
+      } else {
+        XYVelocity = (XYVelocity.rotate(-2*ThetaXY)).mult(EM);  
+      }
+      
+      if (ThetaXZ > PI/2) {
+        ThetaXZ = PI - ThetaXZ;
+        XZVelocity = (XZVelocity.rotate(2*ThetaXZ)).mult(EM);   
+      } else {
+        XZVelocity = (XZVelocity.rotate(-2*ThetaXZ)).mult(EM);  
+      }
+     
+      if (ThetaYZ > PI/2) {
+        ThetaYZ = PI - ThetaYZ;
+        YZVelocity = (YZVelocity.rotate(2*ThetaYZ)).mult(EM);   
+      } else {
+        YZVelocity = (YZVelocity.rotate(-2*ThetaYZ)).mult(EM);  
+      }
+       
+      float Vx = (XYVelocity.x + XZVelocity.x)/2;
+      float Vy = (XYVelocity.y + YZVelocity.x)/2;
+      float Vz = (XZVelocity.y + YZVelocity.y)/2;
+      
+      velocity.set(Vx, Vy, Vz);
+    }
+  }
+  
+  
 
 void CollisionCheckB(ShearParticle B) {
     PVector distVect = PVector.sub(position.copy(), B.position.copy());
     PVector RelVelocity = PVector.sub(velocity.copy(), B.velocity.copy());
 
     if (distVect.mag() < radius + B.radius) {
-    Float CorrectionMag = ((radius + B.radius + 2) - distVect.mag())/2.0;
+    float CorrectionMag = ((radius + B.radius + 2) - distVect.mag())/2.0;
     PVector d = distVect.copy();
     PVector CorrectionVect = d.normalize().mult(CorrectionMag);
     position.add(CorrectionVect);
@@ -874,27 +940,29 @@ void CollisionCheckB(ShearParticle B) {
 
 
 
-  //void CollisionCheck(ShearParticle B) {
-  //  float EnergyModifier = 0.97;
-  //  PVector distanceVect = PVector.sub(position.copy(), B.position.copy());
+  void CollisionCheck(ShearParticle B) {
+    float EnergyModifier = 0.97;
+    PVector distanceVect = PVector.sub(position.copy(), B.position.copy());
 
-  //  float distVectMag = distanceVect.mag();
-  //  if (distVectMag < (radius + B.radius)) {
+    float distVectMag = distanceVect.mag();
+    if (distVectMag < (radius + B.radius)) {
 
-  //    Float CorrectionMag = ((radius + B.radius + 1) - distanceVect.mag())/2.0;
-  //    PVector d = distanceVect.copy();
-  //    PVector CorrectionVect = d.normalize().mult(CorrectionMag);
-  //    position.add(CorrectionVect);
-  //    B.position.sub(CorrectionVect);
-  //    float M = m + B.m;
-  //    float x1 = EnergyModifier*(velocity.x*(m - B.m) + 2*B.m*B.velocity.x)/M;
-  //    float y1 = EnergyModifier*(velocity.y*(m - B.m) + 2*B.m*B.velocity.y)/M;         
-  //    float x2 = EnergyModifier*(B.velocity.x*(B.m - m) + 2*m*velocity.x)/M;
-  //    float y2 = EnergyModifier*(B.velocity.y*(B.m - m) + 2*m*velocity.y)/M;
-  //    velocity.set(x1, y1, 0);
-  //    B.velocity.set(x2, y2, 0);
-  //  }
-  //}
+      Float CorrectionMag = ((radius + B.radius + 1) - distanceVect.mag())/2.0;
+      PVector d = distanceVect.copy();
+      PVector CorrectionVect = d.normalize().mult(CorrectionMag);
+      position.add(CorrectionVect);
+      B.position.sub(CorrectionVect);
+      float M = m + B.m;
+      float x1 = EnergyModifier*(velocity.x*(m - B.m) + 2*B.m*B.velocity.x)/M;
+      float y1 = EnergyModifier*(velocity.y*(m - B.m) + 2*B.m*B.velocity.y)/M;     
+      float z1 = EnergyModifier*(velocity.z*(m - B.m) + 2*B.m*B.velocity.z)/M;
+      float x2 = EnergyModifier*(B.velocity.x*(B.m - m) + 2*m*velocity.x)/M;
+      float y2 = EnergyModifier*(B.velocity.y*(B.m - m) + 2*m*velocity.y)/M;
+      float z2 = EnergyModifier*(B.velocity.z*(B.m - m) + 2*m*velocity.z)/M;
+      velocity.set(x1, y1, 0);
+      B.velocity.set(x2, y2, 0);
+    }
+  }
 
   
 }

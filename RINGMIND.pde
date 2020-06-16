@@ -1,4 +1,5 @@
-
+import controlP5.*;
+import com.hamoid.*;
 ///////////////
 //           //
 //           //
@@ -20,6 +21,7 @@
 int TimerReset = 0;
 
 Boolean Running= true;
+Boolean Recording = false;
 
 void settings() {
 
@@ -27,6 +29,7 @@ void settings() {
   size (1800, 900, P3D);
   smooth(); //noSmooth();
 }
+  ControlP5 cp5;
 
 void setup() {
   background(0);
@@ -37,20 +40,32 @@ void setup() {
 
   setupStates();
   
-  import com.hamoid.*;
   setupExport();
-  
-  
+   
+ 
+  cp5 = new ControlP5(this);
+  cp5.addButton("boo").setValue(1).setPosition(-500,0).setSize(400,200);
+  cp5.setAutoDraw(false);
 }
 
 void draw() {
 
   //*************Simulation Update Frame******************
 
+  
+
   updateCurrentState(millis());    //calls the render and anything specific to each scene state 
+     
+   //cp5.draw();
+   if(cp5.isMouseOver()){
+      scene.disableMotionAgent();
+   //else{
+    // scene.enableMouseAgent();
+   }
+     
+     
 
   //******************************************************
-  
 
   int(millis());
   //every 25 ms save frame (40 fps)
@@ -58,13 +73,20 @@ void draw() {
   
   if(timer >= 25){
     TimerReset += 25;
-    drawMovie();
+    
+    if(Recording){
+      drawMovie();
+    }
+    
 
   }
   
 }
 
-import com.hamoid.*;
+void boo(){
+  println("Click");
+}
+
 
 VideoExport videoExport;
 
@@ -77,6 +99,13 @@ void setupExport(){
 void drawMovie(){
   videoExport.saveFrame();
 }
+
+
+
+
+
+
+
 
 
 //--------------------------- INTERACTION KEYS -------------------------------------------------------------------
@@ -228,6 +257,7 @@ void keyPressed() {
   } else if (key=='J') {
     //
   } else if (key=='k') {
+    Recording = !Recording;
     //
   } else if (key=='k') {
     //

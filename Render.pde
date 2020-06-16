@@ -61,7 +61,7 @@ void renderOffScreenOnPGraphics2() {
   //pg.strokeWeight(100);
   //pg. line(0,0,pg.wdith,pg.height);
 
-  pg.ellipse(mouseX, mouseY, 200, 200);
+  //pg.ellipse(mouseX, mouseY, 200, 200);
   pg.endDraw();
 }
 
@@ -277,7 +277,7 @@ class Renderer {
           fill(255);//Grey
           //ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);    
           translate(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.position.z);
-          sphereDetail(20);
+          sphereDetail(30);
           sphere(ss.moonlet.radius*width/ss.Ly);
         pop();
       }
@@ -562,6 +562,7 @@ void initScene() {
   scene.setRadius(500); //how big is the scene - bigger means slower to load at startup
 
   scene.showAll();
+
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
