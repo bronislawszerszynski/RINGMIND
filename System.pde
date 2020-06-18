@@ -446,8 +446,7 @@ class ShearSystem extends System {
     }
     if(ParticleCollisions){
       SG.FillGrid(this);
-      //SG.CollisionCheckB();
-      SG.CollisionCheck();
+      SG.CollisionCheckB();
     }
     
     ClearMoonlet= false;

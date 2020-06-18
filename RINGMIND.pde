@@ -52,17 +52,20 @@ void draw() {
 
   //*************Simulation Update Frame******************
 
-  
+hint(ENABLE_DEPTH_TEST);  
 
+  pushMatrix();
   updateCurrentState(millis());    //calls the render and anything specific to each scene state 
-     
-   //cp5.draw();
+  popMatrix();  
+  hint(DISABLE_DEPTH_TEST);
    if(cp5.isMouseOver()){
       scene.disableMotionAgent();
-   //else{
-    // scene.enableMouseAgent();
+    }
+   else{
+     scene.enableMouseAgent();
    }
-     
+   //cp5.draw();
+   
      
 
   //******************************************************

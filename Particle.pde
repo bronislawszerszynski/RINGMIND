@@ -892,14 +892,16 @@ void CollisionCheckB(ShearParticle B) {
     
         float x_0 = distVect.x;
         float y_0 = distVect.y;
+        float z_0 = distVect.z;
         float V_x = RelVelocity.x;
         float V_y = RelVelocity.y;
+        float V_z = RelVelocity.z;
         float R = radius + B.radius;
     
-        float Discriminant = sq(2*((x_0*V_x)+(y_0*V_y))) - 4*(sq(V_x) + sq(V_y))*(sq(x_0) + sq(y_0) - sq(R));
+        float Discriminant = sq(2*((x_0*V_x)+(y_0*V_y)+(z_0*V_z))) - 4*(sq(V_x) + sq(V_y) + sq(V_z))*(sq(x_0) + sq(y_0) + sq(z_0) - sq(R));
         if (Discriminant > 0) {   
-          float T1 =   (-2*((x_0*V_x)+(y_0*V_y)) - sqrt(Discriminant))/(2*(sq(V_x) + sq(V_y)));
-          float T2 =   (-2*((x_0*V_x)+(y_0*V_y)) + sqrt(Discriminant))/(2*(sq(V_x) + sq(V_y)));
+          float T1 =   (-2*((x_0*V_x)+(y_0*V_y)+(z_0*V_z)) - sqrt(Discriminant))/(2*(sq(V_x) + sq(V_y) + sq(V_z)));
+          float T2 =   (-2*((x_0*V_x)+(y_0*V_y)+(z_0*V_z)) + sqrt(Discriminant))/(2*(sq(V_x) + sq(V_y) + sq(V_z)));
           float Delta_T = 0;
     
           if (T1 < T2) {
@@ -936,35 +938,6 @@ void CollisionCheckB(ShearParticle B) {
     }
    
   }
-
-
-
-
-  void CollisionCheck(ShearParticle B) {
-    float EnergyModifier = 0.97;
-    PVector distanceVect = PVector.sub(position.copy(), B.position.copy());
-
-    float distVectMag = distanceVect.mag();
-    if (distVectMag < (radius + B.radius)) {
-
-      Float CorrectionMag = ((radius + B.radius + 1) - distanceVect.mag())/2.0;
-      PVector d = distanceVect.copy();
-      PVector CorrectionVect = d.normalize().mult(CorrectionMag);
-      position.add(CorrectionVect);
-      B.position.sub(CorrectionVect);
-      float M = m + B.m;
-      float x1 = EnergyModifier*(velocity.x*(m - B.m) + 2*B.m*B.velocity.x)/M;
-      float y1 = EnergyModifier*(velocity.y*(m - B.m) + 2*B.m*B.velocity.y)/M;     
-      float z1 = EnergyModifier*(velocity.z*(m - B.m) + 2*B.m*B.velocity.z)/M;
-      float x2 = EnergyModifier*(B.velocity.x*(B.m - m) + 2*m*velocity.x)/M;
-      float y2 = EnergyModifier*(B.velocity.y*(B.m - m) + 2*m*velocity.y)/M;
-      float z2 = EnergyModifier*(B.velocity.z*(B.m - m) + 2*m*velocity.z)/M;
-      velocity.set(x1, y1, 0);
-      B.velocity.set(x2, y2, 0);
-    }
-  }
-
-  
 }
 //-----------------------------------------MOONLET---------------------------------------------------------------
 

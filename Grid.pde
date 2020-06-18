@@ -512,41 +512,6 @@ int Geti(Particle p){
  }
  
  
- // Code that checks for collisions between particles that are in the same cell or adjacent cells with no repetition
- void CollisionCheck(){
-    for(int i=0; i < sizeX; i++){
-      for(int j=0; j< sizeY; j++){
-          int n = CellParticles[i][j].size();
-          for(int x=0; x < n; x++){
-            ShearParticle A = CellParticles[i][j].get(x);     
-            for(int y=x+1; y<n; y++){     
-             ShearParticle B = CellParticles[i][j].get(y);
-             A.CollisionCheck(B);
-             
-            }
-            // Checks for collisions in the 3 neighboring cells directly bellow and diagonally left and right
-               for(int j2 = j-1; j2 <= j+1; j2++){
-                 if(validij(i+1,j2)){
-                  int n2 = CellParticles[i+1][j2].size();
-                  for(int z=0; z<n2; z++){     
-                     ShearParticle C = CellParticles[i+1][j2].get(z);
-                    A.CollisionCheck(C);
-                  }
-                }
-             }
-             // Checks for collsions in the neighboring cell to the right
-             if(validij(i,j+1)){
-                  int n3 = CellParticles[i][j+1].size();
-                  for(int k=0; k<n3; k++){     
-                     ShearParticle D = CellParticles[i][j+1].get(k);
-                     A.CollisionCheck(D);
-
-                  }
-                }
-             }
-          }
-       }
-    }
 
  void CollisionCheckB(){
     for(int i=0; i < sizeX; i++){
