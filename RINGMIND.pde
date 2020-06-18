@@ -1,5 +1,7 @@
 import controlP5.*;
 import com.hamoid.*;
+
+
 ///////////////
 //           //
 //           //
@@ -19,6 +21,7 @@ import com.hamoid.*;
  * @author ashley james brown march-may.2019 
  */
 int TimerReset = 0;
+
 
 Boolean Running= true;
 Boolean Recording = false;
@@ -44,7 +47,7 @@ void setup() {
    
  
   cp5 = new ControlP5(this);
-  cp5.addButton("boo").setValue(1).setPosition(-500,0).setSize(400,200);
+  cp5.addButton("button").setValue(1).setPosition(-1000,0).setSize(400,200);
   cp5.setAutoDraw(false);
 }
 
@@ -54,17 +57,16 @@ void draw() {
 
 hint(ENABLE_DEPTH_TEST);  
 
-  pushMatrix();
   updateCurrentState(millis());    //calls the render and anything specific to each scene state 
-  popMatrix();  
-  hint(DISABLE_DEPTH_TEST);
-   if(cp5.isMouseOver()){
-      scene.disableMotionAgent();
-    }
-   else{
-     scene.enableMouseAgent();
-   }
-   //cp5.draw();
+  //hint(DISABLE_DEPTH_TEST);
+  // //if(cp5.isMouseOver()){
+  // //   scene.disableMotionAgent();
+  // // }
+  // //else{
+  // //  scene.enableMouseAgent();
+  // //}
+  // cp5.draw();
+   
    
      
 
@@ -74,19 +76,21 @@ hint(ENABLE_DEPTH_TEST);
   //every 25 ms save frame (40 fps)
   int timer = int(millis()) - TimerReset;
   
-  if(timer >= 25){
-    TimerReset += 25;
+  if(timer >= 50){
+    TimerReset += 50;
     
     if(Recording){
       drawMovie();
     }
-    
+
 
   }
   
 }
 
-void boo(){
+
+
+void button(){
   println("Click");
 }
 
@@ -95,20 +99,13 @@ VideoExport videoExport;
 
 void setupExport(){
   videoExport = new VideoExport(this, "myVideo.mp4");
-  videoExport.setFrameRate(40);
+  videoExport.setFrameRate(20);
   videoExport.startMovie();
 }
 
 void drawMovie(){
   videoExport.saveFrame();
 }
-
-
-
-
-
-
-
 
 
 //--------------------------- INTERACTION KEYS -------------------------------------------------------------------

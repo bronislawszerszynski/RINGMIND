@@ -285,7 +285,6 @@ class Renderer {
      // circle(0,0,10);
      
      
-     
     } else if (s instanceof TiltSystem) {
       //--------------------------------------------TiltSystemRender--------------------------------------------------
       push();
