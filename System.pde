@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 1000;                       //Used for system initialiations 
+  int n_particles = 1500;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -336,7 +336,7 @@ class AlignableMoonSystem extends MoonSystem {
  */
 class ShearSystem extends System {
 
-  Boolean Moonlet = true; //Adds in the moonlet
+  Boolean Moonlet = false; //Adds in the moonlet
   Boolean ClearMoonlet = false; // Clears a space for the moonlet to fit in, leave this off
   Boolean SelfGrav = true; // Toggle Self Gravity between particles
   Boolean MoonletCollisions = true; // Particles can collide with the moonlet
@@ -348,6 +348,7 @@ class ShearSystem extends System {
   Boolean DynamicMoon = false; // Moon oscillates up and down
   Boolean RingGap = false;   // Creates a ring gap
   Boolean HalfRing = false; 
+  Boolean Toggle3D = true;
   //Simulation dimensions [m]
   int Lx = 1000;       //Extent of simulation box along planet-point line [m].
   int Ly = 2000;       //Extent of simulation box along orbit [m].
@@ -355,7 +356,7 @@ class ShearSystem extends System {
 
   //Initialises Simulation Constants
   final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
-  final float r0 = 110000e3;   //Central position in the ring [m]. Defaults to 130000 km.
+  final float r0 = 130000e3;   //Central position in the ring [m]. Defaults to 130000 km.
   final float Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
   final float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
   Moonlet moonlet;
@@ -370,30 +371,51 @@ class ShearSystem extends System {
     particles = new ArrayList<Particle>();
     moonlet = new Moonlet(this);
     random_start();
+    
+    if(!Toggle3D){
+      scene.disableMotionAgent();
+    }
+    
+    
+    
         
    // this is all for testing collsions  
     ShearParticle A = new ShearParticle(this);
     ShearParticle B = new ShearParticle(this);
     ShearParticle C = new ShearParticle(this);
-    
+    ShearParticle D = new ShearParticle(this);
     //particles.add(A);
     //particles.add(B);
     //particles.add(C);
-     
-    A.position.x = 100;
-    A.position.y = 600;   
-    A.position.z = 100;   
+    //particles.add(D);
+    A.position.x = 150;
+    A.position.y = 0;   
+    A.position.z = 0;   
+    
+    B.position.x = 0;
+    B.position.y = 150;   
+    B.position.z = 0;   
+    
+    C.position.x = 0;
+    C.position.y = 0;   
+    C.position.z = 150;   
 
-    A.velocity.y = -0.04;   
-    A.velocity.x = 0;   
-
+    D.position.x = 0;
+    D.position.y = 0;   
+    D.position.z = 0;   
+    
+    A.velocity = new PVector();
+    B.velocity = new PVector();
+    C.velocity = new PVector();
+    D.velocity = new PVector();
+    
     A.radius = 20;
     A.m = 2e9;
     B.m = 2e9;
     C.m = 2e9;
     B.radius = 20;
     C.radius = 20;   
-    
+    D.radius = 20;   
   }
 
   /** Take a step using the Velocity Verlet (Leapfrog) ODE integration algorithm.
@@ -431,8 +453,13 @@ class ShearSystem extends System {
     
       if (Moonlet) {
          if(MoonletCollisions){
-            x.MoonletCollisionCheck(this);
-            //x.MoonletCollision3D(this);
+           if(Toggle3D){
+             x.MoonletCollision3D(this);
+           }else{
+             x.MoonletCollisionCheck(this);
+           }
+           
+           
 
           }
           if (particle_inMoonlet(x)) {
@@ -461,8 +488,8 @@ class ShearSystem extends System {
    *@return True if out of Shearing Box
    */
   boolean particle_outBox(ShearParticle x) {
-    //if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)||(x.position.z > 200)||(x.position.z < -200)){
-    if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)){
+    if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)||(x.position.z > 500)||(x.position.z < -500)){
+    //if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)){
       return true;
     } else {
       return false;
@@ -557,6 +584,11 @@ class ShearSystem extends System {
     stroke(c);
     line(0, 0, -v.y*scale, -v.x*scale);
   }
+  
+  void mouseClicked(){
+  println("Clickly!");
+  }
+  
 }
 
 /**Class TiltSystem

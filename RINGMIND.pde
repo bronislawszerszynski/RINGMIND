@@ -49,6 +49,9 @@ void setup() {
   cp5 = new ControlP5(this);
   cp5.addButton("button").setValue(1).setPosition(-1000,0).setSize(400,200);
   cp5.setAutoDraw(false);
+
+
+
 }
 
 void draw() {
@@ -58,22 +61,23 @@ void draw() {
 hint(ENABLE_DEPTH_TEST);  
 
   updateCurrentState(millis());    //calls the render and anything specific to each scene state 
-  //hint(DISABLE_DEPTH_TEST);
-  // //if(cp5.isMouseOver()){
-  // //   scene.disableMotionAgent();
-  // // }
-  // //else{
-  // //  scene.enableMouseAgent();
-  // //}
-  // cp5.draw();
+   //hint(DISABLE_DEPTH_TEST);
+   //if(cp5.isMouseOver()){
+   //   scene.disableMotionAgent();
+   // }
+   //else{
+   //  scene.enableMouseAgent();
+   //}
+   cp5.draw();
    
    
-     
+  scene.mouseAgent().setPickingMode(MouseAgent.PickingMode.CLICK);
+
 
   //******************************************************
 
   int(millis());
-  //every 25 ms save frame (40 fps)
+  //every 50 ms save frame (20 fps)
   int timer = int(millis()) - TimerReset;
   
   if(timer >= 50){
@@ -91,7 +95,7 @@ hint(ENABLE_DEPTH_TEST);
 
 
 void button(){
-  println("Click");
+  //println("Click");
 }
 
 

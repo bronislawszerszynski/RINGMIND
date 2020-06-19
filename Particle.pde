@@ -636,10 +636,12 @@ class ShearParticle extends Particle {
     }
     InitPosition = position.copy();
     
-    position.z = random(80) - 40;
+    if(s.Toggle3D){
+    position.z = random(300) - 150;
+    }
+    
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
-
     this.radius = (-log((particle_C-random(1.0))/particle_D)/particle_lambda);
     this.m = (4*PI/3)*pow(radius, 3)*particle_rho;
   }
@@ -675,8 +677,8 @@ class ShearParticle extends Particle {
       if (distanceVectMag > radius+ss.moonlet.radius) {
         distanceVect = distanceVect.mult((SG*ss.moonlet.m)/pow(distanceVectMag, 3));
         a_grav.x+= -distanceVect.x ;
-        a_grav.y+=-distanceVect.y;
-        a_grav.z+=-distanceVect.z;
+        a_grav.y+= -distanceVect.y;
+        a_grav.z+= -distanceVect.z;
 
       }
     }
@@ -711,9 +713,7 @@ class ShearParticle extends Particle {
    * @param s 
    */
   void Reset(ShearSystem s) {
-    acceleration.x=0;
-    acceleration.y=0;
-
+    acceleration = new PVector();
 
     // Splits each half (top/bottom) into k number of orbital heights
     int k=1000;
@@ -766,11 +766,13 @@ class ShearParticle extends Particle {
   } while (InGap == true);
     
     InitPosition = position.copy();
-    position.z = random(100) - 50;
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
+    
+    if(s.Toggle3D){
+    position.z = random(300) - 150;
     velocity.z = 0;
-
+    }
     //
     //this.radius = RadiusMultiplier*(- log((particle_C-random(1))/particle_D)/particle_lambda) + MinRadius;
     this.radius = (-log((particle_C-random(1.0))/particle_D)/particle_lambda);
@@ -813,13 +815,13 @@ class ShearParticle extends Particle {
   
   
   void MoonletCollision3D(ShearSystem ss){
-      float EM = 1;
+      float EM = 0.90;
     PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
     PVector Norm = (distVect.copy()).normalize();
     float distVectMag = distVect.copy().mag();
 
-    if (distVectMag < (ss.moonlet.radius + radius)) {
-      float CorrectionMag = (ss.moonlet.radius+radius) - distVectMag;
+    if (distVectMag < (ss.moonlet.radius + radius+3)) {
+      float CorrectionMag = (ss.moonlet.radius+radius+5) - distVectMag;
       PVector CorrectionVect = (Norm.copy()).mult(CorrectionMag);
       position.add(CorrectionVect);
       PVector XYVelocity = new PVector();

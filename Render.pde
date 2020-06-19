@@ -250,12 +250,16 @@ class Renderer {
           }else if(sp.InitPosition.x < -ss.Lx/3){
           fill(255,0,0);//Red
           }
+          
+          if(ss.Toggle3D){
             push();
-          //ellipse(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, 2*sp.radius*width/ss.Ly, 2*sp.radius*height/ss.Lx);      
           translate(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, sp.position.z);
           sphereDetail(6);
           sphere(sp.radius*width/ss.Ly);      
             pop();
+          }else{
+            ellipse(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, 2*sp.radius*width/ss.Ly, 2*sp.radius*height/ss.Lx);      
+          }
       }
 
       
@@ -273,17 +277,20 @@ class Renderer {
       }
       //moonlet
       if (ss.Moonlet) {
-        push();
-          fill(255);//Grey
-          //ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);    
+        fill(255);//Grey
+        if(ss.Toggle3D){
+          push();
           translate(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.position.z);
           sphereDetail(30);
           sphere(ss.moonlet.radius*width/ss.Ly);
-        pop();
-      }
-      // Marker for the centre of the screen
-     // circle(0,0,10);
-     
+          pop();
+        }else{
+        ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);    
+        }
+        
+        
+
+    }
      
     } else if (s instanceof TiltSystem) {
       //--------------------------------------------TiltSystemRender--------------------------------------------------
