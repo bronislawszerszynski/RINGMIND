@@ -1,7 +1,7 @@
 import controlP5.*;
 import com.hamoid.*;
-
-
+ControlP5 cp5;
+ControlFrame cf;
 ///////////////
 //           //
 //           //
@@ -26,17 +26,20 @@ int TimerReset = 0;
 Boolean Running= true;
 Boolean Recording = false;
 
+
 void settings() {
 
   //fullScreen(P3D, 1);
-  size (1800, 900, P3D);
+  size (1600, 800, P3D);
+
   smooth(); //noSmooth();
 }
-  ControlP5 cp5;
 
 void setup() {
+    setupCP5();
   background(0);
   randomSeed(3);
+  surface.setLocation(280,10);
   systemState = State.initState;  //which state shall we begin with 
   setupStates();    //instantiate the scenarios so they are avialble for the state system to handle
   systemState = State.shearState;  //which state shall we begin with 
@@ -44,37 +47,20 @@ void setup() {
   setupStates();
   
   setupExport();
-   
- 
-  cp5 = new ControlP5(this);
-  cp5.addButton("button").setValue(1).setPosition(-1000,0).setSize(400,200);
-  cp5.setAutoDraw(false);
-
-
 
 }
 
 void draw() {
-
+  
   //*************Simulation Update Frame******************
 
-hint(ENABLE_DEPTH_TEST);  
+//hint(ENABLE_DEPTH_TEST);  
 
   updateCurrentState(millis());    //calls the render and anything specific to each scene state 
-   //hint(DISABLE_DEPTH_TEST);
-   //if(cp5.isMouseOver()){
    //   scene.disableMotionAgent();
-   // }
-   //else{
-   //  scene.enableMouseAgent();
-   //}
-   cp5.draw();
    
    
-  scene.mouseAgent().setPickingMode(MouseAgent.PickingMode.CLICK);
-
-
-  //******************************************************
+   //******************************************************
 
   int(millis());
   //every 50 ms save frame (20 fps)
@@ -86,17 +72,15 @@ hint(ENABLE_DEPTH_TEST);
     if(Recording){
       drawMovie();
     }
-
-
   }
-  
+}
+
+void setupCP5(){
+  cf = new ControlFrame(this, 400, 800, "Controls");
+  surface.setLocation(420,10);
 }
 
 
-
-void button(){
-  //println("Click");
-}
 
 
 VideoExport videoExport;
@@ -113,6 +97,7 @@ void drawMovie(){
 
 
 //--------------------------- INTERACTION KEYS -------------------------------------------------------------------
+  
 
 void keyPressed() {
 
@@ -175,8 +160,8 @@ void keyPressed() {
     setupStates();
   }
 
-
   //----------------------------TOP ROW QWERTYUIOP[]------------------------------------------------
+
   if (key=='q') {
     camera1();
   } else if (key=='Q') {

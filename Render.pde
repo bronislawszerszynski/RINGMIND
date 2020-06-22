@@ -277,15 +277,16 @@ class Renderer {
       }
       //moonlet
       if (ss.Moonlet) {
+        float moonRadius = cp5.getController("Moon Radius").getValue();
         fill(255);//Grey
         if(ss.Toggle3D){
           push();
           translate(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.position.z);
           sphereDetail(30);
-          sphere(ss.moonlet.radius*width/ss.Ly);
+          sphere(moonRadius*width/ss.Ly);
           pop();
         }else{
-        ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);    
+        ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*moonRadius*width/ss.Ly, 2*moonRadius*height/ss.Lx);    
         }
         
         
@@ -671,4 +672,52 @@ void titleText() {
     txt_fps = "";
   }
   surface.setTitle(txt_fps);
+}
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//-----------GUI---------------------
+
+class ControlFrame extends PApplet{
+  
+  int w, h;
+  PApplet parent;
+  
+  public ControlFrame(PApplet _parent, int _w, int _h, String _name){
+    super();
+    parent = _parent;
+    w = _w;
+    h = _h;
+    PApplet.runSketch(new String[]{this.getClass().getName()}, this);
+  }
+  
+  public void settings(){
+  size(270,800);
+  }
+  
+  public void setup(){
+  surface.setLocation(10,10);
+  cp5 = new ControlP5(this);
+  
+  cp5.addSlider("Orbit Radius")
+       //.plugTo(parent, "r0")
+       .setRange(50000000, 300000000)
+       .setValue(100000000)
+       .setPosition(0, 10)
+       .setSize(200, 20);
+       
+  cp5.addSlider("Moon Radius")
+       //.plugTo(parent, "r0")
+       .setRange(10, 250)
+       .setValue(150)
+       .setPosition(0, 40)
+       .setSize(200, 20);
+       
+       
+        
+  }
+  
+  void draw(){
+  background(190);
+  }
+  
 }

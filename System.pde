@@ -13,7 +13,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 1500;                       //Used for system initialiations 
+  int n_particles = 1000;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -356,9 +356,10 @@ class ShearSystem extends System {
 
   //Initialises Simulation Constants
   final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
-  final float r0 = 130000e3;   //Central position in the ring [m]. Defaults to 130000 km.
-  final float Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
-  final float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
+  //float r0 = 90000e3;   //Central position in the ring [m]. Defaults to 130000 km.
+  float r0 = cp5.getController("Orbit Radius").getValue();
+  float Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
+  float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
   Moonlet moonlet;
   ShearGrid SG ;
   QuadTree QT;
@@ -375,10 +376,7 @@ class ShearSystem extends System {
     if(!Toggle3D){
       scene.disableMotionAgent();
     }
-    
-    
-    
-        
+            
    // this is all for testing collsions  
     ShearParticle A = new ShearParticle(this);
     ShearParticle B = new ShearParticle(this);
@@ -416,12 +414,18 @@ class ShearSystem extends System {
     B.radius = 20;
     C.radius = 20;   
     D.radius = 20;   
+   
   }
 
   /** Take a step using the Velocity Verlet (Leapfrog) ODE integration algorithm.
    * Additional Method to Check if particles have left simulation.
    */
   @Override void update() {
+   float r0 = cp5.getController("Orbit Radius").getValue();
+    Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
+    S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
+  
+   
    
    super.update();
     //Have any particles left the simulation box, or collided with the moonlet?

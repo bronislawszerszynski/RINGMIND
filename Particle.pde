@@ -674,8 +674,12 @@ class ShearParticle extends Particle {
     if (ss.Moonlet) {
       PVector distanceVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
       float distanceVectMag = distanceVect.mag();
-      if (distanceVectMag > radius+ss.moonlet.radius) {
-        distanceVect = distanceVect.mult((SG*ss.moonlet.m)/pow(distanceVectMag, 3));
+      float moonRadius = cp5.getController("Moon Radius").getValue();
+      float moonMass = (4.0*PI/3.0)*pow(moonRadius, 3.0)*ss.moonlet.moonlet_density;
+
+      //if (distanceVectMag > radius+ss.moonlet.radius) {
+      if(distanceVectMag > radius + moonRadius){  
+        distanceVect = distanceVect.mult((SG*moonMass)/pow(distanceVectMag, 3));
         a_grav.x+= -distanceVect.x ;
         a_grav.y+= -distanceVect.y;
         a_grav.z+= -distanceVect.z;
@@ -819,9 +823,10 @@ class ShearParticle extends Particle {
     PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
     PVector Norm = (distVect.copy()).normalize();
     float distVectMag = distVect.copy().mag();
+    float moonRadius = cp5.getController("Moon Radius").getValue();
 
-    if (distVectMag < (ss.moonlet.radius + radius+3)) {
-      float CorrectionMag = (ss.moonlet.radius+radius+5) - distVectMag;
+    if (distVectMag < (moonRadius + radius+3)) {
+      float CorrectionMag = (moonRadius+radius+5) - distVectMag;
       PVector CorrectionVect = (Norm.copy()).mult(CorrectionMag);
       position.add(CorrectionVect);
       PVector XYVelocity = new PVector();
@@ -946,7 +951,8 @@ void CollisionCheckB(ShearParticle B) {
 class Moonlet extends ShearParticle {
 
   //Ring Moonlet Properties
-  float moonlet_r = 150.0;            //Radius of the moonlet [m].
+  //float moonlet_r = 150.0;         //Radius of the moonlet [m].
+  float moonlet_r = cp5.getController("Moon Radius").getValue();
   final float moonlet_density = 1000.0; //Density of the moonlet [kg/m^3]
 
   Moonlet(ShearSystem ss) {
