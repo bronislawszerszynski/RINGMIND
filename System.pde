@@ -2,7 +2,6 @@
 float G = 6.67408E-11;       // Gravitational Constant 6.67408E-11[m^3 kg^-1 s^-2]
 
 
-
 /**Class System
  */
 public abstract class System {
@@ -425,9 +424,18 @@ class ShearSystem extends System {
     Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
     S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
   
+   moonlet.radius = cp5.getController("Moon Radius").getValue();
+   moonlet.moonlet_density = cp5.getController("Moonlet Density").getValue();
+   //float LX = (int)1000*cp5.getController("Scale").getValue();
+   //float LY = (int)1000*cp5.getController("Scale").getValue();
+   //Lx = (int)LX;
+   //Ly = (int)LY;
+
+   
    
    
    super.update();
+   
     //Have any particles left the simulation box, or collided with the moonlet?
     //If so, remove and replace them.
     //ShearParticle A = (ShearParticle)particles.get(0);
@@ -438,7 +446,8 @@ class ShearSystem extends System {
      QT.ClearTree();
      for (Particle p : particles) {          
        ShearParticle x =(ShearParticle)p;
-       
+       x.radius = x.InitRadius*cp5.getController("ParticleSize").getValue();
+        
        if(SelfGrav){      
          QT.Insert(x);           
        }
@@ -467,7 +476,7 @@ class ShearSystem extends System {
 
           }
           if (particle_inMoonlet(x)) {
-           //x.Reset(this);       
+           x.Reset(this);       
           }
        }  
     }

@@ -277,16 +277,15 @@ class Renderer {
       }
       //moonlet
       if (ss.Moonlet) {
-        float moonRadius = cp5.getController("Moon Radius").getValue();
         fill(255);//Grey
         if(ss.Toggle3D){
           push();
           translate(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.position.z);
           sphereDetail(30);
-          sphere(moonRadius*width/ss.Ly);
+          sphere(ss.moonlet.radius*width/ss.Ly);
           pop();
         }else{
-        ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*moonRadius*width/ss.Ly, 2*moonRadius*height/ss.Lx);    
+        ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);    
         }
         
         
@@ -681,7 +680,7 @@ class ControlFrame extends PApplet{
   
   int w, h;
   PApplet parent;
-  
+
   public ControlFrame(PApplet _parent, int _w, int _h, String _name){
     super();
     parent = _parent;
@@ -699,25 +698,69 @@ class ControlFrame extends PApplet{
   cp5 = new ControlP5(this);
   
   cp5.addSlider("Orbit Radius")
-       //.plugTo(parent, "r0")
        .setRange(50000000, 300000000)
        .setValue(100000000)
-       .setPosition(0, 10)
+       .setPosition(10, 20)
        .setSize(200, 20);
+       
+  cp5.addButton("ToggleMoonlet")
+        .setCaptionLabel("Toggle Moonlet")
+        .setPosition(10, 60)
+        .setSize(100, 50);  
        
   cp5.addSlider("Moon Radius")
        //.plugTo(parent, "r0")
        .setRange(10, 250)
        .setValue(150)
-       .setPosition(0, 40)
+       .setPosition(10, 120)
        .setSize(200, 20);
        
-       
+  cp5.addSlider("Moonlet Density")
+        .setValue(1000)
+        .setRange(0,10000)
+        .setPosition(10,150)
+        .setSize(200,20);
         
+  cp5.addSlider("ParticleSize")
+        .setCaptionLabel("Particle Size")
+        .setRange(1,10)
+        .setPosition(10,180)
+        .setSize(200,20);
+  
+  cp5.addButton("ZoomOut")
+        .setCaptionLabel("+")
+        .setPosition(10,210)
+        .setSize(100, 50);
+  
+  cp5.addButton("ZoomIn")
+        .setCaptionLabel("-")
+        .setPosition(120,210)
+        .setSize(100, 50);
+  
   }
   
   void draw(){
   background(190);
   }
   
+  void ToggleMoonlet(){
+    ShearSystem ss = (ShearSystem)s;
+    ss.Moonlet = !ss.Moonlet;
+}
+
+  void ZoomOut(){
+     ShearSystem ss = (ShearSystem)s;
+     ss.Lx = ss.Lx/2;
+     ss.Ly = ss.Ly/2;
+  
+  }
+
+void ZoomIn(){
+     ShearSystem ss = (ShearSystem)s;
+     ss.Lx = ss.Lx*2;
+     ss.Ly = ss.Ly*2;
+  
+  }
+
+
 }
