@@ -1,12 +1,12 @@
- System s; //<>// //<>//
+System s; //<>// //<>//
 float G = 6.67408E-11;       // Gravitational Constant 6.67408E-11[m^3 kg^-1 s^-2]
 
 
 /**Class System
  */
- 
- int n_particles = 1000;
- 
+
+int n_particles = 1000;
+
 public abstract class System {
 
   //Timestep variables 
@@ -71,13 +71,13 @@ public abstract class System {
     for (Particle p : particles) {
       p.updatePosition(s.dt);
     }
-    if(!(s instanceof ShearSystem)){
-     for (Grid x : g) {
+    if (!(s instanceof ShearSystem)) {
+      for (Grid x : g) {
         x.update(this);
-    }
-    }else{
+      }
+    } else {
       ShearSystem ss = (ShearSystem)s;
-        ss.SG.Update(ss);
+      ss.SG.Update(ss);
     }
     for (Particle p : particles) {
       p.updateVelocity(p.getAcceleration(s), s.dt);
@@ -336,9 +336,9 @@ class AlignableMoonSystem extends MoonSystem {
 /**Class ShearSystem
  *@author Thomas Cann
  */
- public Boolean Toggle3D = true;
- public Boolean RingGap = false;
- public Boolean HalfRing = false; 
+public Boolean Toggle3D = true;
+public Boolean RingGap = false;
+public Boolean HalfRing = false; 
 
 class ShearSystem extends System {
 
@@ -366,25 +366,26 @@ class ShearSystem extends System {
   Moonlet moonlet;
   ShearGrid SG ;
   QuadTree QT;
-  
+
   ShearSystem(boolean Guides) {
     this.Guides =Guides;
     SG = new ShearGrid(this);
     Rectangle Rect = new Rectangle(Lx/2, Ly/2, Lx, Ly);
-    QT = new QuadTree(1 , Rect);
+    QT = new QuadTree(1, Rect);
     particles = new ArrayList<Particle>();
-    moonlet = new Moonlet(this);
+    moonlet = new Moonlet(
+    );
     random_start();
-    
-    if(!Toggle3D){
+
+    if (!Toggle3D) {
       //scene.disableMotionAgent();
     }
-            
-   // this is all for testing collsions  
+
+    // this is all for testing collsions  
     ShearParticle A = new ShearParticle(this);
     ShearParticle B = new ShearParticle(this);
     ShearParticle C = new ShearParticle(this);
-    ShearParticle D = new ShearParticle(this);
+    ShearParticle D = new ShearParticle(this); 
     //particles.add(A);
     //particles.add(B);
     //particles.add(C);
@@ -392,11 +393,11 @@ class ShearSystem extends System {
     A.position.x = 150;
     A.position.y = 0;   
     A.position.z = 0;   
-    
+
     B.position.x = 0;
     B.position.y = 150;   
     B.position.z = 0;   
-    
+
     C.position.x = 0;
     C.position.y = 0;   
     C.position.z = 150;   
@@ -404,100 +405,105 @@ class ShearSystem extends System {
     D.position.x = 0;
     D.position.y = 0;   
     D.position.z = 0;   
-    
+
     A.velocity = new PVector();
     B.velocity = new PVector();
     C.velocity = new PVector();
     D.velocity = new PVector();
-    
+
     A.radius = 20;
     A.m = 2e9;
     B.m = 2e9;
     C.m = 2e9;
     B.radius = 20;
     C.radius = 20;   
-    D.radius = 20;   
-   
+    D.radius = 20;
   }
 
   /** Take a step using the Velocity Verlet (Leapfrog) ODE integration algorithm.
    * Additional Method to Check if particles have left simulation.
    */
   @Override void update() {
-   float r0 = cp5.getController("Orbit Radius").getValue();
+    float r0 = cp5.getController("Orbit Radius").getValue();
     Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
     S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
-  
-   moonlet.radius = cp5.getController("Moon Radius").getValue();
-   moonlet.moonlet_density = cp5.getController("Moonlet Density").getValue();
-   //float LX = (int)1000*cp5.getController("Scale").getValue();
-   //float LY = (int)1000*cp5.getController("Scale").getValue();
-   //Lx = (int)LX;
-   //Ly = (int)LY;
 
-   
-   
-   
-   super.update();
-   
+    moonlet.radius = cp5.getController("Moon Radius").getValue();
+    moonlet.moonlet_density = cp5.getController("Moonlet Density").getValue();
+    //float LX = (int)1000*cp5.getController("Scale").getValue();
+    //float LY = (int)1000*cp5.getController("Scale").getValue();
+    //Lx = (int)LX;
+    //Ly = (int)LY;
+
+
+
+
+    super.update();
+
     //Have any particles left the simulation box, or collided with the moonlet?
     //If so, remove and replace them.
     //ShearParticle A = (ShearParticle)particles.get(0);
     //ShearParticle B = (ShearParticle)particles.get(1);
-     
-   
-     //println("loop");
-     QT.ClearTree();
-     for (Particle p : particles) {          
-       ShearParticle x =(ShearParticle)p;
-       x.radius = x.InitRadius*cp5.getController("ParticleSize").getValue();
-        
-       if(SelfGrav){      
-         QT.Insert(x);           
-       }
-       if(ClearMoonlet){
-            float ClearRadius = (x.position).dist(moonlet.position);
-               if(ClearRadius < moonlet.radius*1.1){
-               x.Reset(this);
-               } 
-       }
-    
+
+
+    //println("loop");
+    QT.ClearTree();
+    for (Particle p : particles) {          
+      ShearParticle x =(ShearParticle)p;
+      x.radius = x.InitRadius*cp5.getController("ParticleSize").getValue();
+
+      if (SelfGrav) {      
+        QT.Insert(x);
+      }
+      if (ClearMoonlet) {
+        float ClearRadius = (x.position).dist(moonlet.position);
+        if (ClearRadius < moonlet.radius*1.1) {
+          x.Reset(this);
+        }
+      }
+
       if (particle_outBox(x)) {
         x.Reset(this);
       }
-    
-    
-    
-      if (Moonlet) {
-         if(MoonletCollisions){
-           if(Toggle3D){
-             x.MoonletCollision3D(this);
-           }else{
-             x.MoonletCollisionCheck(this);
-           }
-           
-           
 
+
+
+      if (Moonlet) {
+        if (MoonletCollisions) {
+          if (Toggle3D) {
+            x.MoonletCollision3D(this);
+          } else {
+            x.MoonletCollisionCheck(this);
           }
-          if (particle_inMoonlet(x)) {
-           x.Reset(this);       
-          }
-       }  
+        }
+        if (particle_inMoonlet(x)) {
+          x.Reset(this);
+        }
+      }
     }
-    if(SelfGrav){
+    if (SelfGrav) {
       QT.TreeCofM();
-      
     }
-    if(ParticleCollisions){
+    if (ParticleCollisions) {
       SG.FillGrid(this);
       SG.CollisionCheckB();
     }
-    
+
     ClearMoonlet= false;
-    
-    if (DynamicMoon == true){
+
+    if (DynamicMoon == true) {
       moonlet.DynamicMoon(this);
-    }    
+    }
+    
+    moonlet.updatePosition(s.dt);
+    moonlet.updateVelocity(moonlet.getShear(this), s.dt);
+    
+    
+    
+    
+    
+    
+    
   }
 
   /** Method to boolean if Particle is out of ShearingBox.
@@ -505,7 +511,7 @@ class ShearSystem extends System {
    *@return True if out of Shearing Box
    */
   boolean particle_outBox(ShearParticle x) {
-    if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)||(x.position.z > 500)||(x.position.z < -500)){
+    if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)||(x.position.z > 500)||(x.position.z < -500)) {
       return true;
     } else {
       return false;
@@ -518,7 +524,7 @@ class ShearSystem extends System {
   boolean particle_inMoonlet(ShearParticle x) {
     PVector MoonVect = moonlet.position.copy();
     PVector Dist_Vector = MoonVect.sub(x.position);
-    
+
     if ((Dist_Vector.mag() < moonlet.radius)) {
       return true;
     } else {
@@ -529,13 +535,13 @@ class ShearSystem extends System {
    *@param n  Number of Particle to inject.
    */
   void random_inject(float n) {
-   //particles.add(new Moonlet(this));
+    //particles.add(new Moonlet(this));
     for (int i = 0; i < n; i++) {
       ShearParticle p = new ShearParticle(this);
       //particles.add(new ShearParticle(this));
       particles.add(p);
       p.Index=i;
-}
+    }
   }
 
   /** Method to Initialise the simulation with a random set of starting particles at the edges (in y).
@@ -600,8 +606,6 @@ class ShearSystem extends System {
     stroke(c);
     line(0, 0, -v.y*scale, -v.x*scale);
   }
-  
-  
 }
 
 /**Class TiltSystem

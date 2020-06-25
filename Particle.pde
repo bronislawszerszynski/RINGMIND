@@ -956,7 +956,7 @@ class Moonlet extends ShearParticle {
   float moonlet_r = cp5.getController("Moon Radius").getValue();
   float moonlet_density = 1000.0; //Density of the moonlet [kg/m^3]
 
-  Moonlet(ShearSystem ss) {
+  Moonlet() {
     position = new PVector();
     velocity = new PVector();
     acceleration = new PVector();
@@ -966,7 +966,6 @@ class Moonlet extends ShearParticle {
     position.x = 0;          // Change the starting position of the moonlet
     position.y = 0;
     position.z = 0;
-    //position.y = ss.Lx*0.8;
   }
 
   // Moon with eliptical orbit travels according to SMH in the x direction
@@ -975,6 +974,18 @@ class Moonlet extends ShearParticle {
     position.x = 200*cos(Hours*PI/2);  
     return position;
   }
+  
+  PVector getShear(ShearSystem ss){
+  PVector Shear = new PVector();
+   if (ss.A) {
+      Shear.x += -(2.0*ss.Omega0*ss.S0*position.x);
+      Shear.x += -(2.0*ss.Omega0*velocity.y);
+      Shear.y += (2.0*ss.Omega0*velocity.x);
+    }
+  return Shear;
+  }
+  
+  
 }
 //-----------------------------------------Particle I/O--------------------------------------------------------------
 

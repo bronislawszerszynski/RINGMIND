@@ -8,6 +8,7 @@ PShader offscreenShader;
 boolean useAdditiveBlend = false;
 boolean useTrace = false;
 boolean useFilters = false;
+boolean GhostMoon = false;
 int traceAmount=70;
 
 /** 
@@ -290,9 +291,19 @@ class Renderer {
         }else{
         ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);    
         }
-
     }
-       
+    
+    if(GhostMoon){
+    pushMatrix();
+    fill(255);
+    //translate(mm.getArrayValue()[0]*SliderScale, mm.getArrayValue()[1]*SliderScale, 0);
+    translate(mm.getArrayValue()[0]*width/ss.Ly, mm.getArrayValue()[1]*height/ss.Lx, 0);
+    sphere(40);
+    
+    println(SliderScale);
+    popMatrix();
+    }
+      
     } else if (s instanceof TiltSystem) {
       //--------------------------------------------TiltSystemRender--------------------------------------------------
       push();
@@ -677,6 +688,9 @@ void titleText() {
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-----------GUI---------------------
 
+  Slider2D mm;
+  float SliderScale = 1;
+
 class ControlFrame extends PApplet{
   Boolean keepMoonlet = false;
   Boolean keepRingGap = false;
@@ -689,7 +703,7 @@ class ControlFrame extends PApplet{
   int w, h;
   PApplet parent;
 
-  public ControlFrame(PApplet _parent, int _w, int _h, String _name){
+  public ControlFrame(PApplet _parent, int _w, int _h, String name){
     super();
     parent = _parent;
     w = _w;
@@ -783,9 +797,25 @@ class ControlFrame extends PApplet{
         .setPosition(190, 450)
         .setText(N)
         .setFont(font);
-
-
+        
+  mm = cp5.addSlider2D("MoonPosition")
+         .setPosition(10,480)
+         .setSize(200,100)
+         .setMinMax(-1000,-500,1000,500)
+         .setValue(0,0)
+         //.disableCrosshair()
+         ;
+         
+  cp5.addButton("CreateMoon")
+         .setPosition(10, 600)
+         .setSize(100, 50); 
+         
+  cp5.addButton("ResetMoon")
+         .setPosition(120,600)
+         .setSize(100, 50);                     
+  
 }
+  
   
   void draw(){
   background(190);
@@ -799,13 +829,16 @@ class ControlFrame extends PApplet{
 
   void ZoomOut(){
      ShearSystem ss = (ShearSystem)s;
+     SliderScale *= 2;
      ss.Lx = ss.Lx/2;
      ss.Ly = ss.Ly/2;
+     
      setupStates();
   }
 
   void ZoomIn(){
      ShearSystem ss = (ShearSystem)s;
+     SliderScale *= 0.5;
      ss.Lx = ss.Lx*2;
      ss.Ly = ss.Ly*2;
      setupStates();
@@ -849,6 +882,21 @@ class ControlFrame extends PApplet{
   println(N);
   Reset();
   }
+
+  void ResetMoon(){
+  mm.setValue(0,0);
+  CreateMoon();
   
+  }
+  
+  void CreateMoon(){
+  ShearSystem ss = (ShearSystem)s;
+  ss.Moonlet = true;
+
+  ss.moonlet.position.y = -mm.getArrayValue()[0];
+  ss.moonlet.position.x = -mm.getArrayValue()[1];
+  ss.moonlet.position.z = 0;
+  ss.moonlet.velocity = new PVector();
+  }
   
 }
