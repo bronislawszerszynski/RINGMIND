@@ -1,16 +1,7 @@
-/**
- * Class RingSystemProcessing 
- * A gravitational simulation in a Cartesian coordinate system.
- */
-/*
- * Physics Coding by Lancaster University Physics Graduates.
- * @author Thomas Cann
- * @author Sam Hinson
- *
- * Interaction design and audio visual system 
- * @author ashley james brown march-may.2019 
- */
-
+import controlP5.*;
+import com.hamoid.*;
+ControlP5 cp5;
+ControlFrame cf;
 ///////////////
 //           //
 //           //
@@ -19,58 +10,95 @@
 //           //
 ///////////////
 
-//syphon system to send to other applications
-//windows need to comment out these lines and in teh setup and draw
-//import codeanticode.syphon.*;
-//SyphonServer server;
+/** RINGMIND 
+ * A gravitational simulation in a Cartesian coordinate system.
+ *
+ * Physics Coding by Lancaster University Physics Graduates.
+ * @author Thomas Cann
+ * @author Sam Hinson
+ *-
+ * Interaction design and audio visual system 
+ * @author ashley james brown march-may.2019 
+ */
+int TimerReset = 0;
 
-////Dynamic Timestep variables 
-float dt;                                      //Simulation Time step [s]
-float simToRealTimeRatio = 3600.0/1.0;         // 3600.0/1.0 --> 1hour/second
-final float maxTimeStep = 20* simToRealTimeRatio / 30;
-float totalSimTime =0.0;                       // Tracks length of time simulation has be running
 
-//--------------------------------------------------------------------------------------------------------------------------------------------
+Boolean Running= true;
+Boolean Recording = false;
+PImage bg;
 
 void settings() {
 
-  fullScreen(P3D, 2);
-  //size (1000, 700, P3D);
+  //fullScreen(P3D, 1);
+  size (1600, 800, P3D);
+
   smooth(); //noSmooth();
 }
 
-//--------------------------------------------------------------------------------------------------------------------------------------------
-
 void setup() {
+    bg = loadImage("Background.png");
+    bg.resize(1600,800);
+    setupCP5();
   background(0);
   randomSeed(3);
-  //windows comment out this
-  //server = new SyphonServer(this, "ringmindSyphon");
+  surface.setLocation(280,10);
   systemState = State.initState;  //which state shall we begin with 
   setupStates();    //instantiate the scenarios so they are avialble for the state system to handle
-  systemState = State.resonanceState;  //which state shall we begin with 
-  setupStates();  
-}
+  systemState = State.shearState;  //which state shall we begin with 
 
-//--------------------------------------------------------------------------------------------------------------------------------------------
+  setupStates();
+  
+  setupExport();
+}
 
 void draw() {
-
+  
   //*************Simulation Update Frame******************
 
-  updateCurrentScene(millis());    //calls the render and anything specific to each scene state 
+//hint(ENABLE_DEPTH_TEST);  
 
-  //******************************************************
+  updateCurrentState(millis());    //calls the render and anything specific to each scene state 
+   //   scene.disableMotionAgent();
+   
+   
+   //******************************************************
 
-  //windows comment out this
-  //server.sendScreen();    //if we need to use multiple screens then lets sent it to madmapper and map it.
+  int(millis());
+  //every 50 ms save frame (20 fps)
+  int timer = int(millis()) - TimerReset;
+  
+  if(timer >= 50){
+    TimerReset += 50;
+    
+    if(Recording){
+      drawMovie();
+    }
+  }
 }
 
-void update() {
-  Saturn.update(); //
+void setupCP5(){
+  cf = new ControlFrame(this, 400, 800, "Controls");
+  surface.setLocation(420,10);
 }
+
+
+
+
+VideoExport videoExport;
+
+void setupExport(){
+  videoExport = new VideoExport(this, "myVideo.mp4");
+  videoExport.setFrameRate(20);
+  videoExport.startMovie();
+}
+
+void drawMovie(){
+  videoExport.saveFrame();
+}
+
 
 //--------------------------- INTERACTION KEYS -------------------------------------------------------------------
+  
 
 void keyPressed() {
 
@@ -90,7 +118,7 @@ void keyPressed() {
     setupStates();
   } else if (key=='5') {
     //ringmindStableState
-    systemState= State.ringmindStableState;
+    systemState= State.ringmindState;
     setupStates();
   } else if (key=='%') {
     //Unstable Ringmind State
@@ -109,28 +137,32 @@ void keyPressed() {
     systemState= State.shearState;
     setupStates();
   } else if (key=='*') {
-    //Add Moonlet
-    Moonlet = true;
+    //Toggle Moonlet
+    if (s instanceof ShearSystem) {
+      ShearSystem ss = (ShearSystem) s;
+      ss.Moonlet = !ss.Moonlet;
+      ss.ClearMoonlet = true;
+    }
   } else if (key=='9') {
     //TiltSystem
-    systemState= State.chaosState;
+    systemState= State.formingState;
     setupStates();
-  //} else if (key=='0') {
-  //  systemState= State.ringboarderState;
-  //  setupStates();
-  //} else if (key==')') {
-  //  systemState= State.addAlienLettersState;
-  //  setupStates();
-  //} else if (key=='-') {
-  //  systemState= State.orbitalState;
-  //  setupStates();
-  //} else if (key== '=') {
-  //  systemState= State.resonanceState;
-  //  setupStates();
+  } else if (key=='0') {
+    systemState= State.ringboarderState;
+    setupStates();
+  } else if (key==')') {
+    systemState= State.addAlienLettersState;
+    setupStates();
+  } else if (key=='-') {
+    systemState= State.threadingState;
+    setupStates();
+  } else if (key== '=') {
+    systemState= State.resonanceState;
+    setupStates();
   }
 
-
   //----------------------------TOP ROW QWERTYUIOP[]------------------------------------------------
+
   if (key=='q') {
     camera1();
   } else if (key=='Q') {
@@ -145,10 +177,9 @@ void keyPressed() {
   } else if (key=='E') {
     //
   } else if (key=='r') {
-    camera4();
     //Proscene - Show Camera Path
   } else if (key=='R') {
-    //
+    camera4();
   } else if (key=='t') {
     zoomedCamera();
   } else if (key=='T') {
@@ -186,12 +217,16 @@ void keyPressed() {
   } else if (key == 'A') {
     useAdditiveBlend = !useAdditiveBlend;
   } else if (key=='s') {
-    useTrace = !useTrace;
     //Proscene - Fill Screen
   } else if (key=='S') {
-    //Save Path to JSON
+    //Release to Save Path to JSON
   } else if (key=='d') {
-    traceAmount=190;
+    if (s instanceof ShearSystem) {
+      ShearSystem ss = (ShearSystem)s;
+      ss.Guides= !ss.Guides;
+    } else {
+      traceAmount=190;
+    }
   } else if (key=='D') {
     //
   } else if (key=='f') {
@@ -208,10 +243,11 @@ void keyPressed() {
   } else if (key=='H') {
     //
   } else if (key=='j') {
-    //
+    useTrace = !useTrace;
   } else if (key=='J') {
     //
   } else if (key=='k') {
+    Recording = !Recording;
     //
   } else if (key=='k') {
     //
@@ -232,8 +268,8 @@ void keyPressed() {
   } else if (key=='X') {
     //
   } else if (key=='c') {
-    oscRingDensity(Saturn);
-    oscRingRotationRate(Saturn);
+    //oscRingDensity(Saturn);
+    //oscRingRotationRate(Saturn);
   } else if (key=='C') {
     //
   } else if (key=='v') {
@@ -249,8 +285,8 @@ void keyPressed() {
   } else if (key=='N') {
     //
   } else if (key=='m') {
-    //turn on this alogorithm to send tony the data
-    MoonAlignment = !MoonAlignment;
+    ////turn on this alogorithm to send tony the data
+    //MoonAlignment = !MoonAlignment;
   } else if (key=='M') {
     //
   }
@@ -269,16 +305,16 @@ public void keyReleased() {
 
 public void mouseReleased() {
   //lets debug print all the camera stuff to help figure out what data we need for each scene
-  println("****** camera debug info ******");
-  println();
-  println("camera orientation");
-  Rotation r = scene.camera().frame().orientation();
-  r.print();
-  println();
-  println("camera position");
-  println(scene.camera().position());
-  println();
-  println("view direction");
-  println(scene.camera().viewDirection());
-  println();
+  //println("****** camera debug info ******");
+  //println();
+  //println("camera orientation");
+  //Rotation r = scene.camera().frame().orientation();
+  //r.print();
+  //println();
+  //println("camera position");
+  //println(scene.camera().position());
+  //println();
+  //println("view direction");
+  //println(scene.camera().viewDirection());
+  //println();
 }
