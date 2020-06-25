@@ -4,6 +4,9 @@ float G = 6.67408E-11;       // Gravitational Constant 6.67408E-11[m^3 kg^-1 s^-
 
 /**Class System
  */
+ 
+ int n_particles = 1000;
+ 
 public abstract class System {
 
   //Timestep variables 
@@ -12,7 +15,7 @@ public abstract class System {
   float maxTimeStep = 20* simToRealTimeRatio / 30;
   float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
 
-  int n_particles = 1000;                       //Used for system initialiations 
+  //int n_particles = 1000;                       //Used for system initialiations 
   ArrayList<Particle> particles;
   ArrayList<Grid> g;  
 
@@ -334,7 +337,9 @@ class AlignableMoonSystem extends MoonSystem {
  *@author Thomas Cann
  */
  public Boolean Toggle3D = true;
- 
+ public Boolean RingGap = false;
+ public Boolean HalfRing = false; 
+
 class ShearSystem extends System {
 
   Boolean Moonlet = false; //Adds in the moonlet
@@ -347,9 +352,6 @@ class ShearSystem extends System {
   Boolean Guides = true; // shows particle trajectories
   Boolean Reset = false; // leave this off
   Boolean DynamicMoon = false; // Moon oscillates up and down
-  Boolean RingGap = false;   // Creates a ring gap
-  Boolean HalfRing = false; 
-  //Boolean Toggle3D = true;
   //Simulation dimensions [m]
   int Lx = 1000;       //Extent of simulation box along planet-point line [m].
   int Ly = 2000;       //Extent of simulation box along orbit [m].
@@ -504,7 +506,6 @@ class ShearSystem extends System {
    */
   boolean particle_outBox(ShearParticle x) {
     if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)||(x.position.z > 500)||(x.position.z < -500)){
-    //if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)){
       return true;
     } else {
       return false;
@@ -600,9 +601,6 @@ class ShearSystem extends System {
     line(0, 0, -v.y*scale, -v.x*scale);
   }
   
-  void mouseClicked(){
-  println("Clickly!");
-  }
   
 }
 

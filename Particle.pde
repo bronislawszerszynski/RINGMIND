@@ -609,7 +609,7 @@ class ShearParticle extends Particle {
     acceleration = new PVector();
     //
     position.y = (random(1)-0.5)*s.Ly;  
-    if(s.HalfRing){
+    if(HalfRing){
        position.x = -(random(1))*s.Lx/2;
     }else{
       position.x = (random(1)-0.5)*s.Lx;
@@ -617,10 +617,10 @@ class ShearParticle extends Particle {
     
     
 
-    if (s.RingGap) {
+    if (RingGap) {
       boolean InGap = true;
       do {
-        if(s.HalfRing){
+        if(HalfRing){
           position.x = -(random(1))*s.Lx/2;
         }else{
           position.x = (random(1)-0.5)*s.Lx;
@@ -744,7 +744,7 @@ class ShearParticle extends Particle {
       // normanlise n --> k = 1
       float XWeight = float(n)/k;  
 
-      if(s.HalfRing){
+      if(HalfRing){
         position.x= (-XWeight*s.Lx/2);
         position.y = s.Ly/2;
       }else{
@@ -759,7 +759,7 @@ class ShearParticle extends Particle {
           position.y = s.Ly/2;
         }
       }
-        if (s.RingGap == true) {
+        if (RingGap == true) {
           if (position.x > -s.GapWidth/2 && position.x < s.GapWidth/2) {
             InGap = true;
           } else {

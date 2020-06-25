@@ -428,7 +428,7 @@ ShearGrid(ShearSystem ss){
   dy = ss.Ly/sizeY;
 
   this.sGrid = new int[sizeX][sizeY];
-  this.sGrid2 = new int[sizeX][sizeY][ss.n_particles];
+  this.sGrid2 = new int[sizeX][sizeY][n_particles];
   this.sGridNorm = new float[sizeX][sizeY];
   this.sGridCofM = new PVector[sizeX][sizeY];
   this.CellParticles = new ArrayList[sizeX][sizeY];

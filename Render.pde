@@ -678,7 +678,14 @@ void titleText() {
 //-----------GUI---------------------
 
 class ControlFrame extends PApplet{
-  
+  Boolean keepMoonlet = false;
+  Boolean keepRingGap = false;
+  String N = Integer.toString(n_particles);
+  Textlabel A; 
+
+
+
+
   int w, h;
   PApplet parent;
 
@@ -695,6 +702,10 @@ class ControlFrame extends PApplet{
   }
   
   public void setup(){
+    
+  PFont p = createFont("Verdana",12); 
+  ControlFont font = new ControlFont(p);  
+    
   surface.setLocation(10,10);
   cp5 = new ControlP5(this);
   
@@ -745,7 +756,36 @@ class ControlFrame extends PApplet{
   cp5.addButton("Toggle3D")
         .setPosition(120, 270)
         .setSize(100, 50);
-  }
+        
+  cp5.addButton("RingGap")
+        .setPosition(10, 330)
+        .setSize(100, 50);
+        
+  cp5.addButton("HalfRing")
+        .setPosition(120, 330)
+        .setSize(100, 50);
+        
+  cp5.addButton("MoreParticles")
+        .setPosition(10,390)
+        .setSize(100,50);
+
+
+  cp5.addButton("LessParticles")
+        .setPosition(120,390)
+        .setSize(100,50);
+
+  cp5.addTextlabel("#Particles")
+        .setPosition(10, 450)
+        .setText("NUMBER OF PARTICLES:")
+        .setFont(font);
+
+  A = cp5.addTextlabel("ParticleN")
+        .setPosition(190, 450)
+        .setText(N)
+        .setFont(font);
+
+
+}
   
   void draw(){
   background(190);
@@ -754,6 +794,7 @@ class ControlFrame extends PApplet{
   void ToggleMoonlet(){
     ShearSystem ss = (ShearSystem)s;
     ss.Moonlet = !ss.Moonlet;
+    keepMoonlet = ss.Moonlet;
 }
 
   void ZoomOut(){
@@ -761,8 +802,6 @@ class ControlFrame extends PApplet{
      ss.Lx = ss.Lx/2;
      ss.Ly = ss.Ly/2;
      setupStates();
-
-  
   }
 
   void ZoomIn(){
@@ -774,14 +813,42 @@ class ControlFrame extends PApplet{
   }
 
   void Reset(){
-    systemState= State.shearState;
     setupStates();
-
+    ShearSystem ss = (ShearSystem)s;
+    ss.Moonlet = keepMoonlet;
   }
 
   void Toggle3D(){
   Toggle3D = !Toggle3D;
-  setupStates();  
+  Reset();
   }
 
+  void RingGap(){
+  RingGap = !RingGap;
+  HalfRing = false;
+  Reset();  
+  }
+  
+  void HalfRing(){
+  HalfRing = !HalfRing;
+  RingGap = false;
+  Reset();
+  }
+  
+  void MoreParticles(){
+  n_particles += 100;
+  N = Integer.toString(n_particles);
+  A.setText(N);
+  Reset();
+  }
+  
+  void LessParticles(){
+  n_particles -= 100;
+  N = Integer.toString(n_particles);
+  A.setText(N);
+  println(N);
+  Reset();
+  }
+  
+  
 }
