@@ -152,6 +152,7 @@ void updateCurrentState(int t) {
     scene.endScreenDrawing();
   } else {
     background(0);
+    //background(bg);
   }
 
   // Display all of the objects to screen using the renderer.

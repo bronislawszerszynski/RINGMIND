@@ -637,7 +637,7 @@ class ShearParticle extends Particle {
     }
     InitPosition = position.copy();
     
-    if(s.Toggle3D){
+    if(Toggle3D){
     position.z = random(300) - 150;
     }
     
@@ -775,7 +775,7 @@ class ShearParticle extends Particle {
     velocity.x = 0;
     velocity.y = 1.5 * s.Omega0 * position.x;
     
-    if(s.Toggle3D){
+    if(Toggle3D){
     position.z = random(300) - 150;
     velocity.z = 0;
     }

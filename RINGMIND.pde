@@ -25,7 +25,7 @@ int TimerReset = 0;
 
 Boolean Running= true;
 Boolean Recording = false;
-
+PImage bg;
 
 void settings() {
 
@@ -36,6 +36,8 @@ void settings() {
 }
 
 void setup() {
+    bg = loadImage("Background.png");
+    bg.resize(1600,800);
     setupCP5();
   background(0);
   randomSeed(3);
@@ -47,7 +49,6 @@ void setup() {
   setupStates();
   
   setupExport();
-
 }
 
 void draw() {

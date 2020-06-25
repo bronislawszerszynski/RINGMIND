@@ -333,6 +333,8 @@ class AlignableMoonSystem extends MoonSystem {
 /**Class ShearSystem
  *@author Thomas Cann
  */
+ public Boolean Toggle3D = true;
+ 
 class ShearSystem extends System {
 
   Boolean Moonlet = false; //Adds in the moonlet
@@ -347,7 +349,7 @@ class ShearSystem extends System {
   Boolean DynamicMoon = false; // Moon oscillates up and down
   Boolean RingGap = false;   // Creates a ring gap
   Boolean HalfRing = false; 
-  Boolean Toggle3D = true;
+  //Boolean Toggle3D = true;
   //Simulation dimensions [m]
   int Lx = 1000;       //Extent of simulation box along planet-point line [m].
   int Ly = 2000;       //Extent of simulation box along orbit [m].
@@ -373,7 +375,7 @@ class ShearSystem extends System {
     random_start();
     
     if(!Toggle3D){
-      scene.disableMotionAgent();
+      //scene.disableMotionAgent();
     }
             
    // this is all for testing collsions  

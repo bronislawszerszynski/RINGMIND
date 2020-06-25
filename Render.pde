@@ -18,7 +18,6 @@ void renderSetup() {
   renderer.withMoon = true;
   //PGraphics Object
   pg = createGraphics(1024, 1024, P3D);
-
   //RenderContext Object
   renderContext = new RenderContext();
   renderContext.pgfx = this;
@@ -231,6 +230,10 @@ class Renderer {
       //endShape();
       pop();
       
+      
+     
+
+      
       for (int PP = 0; PP < ss.particles.size(); PP++) {
         
         //Assigns a colour to particles that origonate on each of these band along the x axis
@@ -251,7 +254,7 @@ class Renderer {
           fill(255,0,0);//Red
           }
           
-          if(ss.Toggle3D){
+          if(Toggle3D){
             push();
           translate(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, sp.position.z);
           sphereDetail(6);
@@ -278,20 +281,18 @@ class Renderer {
       //moonlet
       if (ss.Moonlet) {
         fill(255);//Grey
-        if(ss.Toggle3D){
-          push();
+        if(Toggle3D){
+          pushMatrix();
           translate(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.position.z);
           sphereDetail(30);
           sphere(ss.moonlet.radius*width/ss.Ly);
-          pop();
+          popMatrix();
         }else{
         ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);    
         }
-        
-        
 
     }
-     
+       
     } else if (s instanceof TiltSystem) {
       //--------------------------------------------TiltSystemRender--------------------------------------------------
       push();
@@ -736,7 +737,14 @@ class ControlFrame extends PApplet{
         .setCaptionLabel("-")
         .setPosition(120,210)
         .setSize(100, 50);
-  
+        
+  cp5.addButton("Reset")
+        .setPosition(10, 270)
+        .setSize(100, 50);
+        
+  cp5.addButton("Toggle3D")
+        .setPosition(120, 270)
+        .setSize(100, 50);
   }
   
   void draw(){
@@ -752,15 +760,28 @@ class ControlFrame extends PApplet{
      ShearSystem ss = (ShearSystem)s;
      ss.Lx = ss.Lx/2;
      ss.Ly = ss.Ly/2;
+     setupStates();
+
   
   }
 
-void ZoomIn(){
+  void ZoomIn(){
      ShearSystem ss = (ShearSystem)s;
      ss.Lx = ss.Lx*2;
      ss.Ly = ss.Ly*2;
-  
+     setupStates();
+
   }
 
+  void Reset(){
+    systemState= State.shearState;
+    setupStates();
+
+  }
+
+  void Toggle3D(){
+  Toggle3D = !Toggle3D;
+  setupStates();  
+  }
 
 }
