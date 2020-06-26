@@ -406,16 +406,14 @@ class Grid {
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ////// Grid for the ShearSystem  ///////
 
-
+//Shear grid is a standard grid system used for particle collision detection - this would be best moved over to the Quad tree as it will likely be fasted and then we won't need 2 grids
 class ShearGrid{
-int dx, dy;
+int dx, dy; //Dimensions of 1 grid cell
 int sGrid[][];
-int sGrid2[][][];
 
 ArrayList<ShearParticle> CellParticles[][];
 float sGridNorm[][];
-PVector sGridCofM[][];
-int sizeX, sizeY;
+int sizeX, sizeY;  //# of cells 
 int Lx, Ly;
 
 ShearGrid(ShearSystem ss){
@@ -428,9 +426,7 @@ ShearGrid(ShearSystem ss){
   dy = ss.Ly/sizeY;
 
   this.sGrid = new int[sizeX][sizeY];
-  this.sGrid2 = new int[sizeX][sizeY][n_particles];
   this.sGridNorm = new float[sizeX][sizeY];
-  this.sGridCofM = new PVector[sizeX][sizeY];
   this.CellParticles = new ArrayList[sizeX][sizeY];
   reset();
 
@@ -461,13 +457,13 @@ int Geti(Particle p){
       for (int j = 0; j < sizeY; j++) {
         sGrid[i][j] = 0;
         sGridNorm[i][j] = 0;
-        sGridCofM[i][j]= new PVector();
         this.CellParticles[i][j] = new ArrayList();
 
       }
     }
   }
   
+  //Draws new grid putting particles in the correct cell and assigning an index
  void Update(ShearSystem ss){ 
    reset();
   
@@ -476,27 +472,8 @@ int Geti(Particle p){
           int j = Getj(p);
           if (validij(i, j)) {
             sGrid[i][j] +=1;
-            //sGridCofM[i][j].add(p.position);
           }
-   } 
-   //for (int i = 0; i < sizeX; i++) {
-   //   for (int j = 0; j < sizeY; j++) {
-   //      if (sGrid[i][j] !=0) {
-   //         sGridCofM[i][j].div(sGrid[i][j]);
-   //      } else {
-   //         sGridCofM[i][j].set(0.0, 0.0, 0.0);
-   //      }     
-
-   //    }
-   // }
- 
- //  //Looping through all the grid cell combining properties to calculate normalised values and average values from total values.
-      //for (int i = 0; i < sizeX; i++) {
-      //  for (int j = 0; j < sizeY; j++) {
-
-      //    sGridNorm[i][j] = sGrid[i][j]/((dx*dy)*ss.n_particles);
-      //  }
-      //}
+   }  
  }
  
  void FillGrid(ShearSystem ss){
@@ -512,8 +489,8 @@ int Geti(Particle p){
  }
  
  
-
- void CollisionCheckB(){
+  //Runs through the grid cells and checks for particle collisions between itself and adjacent cells with no repitition
+ void CollisionCheck(){
     for(int i=0; i < sizeX; i++){
       for(int j=0; j< sizeY; j++){
           int n = CellParticles[i][j].size();
@@ -550,6 +527,7 @@ int Geti(Particle p){
 }
 //-------------------- QuadTree----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+//Much better grid system than above, collision detection would be best moved here
 
 class QuadTree{
      int MaxObjects = 1;
@@ -572,6 +550,7 @@ class QuadTree{
        this.CofM = new PVector();
       }
       
+     //Clears the particles from the tree
 void ClearTree(){
       Objects.clear();
       M = 0;
@@ -583,7 +562,7 @@ void ClearTree(){
         }
       }
 } 
-  
+    //Splits a node in 4 equal children and reasigns the particles into these 4 nodes
 void SplitTree(){
        
       int SubWidth = (int)bounds.getWidth()/2;
@@ -621,7 +600,7 @@ void SplitTree(){
       
       return Index;
   }
-  
+  //Places a particle into the correct node, if a node is full the  the node is split and all particles asigned to child nodes 
 void Insert(ShearParticle p){
   
   if(nodes[0] != null){
@@ -650,7 +629,7 @@ void Insert(ShearParticle p){
       }
 }
 
-
+    //Retreives the node of a specific particle
 ArrayList RetrieveNode(ArrayList ReturnObjects){
      for(int i = 0; i < 4 ; i++){
          if(nodes[0] != null){
@@ -662,6 +641,7 @@ ArrayList RetrieveNode(ArrayList ReturnObjects){
   return ReturnObjects;
 }
 
+//Calculates the centre of mass of each node
 void TreeCofM(){
     NodeObjects.clear();
     RetrieveNode(NodeObjects);
@@ -690,7 +670,10 @@ void TreeCofM(){
       }
     }
 }
-
+  // Calculates the gravitational force an a particle
+  // if a nodes centre of mass is sufficiently far away then it is assumed to be 1 object, objects closer to the particle are individually considered
+  //http://arborjs.org/docs/barnes-hut
+  //Done exactly as the website above
   PVector SelfGrav(ShearParticle p){
        
       
