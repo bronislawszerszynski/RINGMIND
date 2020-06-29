@@ -151,6 +151,7 @@ void updateCurrentState(int t) {
     rect(0, 0, width, height);
     scene.endScreenDrawing();
   } else {
+    //Either a black background or use a spacey looking imagine I took from the Unity version
     background(0);
     //background(bg);
   }

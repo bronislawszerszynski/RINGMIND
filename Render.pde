@@ -256,18 +256,22 @@ class Renderer {
           }
           
           if(Toggle3D){
+            //Renders low poly spheres
             push();
           translate(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, sp.position.z);
           sphereDetail(6);
           sphere(sp.radius*width/ss.Ly);      
             pop();
           }else{
+            //Renders 2D circles
             ellipse(-sp.position.y*width/ss.Ly, -sp.position.x*height/ss.Lx, 2*sp.radius*width/ss.Ly, 2*sp.radius*height/ss.Lx);      
           }
       }
 
       
       if (ss.Guides) {
+        //Renders the velocities and accelerations for particles
+        //Has not been updated to work in 3D
         for (int PP = 0; PP < ss.particles.size(); PP++) {
           ShearParticle sp = (ShearParticle)ss.particles.get(PP);
           //ss.displayPosition(sp.position, 1, color(255, 0, 0));
@@ -280,29 +284,34 @@ class Renderer {
         }
       }
       //moonlet
-      if (ss.Moonlet) {
+      if (Moonlet) {
         fill(255);//Grey
         if(Toggle3D){
+          //Renders 3D moonlet
           pushMatrix();
+          lights();
           translate(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, ss.moonlet.position.z);
-          sphereDetail(30);
+          sphereDetail(60);
           sphere(ss.moonlet.radius*width/ss.Ly);
           popMatrix();
         }else{
+          //Renders 2D Moonlet
         ellipse(-ss.moonlet.position.y*width/ss.Ly, -ss.moonlet.position.x*height/ss.Lx, 2*ss.moonlet.radius*width/ss.Ly, 2*ss.moonlet.radius*height/ss.Lx);    
         }
     }
     
-    if(GhostMoon){
-    pushMatrix();
-    fill(255);
-    //translate(mm.getArrayValue()[0]*SliderScale, mm.getArrayValue()[1]*SliderScale, 0);
-    translate(mm.getArrayValue()[0]*width/ss.Ly, mm.getArrayValue()[1]*height/ss.Lx, 0);
-    sphere(40);
+    //Adds a texture to the moonlet, slows things down a lot and doesn't look that good anyway 
+    //pushMatrix();
+    //fill(255);
+    //sphereDetail(10);
+    //PImage moonTexture;
+    //PShape Moon;
+    //moonTexture = loadImage("plutomap1k.jpg");
+    //Moon = createShape(SPHERE, 200);
+    //Moon.setTexture(moonTexture);
+    //shape(Moon);
+    //popMatrix();
     
-    println(SliderScale);
-    popMatrix();
-    }
       
     } else if (s instanceof TiltSystem) {
       //--------------------------------------------TiltSystemRender--------------------------------------------------
@@ -692,10 +701,9 @@ void titleText() {
   float SliderScale = 1;
 
 class ControlFrame extends PApplet{
-  Boolean keepMoonlet = false;
   Boolean keepRingGap = false;
   String N = Integer.toString(n_particles);
-  Textlabel A; 
+  Textlabel LabelA; 
 
 
 
@@ -716,103 +724,173 @@ class ControlFrame extends PApplet{
   }
   
   public void setup(){
-    
-  PFont p = createFont("Verdana",12); 
-  ControlFont font = new ControlFont(p);  
-    
+  PFont A = createFont("Verdana",9); 
+  PFont B = createFont("Verdana",12); 
+  PFont C = createFont("Verdana",8); 
+  PFont D = createFont("Verdana",11); 
+  
+  ControlFont fontA = new ControlFont(A);  
+  ControlFont fontB = new ControlFont(B);
+  ControlFont fontC = new ControlFont(C);
+  ControlFont fontD = new ControlFont(D);
+
   surface.setLocation(10,10);
   cp5 = new ControlP5(this);
+  cp5.setFont(fontA);
   
+  //PLAY
+  
+  cp5.addTextlabel("PLAY")
+        .setPosition(115, 300)
+        .setText("PLAY")
+        .setFont(fontB)
+        .setColorValue(0xff000000);
+  
+  //Slider to vary the orbital hight of the shearing box
   cp5.addSlider("Orbit Radius")
        .setRange(50000000, 300000000)
        .setValue(100000000)
-       .setPosition(10, 20)
-       .setSize(200, 20);
-       
-  cp5.addButton("ToggleMoonlet")
-        .setCaptionLabel("Toggle Moonlet")
-        .setPosition(10, 60)
-        .setSize(100, 50);  
-       
+       .setPosition(10, 330)
+       .setSize(180, 20)
+       .setColorLabel(0xff000000);
+ 
+  
+  //Slider to vary moonlet radius     
   cp5.addSlider("Moon Radius")
        //.plugTo(parent, "r0")
-       .setRange(10, 250)
+       .setRange(10, 300)
        .setValue(150)
-       .setPosition(10, 120)
-       .setSize(200, 20);
+       .setPosition(10, 360)
+       .setSize(180, 20)
+       .setColorLabel(0xff000000);
        
+  //Slider to vary moonlet Density     
   cp5.addSlider("Moonlet Density")
+        .setCaptionLabel("Moon Density")
         .setValue(1000)
         .setRange(0,10000)
-        .setPosition(10,150)
-        .setSize(200,20);
+        .setPosition(10,390)
+        .setSize(180,20)
+       .setColorLabel(0xff000000);
         
+  //Slider to vary particle size
   cp5.addSlider("ParticleSize")
         .setCaptionLabel("Particle Size")
-        .setRange(1,10)
-        .setPosition(10,180)
-        .setSize(200,20);
-  
-  cp5.addButton("ZoomOut")
-        .setCaptionLabel("+")
-        .setPosition(10,210)
-        .setSize(100, 50);
-  
-  cp5.addButton("ZoomIn")
-        .setCaptionLabel("-")
-        .setPosition(120,210)
-        .setSize(100, 50);
+        .setRange(1,5)
+        .setPosition(10,420)
+        .setSize(180,20)
+       .setColorLabel(0xff000000);
         
-  cp5.addButton("Reset")
-        .setPosition(10, 270)
-        .setSize(100, 50);
-        
-  cp5.addButton("Toggle3D")
-        .setPosition(120, 270)
-        .setSize(100, 50);
-        
-  cp5.addButton("RingGap")
-        .setPosition(10, 330)
-        .setSize(100, 50);
-        
-  cp5.addButton("HalfRing")
-        .setPosition(120, 330)
-        .setSize(100, 50);
-        
-  cp5.addButton("MoreParticles")
-        .setPosition(10,390)
-        .setSize(100,50);
-
-
-  cp5.addButton("LessParticles")
-        .setPosition(120,390)
-        .setSize(100,50);
-
-  cp5.addTextlabel("#Particles")
-        .setPosition(10, 450)
-        .setText("NUMBER OF PARTICLES:")
-        .setFont(font);
-
-  A = cp5.addTextlabel("ParticleN")
-        .setPosition(190, 450)
-        .setText(N)
-        .setFont(font);
-        
+  // 2D slider that lets you pick of position on screen and for you to create a moonlet   
   mm = cp5.addSlider2D("MoonPosition")
-         .setPosition(10,480)
-         .setSize(200,100)
+         .setCaptionLabel("Moon Position")
+         .setPosition(10,450)
+         .setSize(250,125)
          .setMinMax(-1000,-500,1000,500)
          .setValue(0,0)
+         .setFont(D)
          //.disableCrosshair()
-         ;
+       .setColorLabel(0xff000000)
+       .setColorValue(0xff000000);
          
+              
+         //Turn moonlet on/off
+  cp5.addButton("ToggleMoonlet")
+        .setCaptionLabel("Toggle Moon")
+        .setPosition(10, 610)
+        .setSize(80, 50)  
+        .setFont(fontA);
+              
+  //Creates a moonlet at position selected on the 2D slider; will remove old moonlet      
   cp5.addButton("CreateMoon")
-         .setPosition(10, 600)
-         .setSize(100, 50); 
-         
+        .setCaptionLabel("Create Moon")
+        .setPosition(95, 610)
+        .setSize(80, 50) 
+        .setFont(fontA);
+
+  //Resets the moonlet position and slider possition back to (0,0)       
   cp5.addButton("ResetMoon")
-         .setPosition(120,600)
-         .setSize(100, 50);                     
+        .setCaptionLabel("Reset Moon")
+        .setPosition(180,610)
+        .setSize(80, 50)
+        .setFont(fontA);
+
+           
+           // SETUP
+  cp5.addTextlabel("Setup")
+        .setPosition(110, 10)
+        .setText("SETUP")
+        .setFont(fontB)
+        .setColorValue(0xff000000);
+  
+  //  //Half the dimensions of the shearing box
+  cp5.addButton("ZoomIn")
+        .setCaptionLabel("Zoom In")
+        .setPosition(10,40)
+        .setSize(55, 50)
+        .setFont(fontC);
+  
+  //Double the dimensions of the shearing box
+  cp5.addButton("ZoomOut")
+        .setCaptionLabel("Zoom Out")
+        .setPosition(75,40)
+        .setSize(55, 50)
+        .setFont(fontC);
+  
+  //Resets all particles to new random start points
+  cp5.addButton("Reset")
+        .setPosition(140, 40)
+        .setSize(55, 50)
+        .setFont(fontD);
+
+        
+  //Swaps between 2D and 3D (also calls Reset)
+  cp5.addButton("Toggle3D")
+        .setCaptionLabel("2D/3D")
+        .setPosition(205, 40)
+        .setSize(55, 50)
+        .setFont(fontD);
+        
+  //Adds 100 particles to the shearing box (also calls Reset)  
+  cp5.addButton("MoreParticles")
+        .setCaptionLabel("+ 100")
+        .setPosition(70,100)
+        .setSize(50,50)
+        .setFont(fontD);
+
+  //Removes 100 particles from the shearing box (also calls Reset)  
+  cp5.addButton("LessParticles")
+        .setCaptionLabel("- 100")
+        .setPosition(10,100)
+        .setSize(50,50)
+        .setFont(fontD);
+        
+  //Label displaying number of particles on screen
+  cp5.addTextlabel("#Particles")
+        .setPosition(130, 115)
+        .setText("PARTICLES:")
+        .setFont(fontD)
+        .setColorValue(0xff000000);
+  
+  LabelA = cp5.addTextlabel("ParticleN")
+        .setPosition(220, 115)
+        .setText(N)
+        .setFont(fontD)        
+        .setColorValue(0xff000000);
+        
+                
+  //Turns on/off the ring gap (also calls Reset)
+  cp5.addButton("RingGap")
+        .setPosition(10, 160)
+        .setSize(120, 50)
+        .setFont(fontD);
+        
+  //Turns on/off the top half of the ring (also calls Reset)      
+  cp5.addButton("HalfRing")
+        .setPosition(140, 160)
+        .setSize(120, 50)
+        .setFont(fontD);
+       
   
 }
   
@@ -820,35 +898,30 @@ class ControlFrame extends PApplet{
   void draw(){
   background(190);
   }
+  //These are all the methods corresponding to the buttons above so I won't commment them all again
   
   void ToggleMoonlet(){
-    ShearSystem ss = (ShearSystem)s;
-    ss.Moonlet = !ss.Moonlet;
-    keepMoonlet = ss.Moonlet;
+    Moonlet = !Moonlet;
 }
 
-  void ZoomOut(){
-     ShearSystem ss = (ShearSystem)s;
+  void ZoomIn(){
      SliderScale *= 2;
-     ss.Lx = ss.Lx/2;
-     ss.Ly = ss.Ly/2;
-     
+     LX = LX/2;
+     LY = LY/2;
      setupStates();
   }
 
-  void ZoomIn(){
-     ShearSystem ss = (ShearSystem)s;
+  void ZoomOut(){
      SliderScale *= 0.5;
-     ss.Lx = ss.Lx*2;
-     ss.Ly = ss.Ly*2;
+     LX = LX*2;
+     LY = LY*2;
      setupStates();
+
 
   }
 
   void Reset(){
     setupStates();
-    ShearSystem ss = (ShearSystem)s;
-    ss.Moonlet = keepMoonlet;
   }
 
   void Toggle3D(){
@@ -871,14 +944,14 @@ class ControlFrame extends PApplet{
   void MoreParticles(){
   n_particles += 100;
   N = Integer.toString(n_particles);
-  A.setText(N);
+  LabelA.setText(N);
   Reset();
   }
   
   void LessParticles(){
   n_particles -= 100;
   N = Integer.toString(n_particles);
-  A.setText(N);
+  LabelA.setText(N);
   println(N);
   Reset();
   }
@@ -891,12 +964,14 @@ class ControlFrame extends PApplet{
   
   void CreateMoon(){
   ShearSystem ss = (ShearSystem)s;
-  ss.Moonlet = true;
+  Moonlet = true;
 
   ss.moonlet.position.y = -mm.getArrayValue()[0];
   ss.moonlet.position.x = -mm.getArrayValue()[1];
   ss.moonlet.position.z = 0;
   ss.moonlet.velocity = new PVector();
+  ss.moonlet.velocity.y = 1.5 * ss.Omega0 * ss.moonlet.position.x;
+
   }
   
 }

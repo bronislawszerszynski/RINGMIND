@@ -64,6 +64,7 @@ void draw() {
    //******************************************************
 
   int(millis());
+  //Video Export timer to create smoother looking videos
   //every 50 ms save frame (20 fps)
   int timer = int(millis()) - TimerReset;
   
@@ -79,6 +80,7 @@ void draw() {
 void setupCP5(){
   cf = new ControlFrame(this, 400, 800, "Controls");
   surface.setLocation(420,10);
+  background(0);
 }
 
 
@@ -140,8 +142,7 @@ void keyPressed() {
     //Toggle Moonlet
     if (s instanceof ShearSystem) {
       ShearSystem ss = (ShearSystem) s;
-      ss.Moonlet = !ss.Moonlet;
-      ss.ClearMoonlet = true;
+      Moonlet = !Moonlet;
     }
   } else if (key=='9') {
     //TiltSystem

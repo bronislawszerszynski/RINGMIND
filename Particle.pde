@@ -587,8 +587,6 @@ class ShearParticle extends Particle {
   final float particle_D =1.0/( exp(-particle_lambda*particle_a) -exp(-particle_lambda*particle_b));
   final float particle_C =particle_D * exp(-particle_lambda*particle_a);
 
-  float i = 0;
-  float j = 0;
   PVector InitPosition = new PVector();
 
   //ShearParticle Properties
@@ -674,7 +672,7 @@ class ShearParticle extends Particle {
       a_grav.y += (2.0*ss.Omega0*velocity.x);
     }
     //Gravitational attraction of the moonlet
-    if (ss.Moonlet) {
+    if (Moonlet) {
       PVector distanceVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
       float distanceVectMag = distanceVect.mag();
       float moonMass = (4.0*PI/3.0)*pow(ss.moonlet.radius, 3.0)*ss.moonlet.moonlet_density;
@@ -688,30 +686,14 @@ class ShearParticle extends Particle {
 
       }
     }
-
+        //aproximate forces acting ona particle due to other particles
     if (ss.SelfGrav) {
         PVector SGrav = new PVector();
         SGrav = ss.QT.SelfGrav(this);
-        
-        //if(position.y < (ss.Lx/2) && position.y > -(ss.Lx/2)*0.5){
         a_grav.x += SGrav.x;
         a_grav.y += SGrav.y;      
         a_grav.z += SGrav.z;
-        //}
- }
-
-
-    //for testing collisions
-    //if(this == ss.particles.get(1)){
-
-    // a_grav.x = 0;
-    // a_grav.y = -0.00008;
-    // }
-    // if(this == ss.particles.get(0)){
-
-    // a_grav.x = 0;
-    // a_grav.y = 0.00008;
-    // }
+    }
     return a_grav;
   }
 
@@ -720,7 +702,11 @@ class ShearParticle extends Particle {
    */
   void Reset(ShearSystem s) {
     acceleration = new PVector();
-
+    
+    
+    //This section below is for introducing particles acording to their velocites (introduce faster particles more often etc)
+    // there is 100% a better way to do this but never had chance to improve it, it does work but it's not the fastest when resetting a high volume of particles
+    
     // Splits each half (top/bottom) into k number of orbital heights
     int k=1000;
 
@@ -796,7 +782,7 @@ class ShearParticle extends Particle {
     return p;
   }
 
-  // Checks for particles colliding with the moonlet
+  // Checks if a particle has entered the moonlet radius in this timestep, if so the particle is pushed back outside the moonlet radius and deflected off.
   void MoonletCollisionCheck(ShearSystem ss) {
     float EM = 1;
     PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
@@ -819,7 +805,8 @@ class ShearParticle extends Particle {
     }
   }
   
-  
+  // Exactly the same as above but in 3D
+  //There may be a simpler/faster way to do this in 3D but I had to split the caculations into XY, XZ, YZ planes
   void MoonletCollision3D(ShearSystem ss){
       float EM = 0.90;
     PVector distVect = PVector.sub(position.copy(), ss.moonlet.position.copy());
@@ -885,7 +872,8 @@ class ShearParticle extends Particle {
   }
   
   
-
+   //Collisions detection for 2 particles using a combination of the moonlet method above and Chris Arridge's quadratic equation idea
+   //Seems to work pretty well
 void CollisionCheckB(ShearParticle B) {
     PVector distVect = PVector.sub(position.copy(), B.position.copy());
     PVector RelVelocity = PVector.sub(velocity.copy(), B.velocity.copy());
@@ -968,13 +956,14 @@ class Moonlet extends ShearParticle {
     position.z = 0;
   }
 
-  // Moon with eliptical orbit travels according to SMH in the x direction
+  // Makes the moonlet bob up and down based on simulation time
   PVector DynamicMoon(ShearSystem s) {
     float Hours = s.totalSystemTime/3600.0;
     position.x = 200*cos(Hours*PI/2);  
     return position;
   }
   
+  //Calculates the shear forces on the moonlet when it is moved off of its orbit
   PVector getShear(ShearSystem ss){
   PVector Shear = new PVector();
    if (ss.A) {
