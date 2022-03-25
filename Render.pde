@@ -748,8 +748,8 @@ class ControlFrame extends PApplet{
   
   //Slider to vary the orbital hight of the shearing box
   cp5.addSlider("Orbit Radius")
-       .setRange(50000000, 300000000)
-       .setValue(100000000)
+       .setRange(50000000, 300000000) //.setRange(50000000, 300000000) (default range)
+       .setValue(100000000) //  .setValue(100000000) (default value)
        .setPosition(10, 330)
        .setSize(180, 20)
        .setColorLabel(0xff000000);

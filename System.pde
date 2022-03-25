@@ -5,7 +5,7 @@ float G = 6.67408E-11;       // Gravitational Constant 6.67408E-11[m^3 kg^-1 s^-
 /**Class System
  */
 
-int n_particles = 1000;
+int n_particles = 1;
 
 public abstract class System {
 
@@ -13,7 +13,7 @@ public abstract class System {
   float dt;                                      //Simulation Time step [s]
   float simToRealTimeRatio = 3600.0/1.0;         // 3600.0/1.0 --> 1hour/second
   float maxTimeStep = 20* simToRealTimeRatio / 30;
-  float totalSystemTime =0.0;                    // Tracks length of time simulation has be running
+  float totalSystemTime = 0.0;                    // Tracks length of time simulation has be running
 
   //int n_particles = 1000;                       //Used for system initialiations 
   ArrayList<Particle> particles;
@@ -28,7 +28,6 @@ public abstract class System {
   /**  Updates System for one time step of simulation taking into account the System.
    */
   void update() {
-
     update(this);
 
     //if (simToRealTimeRatio/frameRate < maxTimeStep) {
@@ -85,6 +84,234 @@ public abstract class System {
     s.totalSystemTime += s.dt;
   }
 }
+
+//--------------------------------------------------------------------------------------------------------------------
+/**Class ShearSystem
+ *@author Thomas Cann
+ */
+ 
+ //These toggles need to be global for the Control P5 buttons to work
+public Boolean Toggle3D = false; //true (default value)
+public Boolean RingGap = false;
+public Boolean HalfRing = false; 
+public int LX = 1000;
+public int LY = 2000;
+public Boolean Moonlet = false; //Adds in the moonlet
+
+class ShearSystem extends System {
+  
+  Boolean Training = true;
+
+  Boolean SelfGrav = true; // Toggle Self Gravity between particles
+  Boolean MoonletCollisions = true; // Particles can collide with the moonlet
+  Boolean ParticleCollisions = true; // Particles can collide with one another (no grid implentation yet, runs super slow)
+  Boolean Output = true; //no idea
+  Boolean A = true; // shear forces that make this part of a ring and not just particles in a box
+  Boolean Guides = true; // shows particle trajectories
+  Boolean Reset = false; // leave this off
+  Boolean DynamicMoon = false; // Moon oscillates up and down
+  //Simulation dimensions [m]
+  //int Lx = 1000;       //Extent of simulation box along planet-point line [m].
+  //int Ly = 2000;       //Extent of simulation box along orbit [m].
+
+  int Lx = LX;
+  int Ly = LY;
+  
+  int GapWidth = Lx/4;  //Width of the ring gap
+  
+
+  //Initialises Simulation Constants
+  final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
+  //float r0 = 90000e3;   //Central position in the ring [m]. Defaults to 130000 km.
+  float r0 = cp5.getController("Orbit Radius").getValue();
+  float Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
+  float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
+  Moonlet moonlet;
+  ShearGrid SG ;
+  QuadTree QT;
+
+  ShearSystem(boolean Guides) {
+    this.Guides = Guides;
+    SG = new ShearGrid(this);
+    Rectangle Rect = new Rectangle(Lx/2, Ly/2, Lx, Ly);
+    QT = new QuadTree(1, Rect);
+    particles = new ArrayList<Particle>();
+    moonlet = new Moonlet();
+    random_start();
+  }
+
+  /** Take a step using the Velocity Verlet (Leapfrog) ODE integration algorithm.
+   * Additional Method to Check if particles have left simulation.
+   */
+  @Override void update() {
+    float r0 = cp5.getController("Orbit Radius").getValue();
+    Omega0 = sqrt(GM/(pow(r0, 3.0))); //ω: The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
+    S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
+    
+    //Reads in the slider values 
+    moonlet.radius = cp5.getController("Moon Radius").getValue();
+    moonlet.moonlet_density = cp5.getController("Moonlet Density").getValue();
+    
+    super.update();
+
+    
+    QT.ClearTree();
+    
+    for (Particle p : particles) {  
+      ShearParticle x =(ShearParticle)p;
+      //multiplies particle radii by slider value
+      x.radius = x.InitRadius*cp5.getController("ParticleSize").getValue();
+
+      if (SelfGrav) {
+        //Fills the quadtree, splitting nodes where needed
+        QT.Insert(x);
+      }
+
+      if (particle_outBox(x) && Training==false) {
+        //removes particles that are out of bounds
+        x.Reset(this);
+      }
+
+      if (Moonlet) {
+        if (MoonletCollisions) {
+          if (Toggle3D) {
+            //3D collisions
+            x.MoonletCollision3D(this);
+          } else {
+            //2D collisions
+            x.MoonletCollisionCheck(this);
+          }
+        }
+        if (particle_inMoonlet(x)) {
+          //Resets particles that accidentaly get stuck in the moonlet
+          x.Reset(this);
+        }
+      }
+      if (Output == true){
+        x.out();
+      }
+    }
+    if (SelfGrav) {
+      QT.TreeCofM();
+    }
+    if (ParticleCollisions) {
+      //Fills the collision grid and checks for particle collisions
+      SG.FillGrid(this);
+      SG.CollisionCheck();
+    }
+
+    if (DynamicMoon == true) {
+      moonlet.DynamicMoon(this);
+    }
+    
+    // Moonlet obeys physics when moved outside of its standard orbit
+    moonlet.updatePosition(s.dt);
+    moonlet.updateVelocity(moonlet.getShear(this), s.dt);
+    
+  }
+
+  /** Method to boolean if Particle is out of ShearingBox.
+   *@param x  A Particle to inject.
+   *@return True if out of Shearing Box
+   */
+  boolean particle_outBox(ShearParticle x) {
+    if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)||(x.position.z > 500)||(x.position.z < -500)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  /** Method to boolean if Particle is out of ShearingBox.
+   *@param x  A Particle to inject.
+   *@return True if out of Shearing Box
+   */
+  boolean particle_inMoonlet(ShearParticle x) {
+    PVector MoonVect = moonlet.position.copy();
+    PVector Dist_Vector = MoonVect.sub(x.position);
+
+    if ((Dist_Vector.mag() < moonlet.radius)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  /** Method to inject a number of Particle object into Shearing Box.
+   *@param n  Number of Particle to inject.
+   */
+  void random_inject(float n) {
+    //particles.add(new Moonlet(this));
+    for (int i = 0; i < n; i++) {
+      ShearParticle p = new ShearParticle(this);
+      //particles.add(new ShearParticle(this));
+      particles.add(p);
+      p.Index=i;
+    }
+  }
+
+  /** Method to Initialise the simulation with a random set of starting particles at the edges (in y).
+   */
+  void random_start() {
+    random_inject(n_particles);
+  }
+
+  /** Method to calculate the Keplerian orbital period (using Kepler's 3rd law).
+   *@param r  Radial position (semi-major axis) to calculate the period [m].
+   *@return   The period [s].
+   */
+  float kepler_period(float r) {
+    return 2.0*PI*sqrt((pow(r, 3.0))/GM);
+  }
+
+  /** Method to calculate the Keplerian orbital angular frequency (using Kepler's 3rd law).
+   *@param r  Radial position (semi-major axis) to calculate the period [m].
+   *@return   The angular frequency [radians/s].
+   */
+  float kepler_omega(float r) {
+    return sqrt(GM/(pow(r, 3.0)));
+  }
+
+  /** Method to calculate the Keplerian orbital speed.
+   *@param r  Radial position (semi-major axis) to calculate the period [m].
+   *@return   The speed [m/s].
+   */
+  float kepler_speed(float r) {
+    return sqrt(GM/r);
+  }
+
+  /** Method to calculate the Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr.
+   *@param r Radial position (semi-major axis) to calculate the period [m]. 
+   *@return Shear [radians/s].
+   */
+  float kepler_shear(float r) {
+    return -1.5*kepler_omega(r);
+  }
+
+
+  void initTable() {
+    addParticlesFromTable(this, "shearoutput.csv");
+  }
+
+  /**Display vector from the centre of screen to position that a particle is rendered
+   * @param v vector to display from middle of screen.
+   * @param scale multiple by magnitude.
+   * @param c color of line.
+   */
+  void displayPosition(PVector v, float scale, color c) {
+    stroke(c);
+    line(0, 0, -v.y*scale*width/Ly, -v.x*scale*height/Lx);
+  }
+
+  /**Display vector from the centre of screen with length and direction of vector (no screen dimension scaling)
+   * @param v vector to display from middle of screen.
+   * @param scale multiple by magnitude.
+   * @param c color of line.
+   */
+  void displayPVector(PVector v, float scale, color c) {
+    stroke(c);
+    line(0, 0, -v.y*scale, -v.x*scale);
+  }
+}
+
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -332,232 +559,6 @@ class AlignableMoonSystem extends MoonSystem {
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-/**Class ShearSystem
- *@author Thomas Cann
- */
- 
- //These toggles need to be global for the Control P5 buttons to work
-public Boolean Toggle3D = true;
-public Boolean RingGap = false;
-public Boolean HalfRing = false; 
-public int LX = 1000;
-public int LY = 2000;
-public Boolean Moonlet = false; //Adds in the moonlet
-
-
-class ShearSystem extends System {
-
-   Boolean SelfGrav = true; // Toggle Self Gravity between particles
-  Boolean MoonletCollisions = true; // Particles can collide with the moonlet
-  Boolean ParticleCollisions = true; // Particles can collide with one another (no grid implentation yet, runs super slow)
-  Boolean Output = false; //no idea
-  Boolean A = true; // shear forces that make this part of a sing and not just particles in a box
-  Boolean Guides = true; // shows particle trajectories
-  Boolean Reset = false; // leave this off
-  Boolean DynamicMoon = false; // Moon oscillates up and down
-  //Simulation dimensions [m]
-  //int Lx = 1000;       //Extent of simulation box along planet-point line [m].
-  //int Ly = 2000;       //Extent of simulation box along orbit [m].
-
-  int Lx = LX;
-  int Ly = LY;
-  
-  int GapWidth = Lx/4;  //Width of the ring gap
-
-  //Initialises Simulation Constants
-  final float GM = 3.793e16;   //Shear Gravitational parameter for the central body, defaults to Saturn  GM = 3.793e16.
-  //float r0 = 90000e3;   //Central position in the ring [m]. Defaults to 130000 km.
-  float r0 = cp5.getController("Orbit Radius").getValue();
-  float Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
-  float S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
-  Moonlet moonlet;
-  ShearGrid SG ;
-  QuadTree QT;
-
-  ShearSystem(boolean Guides) {
-    this.Guides =Guides;
-    SG = new ShearGrid(this);
-    Rectangle Rect = new Rectangle(Lx/2, Ly/2, Lx, Ly);
-    QT = new QuadTree(1, Rect);
-    particles = new ArrayList<Particle>();
-    moonlet = new Moonlet(
-    );
-    random_start();
-  }
-
-  /** Take a step using the Velocity Verlet (Leapfrog) ODE integration algorithm.
-   * Additional Method to Check if particles have left simulation.
-   */
-  @Override void update() {
-    float r0 = cp5.getController("Orbit Radius").getValue();
-    Omega0 = sqrt(GM/(pow(r0, 3.0))); //The Keplerian orbital angular frequency (using Kepler's 3rd law). [radians/s]
-    S0 = -1.5*Omega0; //"The Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr. [radians/s]
-    
-    //Reads in the slider values 
-    moonlet.radius = cp5.getController("Moon Radius").getValue();
-    moonlet.moonlet_density = cp5.getController("Moonlet Density").getValue();
-
-    super.update();
-
-    
-    QT.ClearTree();
-    
-    
-    for (Particle p : particles) {          
-      ShearParticle x =(ShearParticle)p;
-      //multiplies particle radii by slider value
-      x.radius = x.InitRadius*cp5.getController("ParticleSize").getValue();
-
-      if (SelfGrav) {
-        //Fills the quadtree, splitting nodes where needed
-        QT.Insert(x);
-      }
-
-      if (particle_outBox(x)) {
-        //removes particles that are out of bounds
-        x.Reset(this);
-      }
-
-
-
-      if (Moonlet) {
-        if (MoonletCollisions) {
-          if (Toggle3D) {
-            //3D collisions
-            x.MoonletCollision3D(this);
-          } else {
-            //2D collisions
-            x.MoonletCollisionCheck(this);
-          }
-        }
-        if (particle_inMoonlet(x)) {
-          //Resets particles that accidentaly get stuck in the moonlet
-          x.Reset(this);
-        }
-      }
-    }
-    if (SelfGrav) {
-      QT.TreeCofM();
-    }
-    if (ParticleCollisions) {
-      //Fills the collision grid and checks for particle collisions
-      SG.FillGrid(this);
-      SG.CollisionCheck();
-    }
-
-    if (DynamicMoon == true) {
-      moonlet.DynamicMoon(this);
-    }
-    
-    // Moonlet obeys physics when moved outside of its standard orbit
-    moonlet.updatePosition(s.dt);
-    moonlet.updateVelocity(moonlet.getShear(this), s.dt);
-    
-  }
-
-  /** Method to boolean if Particle is out of ShearingBox.
-   *@param x  A Particle to inject.
-   *@return True if out of Shearing Box
-   */
-  boolean particle_outBox(ShearParticle x) {
-    if ((x.position.x >Lx/2)||(x.position.x<-Lx/2)||(x.position.y<-Ly/2)||(x.position.y>Ly/2)||(x.position.z > 500)||(x.position.z < -500)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  /** Method to boolean if Particle is out of ShearingBox.
-   *@param x  A Particle to inject.
-   *@return True if out of Shearing Box
-   */
-  boolean particle_inMoonlet(ShearParticle x) {
-    PVector MoonVect = moonlet.position.copy();
-    PVector Dist_Vector = MoonVect.sub(x.position);
-
-    if ((Dist_Vector.mag() < moonlet.radius)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  /** Method to inject a number of Particle object into Shearing Box.
-   *@param n  Number of Particle to inject.
-   */
-  void random_inject(float n) {
-    //particles.add(new Moonlet(this));
-    for (int i = 0; i < n; i++) {
-      ShearParticle p = new ShearParticle(this);
-      //particles.add(new ShearParticle(this));
-      particles.add(p);
-      p.Index=i;
-    }
-  }
-
-  /** Method to Initialise the simulation with a random set of starting particles at the edges (in y).
-   */
-  void random_start() {
-    random_inject(n_particles);
-  }
-
-  /** Method to calculate the Keplerian orbital period (using Kepler's 3rd law).
-   *@param r  Radial position (semi-major axis) to calculate the period [m].
-   *@return   The period [s].
-   */
-  float kepler_period(float r) {
-    return 2.0*PI*sqrt((pow(r, 3.0))/GM);
-  }
-
-  /** Method to calculate the Keplerian orbital angular frequency (using Kepler's 3rd law).
-   *@param r  Radial position (semi-major axis) to calculate the period [m].
-   *@return   The angular frequency [radians/s].
-   */
-  float kepler_omega(float r) {
-    return sqrt(GM/(pow(r, 3.0)));
-  }
-
-  /** Method to calculate the Keplerian orbital speed.
-   *@param r  Radial position (semi-major axis) to calculate the period [m].
-   *@return   The speed [m/s].
-   */
-  float kepler_speed(float r) {
-    return sqrt(GM/r);
-  }
-
-  /** Method to calculate the Keplerian shear. Equal to -(3/2)Omega for a Keplerian orbit or -rdOmega/dr.
-   *@param r Radial position (semi-major axis) to calculate the period [m]. 
-   *@return Shear [radians/s].
-   */
-  float kepler_shear(float r) {
-    return -1.5*kepler_omega(r);
-  }
-
-
-  void initTable() {
-    addParticlesFromTable(this, "shearoutput.csv");
-  }
-
-  /**Display vector from the centre of screen to position that a particle is rendered
-   * @param v vector to display from middle of screen.
-   * @param scale multiple by magnitude.
-   * @param c color of line.
-   */
-  void displayPosition(PVector v, float scale, color c) {
-    stroke(c);
-    line(0, 0, -v.y*scale*width/Ly, -v.x*scale*height/Lx);
-  }
-
-  /**Display vector from the centre of screen with length and direction of vector (no screen dimension scaling)
-   * @param v vector to display from middle of screen.
-   * @param scale multiple by magnitude.
-   * @param c color of line.
-   */
-  void displayPVector(PVector v, float scale, color c) {
-    stroke(c);
-    line(0, 0, -v.y*scale, -v.x*scale);
-  }
-}
-
 /**Class TiltSystem
  * @author Thomas Cann
  */
